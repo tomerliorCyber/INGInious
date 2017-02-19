@@ -1,0 +1,47 @@
+.color-index {
+    margin-bottom: 15px;
+}
+
+.color-title {
+    text-align: center;
+    font-size: 12px;
+}
+
+.color-box {
+    width: 15px;
+    height: 15px;
+    margin: 0 auto;
+}
+
+.notviewed {
+    background: #b9b9b9;
+}
+
+.notattempted {
+    background: #fff361;
+}
+
+.failed {
+    background: #d9534f;
+}
+
+.succeeded {
+    background: #5cb85c;
+}
+
+.manual {
+    background: #337ab7;
+}
+
+.grades-table {
+    overflow: scroll;
+}
+
+.matrix-table {
+    width: inherit;
+    max-width: inherit;
+}
+
+.grades-table tbody tr td:not(:first-child) {
+    border: 1px solid white;
+}

@@ -1,0 +1,122 @@
+$def with (course, data_users, order_tasks, task_start_line)
+
+$var title: $:course.get_name() - Matrix
+
+$var Column: $:template_helper.call('course_admin_menu',course=course,current='matrix')
+
+$def NavbarF():
+    <ol class="nav navbar-nav nav-breadcrumb">
+        <li>
+            <a href="$get_homepath()/course/$course.get_id()">$course.get_name()</a>
+        </li>
+
+        <li>
+            <a href="$get_homepath()/admin/$course.get_id()" title="Administration" data-toggle="tooltip" data-placement="bottom">
+                <i class="fa fa-user-secret"></i>
+            </a>
+        </li>
+
+        <li class="active">
+            <a href="#"><i class="fa fa-graduation-cap"></i> Matrix <span class="sr-only">(current)</span></a>
+        </li>
+    </ol>
+$var Navbar: $:NavbarF()
+
+$def tr(value):
+    $for user in data_users:
+        <tr>
+            <td>
+                <a href="/admin/$:course.get_id()/student/$user['name']">$user['name']</a>
+            </td>
+
+            $for task in user['tasks']:
+                <td class="$user['tasks'][task]['status']"
+                    $if user['tasks'][task]['name'] == task_start_line:
+                        style="border-left: 5px solid black"
+                >
+                    $if user['tasks'][task]['status'] == 'succeeded' or user['tasks'][task]['status'] == 'failed':
+                        $if user['tasks'][task]['submissionid'] == 'None':
+                            $int(user['tasks'][task]['grade'])
+                        $else:
+                            <a href="/admin/$:course.get_id()/student/$user['name']/$task/$user['tasks'][task]['submissionid']">
+                                $int(user['tasks'][task]['grade'])
+                            </a>
+                </td>
+        </tr>
+
+
+$def th(value):
+    $for x in value
+        <th>
+            <a href="/course/$:course.get_id()/$x.get_id()">
+                $x.get_id()
+            </a>
+
+            <div class="btn-group" role="group">
+                <a href="/admin/$:course.get_id()/edit/task/$x.get_id()" class="btn btn-default btn-xs"
+                   title data-toggle="tooltip"
+                   data-placement="bottom"
+                   data-original-title="Edit task">
+                    <i class="fa fa-edit"></i>
+                </a>
+            </div>
+        </th>
+
+
+
+<h2>Matrix</h2>
+
+<div class="color-index">
+    <div class="row">
+        <div class="col-xs-2 col-xs-push-1">
+            <div class="color-title">Not viewed:</div>
+
+            <div class="color-box notviewed"></div>
+        </div>
+
+        <div class="col-xs-2 col-xs-push-1">
+            <div class="color-title">Not attempted:</div>
+
+            <div class="color-box notattempted"></div>
+        </div>
+
+        <div class="col-xs-2 col-xs-push-1">
+            <div class="color-title">Failed:</div>
+
+            <div class="color-box failed"></div>
+        </div>
+
+        <div class="col-xs-2 col-xs-push-1">
+            <div class="color-title">Succeeded:</div>
+
+            <div class="color-box succeeded"></div>
+        </div>
+
+        <div class="col-xs-2 col-xs-push-1">
+            <div class="color-title">Manual:</div>
+
+            <div class="color-box manual"></div>
+        </div>
+    </div>
+</div>
+
+
+<div class="grades-table">
+    <table class="table matrix-table">
+        <thead>
+            <tr>
+                <th>Students</th>
+                $:th(order_tasks)
+            </tr>
+        </thead>
+
+        <tbody>
+            $if len(data_users) != 0:
+                $:tr(data_users)
+            $else:
+                <tr>
+                    <td>No students</td>
+                </tr>
+        </tbody>
+    </table>
+</div>
