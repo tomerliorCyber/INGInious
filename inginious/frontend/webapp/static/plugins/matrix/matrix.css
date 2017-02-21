@@ -23,10 +23,22 @@
 
 .failed {
     background: #d9534f;
+    text-align: center;
+}
+
+.failed > a {
+    color: white;
+    text-decoration: underline;
 }
 
 .succeeded {
     background: #5cb85c;
+    text-align: center;
+}
+
+.succeeded > a {
+    color: white;
+    text-decoration: underline;
 }
 
 .manual {

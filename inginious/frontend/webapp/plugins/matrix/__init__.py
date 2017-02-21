@@ -16,35 +16,50 @@ class MatrixPage(INGIniousAdminPage):
         # username = self.user_manager.session_username()
         # permissions = self.user_manager.has_staff_rights_on_course(course, username)
         course = self.get_course_and_check_rights(courseid, allow_all_staff=True)[0]
-        users = self.user_manager.get_course_registered_users(course, False)
         tasks = course.get_tasks()
         data_users = []
         task_deadline = []
         task_no_deadline = []
         task_past_deadline = []
-        order_tasks = []
+        future_task = []
         black_line = False
         task_start_line = ''
+
+        """ Get all information about the users """
+        users = sorted(list(
+            self.user_manager.get_users_info(self.user_manager.get_course_registered_users(course, False)).items()),
+                       key=lambda k: k[1][0] if k[1] is not None else "")
+
+        users = dict([(user[0], {"username": user[0],
+                                     "realname": user[1][0] if user[1] is not None else None}) for user in users])
 
         """ Reorder course tasks according to deadline, no deadline and past deadline """
         for task in tasks:
             if tasks[task].get_deadline() == 'No deadline':
                 task_no_deadline.append(tasks[task])
+            elif tasks[task].get_deadline() == "It's too late":
+                task_deadline.append(tasks[task])
+
+                """ Check when to start the black line """
+                if not black_line:
+                    task_start_line = tasks[task].get_name()
+                    black_line = True
             else:
-                current_task_datetime = datetime.strptime(tasks[task].get_deadline(), '%d/%m/%Y %H:%M:%S')
                 now = datetime.now()
 
-                if current_task_datetime < now:
+                if tasks[task].get_accessible_time().get_end_date() < now:
                     task_past_deadline.append(tasks[task])
 
                     """ Check when to start the black line """
                     if not black_line:
                         task_start_line = tasks[task].get_name()
                         black_line = True
+                elif tasks[task].get_accessible_time().get_start_date() > now:
+                    future_task.append(tasks[task])
                 else:
                     task_deadline.append(tasks[task])
 
-        order_tasks = task_deadline + task_no_deadline + task_past_deadline
+        order_tasks = task_no_deadline + task_deadline + task_past_deadline
 
         """ Get all user tasks """
         for user in users:
@@ -55,7 +70,7 @@ class MatrixPage(INGIniousAdminPage):
                                               "grade": 0}) for taskid in order_tasks])
 
             # TODO: Check if we can retrieve all users data once, then reference the needed details in the loop
-            user_tasks = list(self.database.user_tasks.find({"username": user, "courseid": course.get_id()}))
+            user_tasks = list(self.database.user_tasks.find({"username": users[user]['username'], "courseid": course.get_id()}))
 
             for user_task in user_tasks:
                 if user_task["taskid"] in ordered_tasks_for_user:
@@ -70,7 +85,7 @@ class MatrixPage(INGIniousAdminPage):
                     ordered_tasks_for_user[user_task["taskid"]]["grade"] = user_task["grade"]
                     ordered_tasks_for_user[user_task["taskid"]]["submissionid"] = str(user_task["submissionid"])
 
-            data_user = {'name': user, 'tasks': ordered_tasks_for_user}
+            data_user = {'name': users[user], 'tasks': ordered_tasks_for_user}
             data_users.append(data_user)
 
         return self.template_helper.get_custom_renderer('frontend/webapp/plugins/matrix')\
@@ -88,7 +103,7 @@ def add_css_file():
 
 
 def init(plugin_manager, _, _2, _3):
-    """ Init the plugin """
+    """ Init the matrix plugin """
     plugin_manager.add_hook('course_admin_menu', add_admin_menu)
     plugin_manager.add_hook('css', add_css_file)
     plugin_manager.add_page("/admin/([^/]+)/matrix", MatrixPage)
