@@ -6,6 +6,7 @@
 """ Matrix plugin - show course overview of student grades """
 import logging
 import web
+from collections import OrderedDict
 from inginious.frontend.webapp.pages.course_admin.utils import INGIniousAdminPage
 from datetime import datetime
 
@@ -30,7 +31,7 @@ class MatrixPage(INGIniousAdminPage):
             self.user_manager.get_users_info(self.user_manager.get_course_registered_users(course, False)).items()),
                        key=lambda k: k[1][0] if k[1] is not None else "")
 
-        users = dict([(user[0], {"username": user[0],
+        users = OrderedDict([(user[0], {"username": user[0],
                                      "realname": user[1][0] if user[1] is not None else None}) for user in users])
 
         """ Reorder course tasks according to deadline, no deadline and past deadline """
@@ -63,14 +64,14 @@ class MatrixPage(INGIniousAdminPage):
 
         """ Get all user tasks """
         for user in users:
-            ordered_tasks_for_user = dict([(taskid.get_id(), {"taskid": taskid,
+            ordered_tasks_for_user = OrderedDict([(taskid.get_id(), {"taskid": taskid,
                                               "name": taskid.get_name(),
                                               "tried": 0,
                                               "status": "notviewed",
                                               "grade": 0}) for taskid in order_tasks])
 
             # TODO: Check if we can retrieve all users data once, then reference the needed details in the loop
-            user_tasks = list(self.database.user_tasks.find({"username": users[user]['username'], "courseid": course.get_id()}))
+            user_tasks = list(self.database.user_tasks.find({"username":  users[user]['username'], "courseid": course.get_id()}))
 
             for user_task in user_tasks:
                 if user_task["taskid"] in ordered_tasks_for_user:
