@@ -14,15 +14,14 @@ from datetime import datetime
 class MatrixPage(INGIniousAdminPage):
     def GET_AUTH(self, courseid):
         """ GET request """
-        # username = self.user_manager.session_username()
-        # permissions = self.user_manager.has_staff_rights_on_course(course, username)
         course = self.get_course_and_check_rights(courseid, allow_all_staff=True)[0]
         tasks = course.get_tasks()
         data_users = []
-        task_deadline = []
-        task_no_deadline = []
-        task_past_deadline = []
-        future_task = []
+        past_future_tasks = []
+        past_tasks = []
+        future_tasks = []
+        always_tasks = []
+        never_tasks = []
         black_line = False
         task_start_line = ''
 
@@ -34,33 +33,35 @@ class MatrixPage(INGIniousAdminPage):
         users = OrderedDict([(user[0], {"username": user[0],
                                      "realname": user[1][0] if user[1] is not None else None}) for user in users])
 
-        """ Reorder course tasks according to deadline, no deadline and past deadline """
+        """ Reorder course tasks according to deadline from past to future, no deadline and passed deadline """
         for task in tasks:
             if tasks[task].get_deadline() == 'No deadline':
-                task_no_deadline.append(tasks[task])
+                """ Tasks with no deadline, that will always show in tasks """
+                always_tasks.append(tasks[task])
             elif tasks[task].get_deadline() == "It's too late":
-                task_deadline.append(tasks[task])
-
-                """ Check when to start the black line """
-                if not black_line:
-                    task_start_line = tasks[task].get_name()
-                    black_line = True
+                """ Tasks that will never show in tasks """
+                never_tasks.append(tasks[task])
             else:
                 now = datetime.now()
 
-                if tasks[task].get_accessible_time().get_end_date() < now:
-                    task_past_deadline.append(tasks[task])
+                if tasks[task].get_accessible_time().get_start_date() < now:
+                    if tasks[task].get_accessible_time().get_end_date() < now:
+                        """ Past tasks that will show in the beginning """
+                        past_tasks.append(tasks[task])
 
-                    """ Check when to start the black line """
-                    if not black_line:
-                        task_start_line = tasks[task].get_name()
-                        black_line = True
-                elif tasks[task].get_accessible_time().get_start_date() > now:
-                    future_task.append(tasks[task])
-                else:
-                    task_deadline.append(tasks[task])
+                        """ Check when to start the black line """
+                        if not black_line:
+                            task_start_line = tasks[task].get_name()
+                            black_line = True
+                    else:
+                        """ Past future tasks that will show at the end """
+                        past_future_tasks.append(tasks[task])
+                elif tasks[task].get_accessible_time().get_start_date() > now \
+                        and tasks[task].get_accessible_time().get_end_date() > now:
+                    """ Future tasks that will not show in tasks """
+                    future_tasks.append(tasks[task])
 
-        order_tasks = task_no_deadline + task_deadline + task_past_deadline
+        order_tasks = past_future_tasks + always_tasks + past_tasks
 
         """ Get all user tasks """
         for user in users:
