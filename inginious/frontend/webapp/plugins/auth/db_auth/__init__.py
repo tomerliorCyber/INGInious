@@ -47,9 +47,10 @@ class DatabaseAuthMethod(AuthMethod):
             "input": OrderedDict((
                 ("login", {"type": "text", "placeholder": "Login"}),
                 ("password", {"type": "password", "placeholder": "Password"}))),
-            "info": '<div class="text-center"><a href="' + web.ctx.home +
-                    '/register">Register</a> / <a href="' + web.ctx.home +
-                    '/register#lostpasswd">Lost password?</a></div>'
+            "info": ""
+            #"info": '<div class="text-center"><a href="' + web.ctx.home +
+            #        '/register">Register</a> / <a href="' + web.ctx.home +
+            #        '/register#lostpasswd">Lost password?</a></div>'
         }
 
     def should_cache(self):
@@ -225,7 +226,7 @@ Someone (probably you) asked to reset your INGInious password. If this was you, 
                 msg = "Your password has been successfully changed."
 
         return msg, error
-
+    '''
     def POST(self):
         """ Handles POST request """
         if self.user_manager.session_logged_in():
@@ -243,7 +244,7 @@ Someone (probably you) asked to reset your INGInious password. If this was you, 
             msg, error = self.reset_passwd(data)
 
         return self.template_helper.get_custom_renderer('frontend/webapp/plugins/auth/db_auth').register(reset, msg, error)
-
+    '''
 
 class ProfilePage(INGIniousAuthPage):
     """ Profile page for DB-authenticated users"""
@@ -363,5 +364,5 @@ def init(plugin_manager, _, _2, conf):
     allow_deletion = conf.get("allow_deletion", False)
     plugin_manager.register_auth_method(DatabaseAuthMethod(conf.get('name', 'WebApp'), plugin_manager.get_database()))
     plugin_manager.add_hook("main_menu", lambda template_helper: main_menu(template_helper, plugin_manager.get_database()))
-    plugin_manager.add_page('/register', RegistrationPage)
+    #plugin_manager.add_page('/register', RegistrationPage)
     plugin_manager.add_page('/profile', ProfilePage)
