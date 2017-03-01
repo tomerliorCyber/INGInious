@@ -225,7 +225,7 @@ Someone (probably you) asked to reset your INGInious password. If this was you, 
                 msg = "Your password has been successfully changed."
 
         return msg, error
-
+    '''
     def POST(self):
         """ Handles POST request """
         if self.user_manager.session_logged_in():
@@ -243,7 +243,7 @@ Someone (probably you) asked to reset your INGInious password. If this was you, 
             msg, error = self.reset_passwd(data)
 
         return self.template_helper.get_custom_renderer('frontend/webapp/plugins/auth/db_auth').register(reset, msg, error)
-
+    '''
 
 class ProfilePage(INGIniousAuthPage):
     """ Profile page for DB-authenticated users"""
