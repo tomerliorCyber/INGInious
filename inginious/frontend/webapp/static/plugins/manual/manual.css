@@ -1,0 +1,37 @@
+.lessons {
+    margin-bottom: 12px;
+}
+
+.lessons .lesson-title {
+    font-size: 20px;
+}
+
+.students {
+    margin-bottom: 12px;
+}
+
+.students .student-title {
+    font-size: 20px;
+}
+
+.feedback {
+    width: 100%;
+    max-width: 100%;
+}
+
+.overall-grade {
+    margin-top: 20px;
+}
+
+.overall-grade table {
+    width: auto;
+    max-width: auto;
+}
+
+.task-anchor {
+    margin-top: 20px;
+}
+
+.users {
+    min-width: 160px;
+}
