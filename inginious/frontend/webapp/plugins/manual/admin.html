@@ -103,10 +103,10 @@ $var Navbar: $:NavbarF()
 <div class="buttons">
     <div class="btn-group" role="group">
         <a href="#" class="btn btn-default btn-xs submit-all">
-            Subbmit all
+            Submit all
         </a>
 
-        <a href="#" class="btn btn-default btn-xs">
+        <a href="#" class="btn btn-default btn-xs save-btn">
             Save
         </a>
 
@@ -149,10 +149,10 @@ $var Navbar: $:NavbarF()
             <tr>
                 <td style="border-right: 2px solid black"></td>
 
-                <td style="border-right: 2px solid black"></td>
+                <td class="avg-grade" style="border-right: 2px solid black"></td>
 
                 $for task in lessons[current_lesson]['tasks']:
-                    <td>
+                    <td class="grade-$task['id']">
 
                     </td>
             </tr>
@@ -164,7 +164,7 @@ $var Navbar: $:NavbarF()
 
 <hr>
 
-$for task in lessons[current_lesson]['tasks']:
+$for index, task in enumerate(lessons[current_lesson]['tasks']):
     <div class="task-$task['id']">
         <h3>Task $current_lesson-$task['id']</h3>
 
@@ -172,7 +172,7 @@ $for task in lessons[current_lesson]['tasks']:
         <textarea name="" class="feedback" cols="50" rows="10"></textarea>
 
         <h4>Grade</h4>
-        <input type="number" min="0" max="100">
+        <input type="number" class="grade" min="0" max="100">
 
         <h4>Submission</h4>
 
@@ -185,15 +185,6 @@ $for task in lessons[current_lesson]['tasks']:
 
             $for key, problem in enumerate(task['taskid'].get_problems()):
                 <div class="panel panel-default">
-                    $if len(task['taskid'].get_problems()) != 1 or task['taskid'].get_problems() != "":
-                        <div class="panel-heading">
-                        <h3 class="panel-title">
-                            $if len(task['taskid'].get_problems()) != 1:
-                                Question ${key+1}:
-                            $problem.get_name()
-                        </h3>
-                    </div>
-
                     <div class="panel-body">
                         <div id="task_alert.$problem.get_id()" class="task_alert_problem"></div>
                         <!--?$:problem.get_header()-->
@@ -227,9 +218,8 @@ $for task in lessons[current_lesson]['tasks']:
 
         <script>
             initManualTask("$task['id']");
-            onToFeedback("$task['id']");
         </script>
     </div>
 
-    <hr>
-
+    $if (index + 1) != len(lessons[current_lesson]['tasks']):
+        <hr>

@@ -1,6 +1,5 @@
 $(document).ready(function() {
     onSubmitAllBtn();
-    onToTopBtn();
 });
 
 
@@ -16,35 +15,6 @@ function onSubmitAllBtn() {
     });
 }
 
-
-/**
- * On click to top btn
- */
-function onToTopBtn() {
-    var body = $('html, body');
-    var toTopBtn = $('.to-top');
-
-    toTopBtn.on('click', function(event) {
-        event.preventDefault();
-        body.stop().animate({ scrollTop: 0 }, '500', 'swing');
-    });
-}
-
-/**
- * On click to feedback btn
- * @param task
- */
-function onToFeedback(task) {
-    var body = $('html, body');
-    var taskDiv = $('.task-' + task);
-    var toFeedbackBtn = $(taskDiv).find('.to-feedback');
-
-    toFeedbackBtn.on('click', function() {
-        event.preventDefault();
-        $(body).stop().animate({ scrollTop: $(taskDiv).offset().top }, '500', 'swing');
-
-    });
-}
 
 /**
  * Init manual task
@@ -82,6 +52,10 @@ function initManualTask(taskId) {
             }
         });
     });
+
+    onToTopBtn();
+    onToFeedback(task);
+    onChangeGrade(task, taskId);
 }
 
 
@@ -284,4 +258,101 @@ function manualDisplayOverflowAlert(task) {
     var taskAlert = manualGetAlertCode(b, 'warning');
 
     task.find('#task_alert').html(taskAlert);
+}
+
+
+/**
+ * On click to top btn
+ */
+function onToTopBtn() {
+    var body = $('html, body');
+    var toTopBtn = $('.to-top');
+
+    toTopBtn.on('click', function(event) {
+        event.preventDefault();
+        body.stop().animate({ scrollTop: 0 }, '500', 'swing');
+    });
+}
+
+
+/**
+ * On click to feedback btn
+ * @param task
+ */
+function onToFeedback(task) {
+    var body = $('html, body');
+    var toFeedbackBtn = task.find('.to-feedback');
+
+    toFeedbackBtn.on('click', function() {
+        event.preventDefault();
+        $(body).stop().animate({ scrollTop: task.offset().top }, '500', 'swing');
+        task.find('.feedback').focus();
+    });
+}
+
+
+/**
+ * Check changes on grade
+ * @param task
+ * @param taskId
+ */
+function onChangeGrade(task, taskId) {
+    var gradeInput = task.find('.grade');
+    var grade = $('.grade-' + taskId);
+    var newGrade = '';
+
+    gradeInput.on('keyup change click', function () {
+        if (isGradeValid(gradeInput.val())) {
+            grade.html(gradeInput.val());
+            checkAvgGrade();
+        } else {
+            if (gradeInput.val().toString().substring(0, 3) == 100) {
+                newGrade = gradeInput.val().toString().substring(0, 3);
+            } else {
+                newGrade = gradeInput.val().toString().substring(0, 2);
+            }
+
+            gradeInput.val(newGrade);
+        }
+    });
+}
+
+
+/**
+ * Check if the grade is valid or not
+ * @param grade
+ * @returns {boolean}
+ */
+function isGradeValid(grade) {
+    if (grade >= 0 && grade <= 100) {
+        return true;
+    }
+}
+
+
+/**
+ * Check the avg grade and update the table
+ */
+function checkAvgGrade() {
+    var avgGradeDiv = $('.avg-grade');
+    var gradesLength = $('.overall-grade').find('td').length;
+    var grades = [];
+    var grade;
+    var avgGrade = 0;
+
+    for (var i = 0; i < gradesLength - 2 ; i++) {
+        grade = $($('.overall-grade').find('td')[i + 2]);
+
+        if (grade.html().trim() != '') {
+            grades.push(grade.html().trim());
+        }
+    }
+
+    for (var j = 0; j < grades.length; j++) {
+        avgGrade += parseInt(grades[j]);
+    }
+
+    avgGrade = avgGrade / grades.length;
+
+    avgGradeDiv.html(avgGrade);
 }

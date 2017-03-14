@@ -5,8 +5,9 @@ import json
 from inginious.frontend.common.task_page_helpers import submission_to_json, list_multiple_multiple_choices_and_files
 from bson.objectid import ObjectId
 
-""" Manual plugin - show overall feedback about student """
+
 class ManualPlugin(INGIniousAdminPage):
+    """ Manual plugin - show overall feedback about student """
     """ Get all information about the users """
     def get_users(self, course):
         users = sorted(list(
@@ -67,7 +68,7 @@ class IndexPage(ManualPlugin):
 
         user_task = list(self.database.user_tasks.find({"courseid": course.get_id(), "username": current_user}))
 
-        if user_task is not None:
+        if not user_task:
             for task in user_task:
                 submission = self.submission_manager.get_submission(task['submissionid'], False)
                 submission = self.submission_manager.get_input_from_submission(submission)
@@ -91,7 +92,7 @@ class StudentPage(ManualPlugin):
 
         user_task = list(self.database.user_tasks.find({"courseid": course.get_id(), "username": current_user}))
 
-        if user_task is not None:
+        if user_task:
             for task in user_task:
                 submission = self.submission_manager.get_submission(task['submissionid'], False)
                 submission = self.submission_manager.get_input_from_submission(submission)
