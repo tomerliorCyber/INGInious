@@ -1,5 +1,6 @@
 $(document).ready(function() {
-    onSubmitAllBtn();
+    onClickArrowBtn();
+    onChangeOverallGrade();
 });
 
 
@@ -12,6 +13,46 @@ function onSubmitAllBtn() {
     submitAllBtn.on('click', function(event) {
         event.preventDefault();
         $('.submit-btn').trigger('click');
+    });
+}
+
+
+/**
+ * On click arrow btn
+ */
+function onClickArrowBtn() {
+    $('.btn-arrow').on('click', function(event) {
+        var target = $(event.target);
+        var btnArrow = target.closest('.btn-arrow');
+
+        btnArrow.addClass('btn-disabled');
+    });
+}
+
+function onChangeOverallGrade() {
+    var gradeInput = $('.overall-grade-input');
+    var newGrade = '';
+
+    gradeInput.on('keyup change click', function () {
+        if (!isGradeValid(gradeInput.val())) {
+            if (gradeInput.val().toString().substring(0, 3) == 100) {
+                newGrade = gradeInput.val().toString().substring(0, 3);
+            } else {
+                newGrade = gradeInput.val().toString().substring(0, 2);
+            }
+
+            gradeInput.val(newGrade);
+        }
+    });
+}
+
+
+/**
+ * On close window
+ */
+function onCloseWindow() {
+    $(window).on("beforeunload", function() {
+        return true;
     });
 }
 
@@ -194,10 +235,13 @@ function manualDisplayFailedAlert(task, taskData) {
  * @param taskData
  */
 function manualDisplaySuccessAlert(task, taskData) {
-    var para = $('<p></p>');
-    para.html('Your answer passed the tests! Your score is ' + taskData.grade);
+    var div = $('<div></div>');
+    var content = '';
+    content += 'Your answer passed the tests! Your score is ' + taskData.grade;
+    content += taskData.text;
+    div.html(content);
 
-    var taskAlert = manualGetAlertCode(para, 'success');
+    var taskAlert = manualGetAlertCode(div, 'success');
 
     task.find('#task_alert').html(taskAlert);
 }
@@ -324,9 +368,7 @@ function onChangeGrade(task, taskId) {
  * @returns {boolean}
  */
 function isGradeValid(grade) {
-    if (grade >= 0 && grade <= 100) {
-        return true;
-    }
+    return grade >= 0 && grade <= 100;
 }
 
 
