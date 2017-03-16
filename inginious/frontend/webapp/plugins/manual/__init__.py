@@ -23,13 +23,14 @@ class ManualPlugin(INGIniousAdminPage):
     def get_lessons(self, course):
         tasks = course.get_tasks()
         lessons_list = set()
+        lessons = []
 
         for task in tasks:
             lessons_list.add(task.split('-')[0])
 
-        lessons = OrderedDict([(lesson, {"name": lesson,
-                                         "tasks": []}) for lesson in sorted(lessons_list, key=int)])
-
+        if lessons_list:
+            lessons = OrderedDict([(lesson, {"name": lesson,
+                                             "tasks": []}) for lesson in sorted(lessons_list, key=int)])
         for task in tasks:
             lesson_num = task.split('-')[0]
             task_num = task.split('-')[1]
@@ -68,13 +69,14 @@ class IndexPage(ManualPlugin):
 
         user_task = list(self.database.user_tasks.find({"courseid": course.get_id(), "username": current_user}))
 
-        if not user_task:
+        if user_task:
             for task in user_task:
-                submission = self.submission_manager.get_submission(task['submissionid'], False)
-                submission = self.submission_manager.get_input_from_submission(submission)
-                submission = self.submission_manager.get_feedback_from_submission(submission, show_everything=True)
+                if task['taskid'].split('-')[1] == current_lesson:
+                    submission = self.submission_manager.get_submission(task['submissionid'], False)
+                    submission = self.submission_manager.get_input_from_submission(submission)
+                    submission = self.submission_manager.get_feedback_from_submission(submission, show_everything=True)
 
-                user_data[task['taskid'].split('-')[1]] = submission
+                    user_data[task['taskid'].split('-')[1]] = submission
 
         return self.template_helper.get_custom_renderer('frontend/webapp/plugins/manual')\
             .admin(course, lessons, users, current_lesson, current_user, buttons, self.webterm_link, user_data)
@@ -94,11 +96,12 @@ class StudentPage(ManualPlugin):
 
         if user_task:
             for task in user_task:
-                submission = self.submission_manager.get_submission(task['submissionid'], False)
-                submission = self.submission_manager.get_input_from_submission(submission)
-                submission = self.submission_manager.get_feedback_from_submission(submission, show_everything=True)
+                if task['taskid'].split('-')[1] == current_lesson:
+                    submission = self.submission_manager.get_submission(task['submissionid'], False)
+                    submission = self.submission_manager.get_input_from_submission(submission)
+                    submission = self.submission_manager.get_feedback_from_submission(submission, show_everything=True)
 
-                user_data[task['taskid'].split('-')[1]] = submission
+                    user_data[task['taskid'].split('-')[1]] = submission
 
         if student_id not in users or lesson_id not in lessons:
             return web.seeother(web.ctx.homepath + '/admin/' + course.get_id() + '/manual')

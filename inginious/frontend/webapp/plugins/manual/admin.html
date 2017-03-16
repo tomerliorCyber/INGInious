@@ -68,8 +68,16 @@ $var Navbar: $:NavbarF()
         No students
     $else:
         <div class="btn-group" role="group" aria-label="...">
-          <a class="btn btn-default" href="/admin/$course.get_id()/manual/$current_lesson/$buttons['back']">
-              <i class="fa fa-arrow-left" aria-hidden="true"></i>
+          <a class="btn btn-default btn-arrow
+               $if list(users)[0] == current_user:
+                btn-disabled
+            " href="/admin/$course.get_id()/manual/$current_lesson/$buttons['back']"
+            $if buttons['back'] != current_user:
+                data-toggle="tooltip"
+                data-placement="bottom"
+                data-original-title="$users[buttons['back']]['realname']"
+            >
+            <i class="fa fa-arrow-left" aria-hidden="true"></i>
           </a>
 
           <div class="btn-group" role="group">
@@ -94,10 +102,20 @@ $var Navbar: $:NavbarF()
             </ul>
           </div>
 
-          <a class="btn btn-default" href="/admin/$course.get_id()/manual/$current_lesson/$buttons['next']">
+          <a class="btn btn-default btn-arrow
+            $if list(users)[(len(users) - 1)] == current_user:
+                btn-disabled
+            "
+            href="/admin/$course.get_id()/manual/$current_lesson/$buttons['next']"
+            $if buttons['next'] != current_user:
+                data-toggle="tooltip"
+                data-placement="bottom"
+                data-original-title="$users[buttons['next']]['realname']"
+            >
               <i class="fa fa-arrow-right" aria-hidden="true"></i>
           </a>
         </div>
+
 </div>
 
 <div class="buttons">
@@ -147,7 +165,9 @@ $var Navbar: $:NavbarF()
 
         <tbody>
             <tr>
-                <td style="border-right: 2px solid black"></td>
+                <td style="border-right: 2px solid black">
+                    <input type="number" class="overall-grade-input" min="0" max="100">
+                </td>
 
                 <td class="avg-grade" style="border-right: 2px solid black"></td>
 
@@ -189,9 +209,9 @@ $for index, task in enumerate(lessons[current_lesson]['tasks']):
                         <div id="task_alert.$problem.get_id()" class="task_alert_problem"></div>
                         <!--?$:problem.get_header()-->
                         $if task['id'] in user_data:
-                            <textarea class="code-editor form-control" name="program" data-x-language="ds" data-x-lines="1">$user_data[task['id']]['input']['program']</textarea>
+                            <textarea class="code-editor form-control" name="program" data-x-language="$problem.get_original_content()['language']" data-x-lines="1">$user_data[task['id']]['input']['program']</textarea>
                         $else:
-                            <textarea class="code-editor form-control" name="program" data-x-language="ds" data-x-lines="1"></textarea>
+                            <textarea class="code-editor form-control" name="program" data-x-language="$problem.get_original_content()['language']" data-x-lines="1"></textarea>
                     </div>
                 </div>
 
@@ -201,6 +221,8 @@ $for index, task in enumerate(lessons[current_lesson]['tasks']):
                 </div>
             </div>
         </form>
+
+
 
         <div class="task-anchor">
             <div class="btn-group" role="group">
@@ -223,3 +245,7 @@ $for index, task in enumerate(lessons[current_lesson]['tasks']):
 
     $if (index + 1) != len(lessons[current_lesson]['tasks']):
         <hr>
+
+<script>
+    onSubmitAllBtn();
+</script>
