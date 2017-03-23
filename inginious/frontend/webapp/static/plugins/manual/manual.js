@@ -4,6 +4,124 @@ $(document).ready(function() {
 });
 
 
+
+/**
+ * On save btn
+ * @param courseId
+ * @param lessonId
+ * @param current_user
+ */
+function onClickSave(courseId, lessonId, current_user) {
+    var saveBtn =  $('.save-btn');
+
+    saveBtn.on('click', function () {
+        sendTasks(courseId, lessonId, current_user);
+    });
+}
+
+
+/**
+ * Add or update task grade and feedback
+ * @param courseId
+ * @param lessonId
+ * @param current_user
+ */
+function sendTasks(courseId, lessonId, current_user) {
+    var url = '/admin/' + courseId + '/task-manual/' + lessonId + '/save-manual/' + current_user;
+    var tasksId = $('.overall-grade').find('th');
+    var tasks = $('.task');
+    var overallFeedbackInput = $('.overall-feedback textarea');
+    var overallGradeInput = $('.overall-grade-input');
+    var avgGrade = $('.avg-grade');
+    var tasksIdArr = [];
+    var tasksArr = [];
+    var overall = {};
+    var avg = {};
+
+
+    overall['task_id'] = '';
+    overall['lesson_id'] = lessonId;
+    overall['course_id'] = courseId;
+    overall['feedback'] = overallFeedbackInput.val();
+    overall['grade'] = overallGradeInput.val();
+    overall['is_overall'] = true;
+    overall['is_average'] = false;
+
+    tasksArr.push(overall);
+
+    avg['task_id'] = '';
+    avg['lesson_id'] = lessonId;
+    avg['course_id'] = courseId;
+    avg['feedback'] = '';
+    avg['grade'] = avgGrade.html().trim();
+    avg['is_overall'] = false;
+    avg['is_average'] = true;
+
+    tasksArr.push(avg);
+
+    for (var j = 2; j < tasksId.length; j++) {
+        var taskId = $(tasksId[j]);
+
+        tasksIdArr.push(taskId.html().trim());
+    }
+
+    for (var i = 0; i < tasks.length; i++) {
+        var taskObj = {};
+        var task = $(tasks[i]);
+        var feedback = task.find('.feedback');
+        var grade = task.find('.grade');
+
+        taskObj['task_id'] = tasksIdArr[i];
+        taskObj['lesson_id'] = lessonId;
+        taskObj['course_id'] = courseId;
+        taskObj['feedback'] = feedback.val();
+        taskObj['grade'] = grade.val();
+        taskObj['is_overall'] = false;
+        taskObj['is_average'] = false;
+
+        tasksArr.push(taskObj);
+    }
+
+    $.ajax({
+        url: url,
+        method: "POST",
+        data: JSON.stringify(tasksArr),
+        dataType: 'json',
+        success: function(data) {
+            if (data.status == 'success') {
+                manualAlertMessage("Your assessment saved!", 'success');
+            } else {
+                manualAlertMessage("Your assessment failed!", 'danger');
+            }
+        },
+        error: function(data) {
+            manualAlertMessage('An internal error occured. Please retry later. If the error persists, send an email to the course administrator.', 'danger')
+        }
+    });
+}
+
+
+function manualAlertMessage(message, type) {
+    var manualTitle = $('.manual-title');
+    var alert = $('<div></div>');
+    var closeBtn = $("<button></button>");
+
+    closeBtn.addClass("close");
+    closeBtn.attr("type", "button").attr("data-dismiss", "alert").attr("aria-hidden", "true").attr("aria-label", "Close");
+    closeBtn.html("&times;");
+
+    alert.addClass('alert' + ' alert-' + type);
+    alert.attr('role', 'alert');
+
+    alert.append(closeBtn);
+    alert.append(message);
+
+    if (!$('.alert').length) {
+        manualTitle.after(alert);
+    }
+}
+
+
 /**
  * On submit all btn
  */
@@ -29,6 +147,10 @@ function onClickArrowBtn() {
     });
 }
 
+
+/**
+ * On change overall grade
+ */
 function onChangeOverallGrade() {
     var gradeInput = $('.overall-grade-input');
     var newGrade = '';
@@ -52,7 +174,7 @@ function onChangeOverallGrade() {
  */
 function onCloseWindow() {
     $(window).on("beforeunload", function() {
-        return true;
+        return 'You have unsaved changes!';
     });
 }
 
@@ -394,7 +516,7 @@ function checkAvgGrade() {
         avgGrade += parseInt(grades[j]);
     }
 
-    avgGrade = avgGrade / grades.length;
+    avgGrade = Math.round(avgGrade / grades.length);
 
     avgGradeDiv.html(avgGrade);
 }

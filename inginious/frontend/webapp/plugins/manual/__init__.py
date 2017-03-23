@@ -4,7 +4,7 @@ from inginious.frontend.webapp.pages.course_admin.utils import INGIniousAdminPag
 import json
 from inginious.frontend.common.task_page_helpers import submission_to_json, list_multiple_multiple_choices_and_files
 from bson.objectid import ObjectId
-
+from datetime import datetime
 
 class ManualPlugin(INGIniousAdminPage):
     """ Manual plugin - show overall feedback about student """
@@ -56,6 +56,41 @@ class ManualPlugin(INGIniousAdminPage):
 
         return {"next": next, "back": back}
 
+    def get_user_data(self, current_lesson, current_user, lessons):
+        user_db = list(self.database.feedbacks.find({
+            "lesson_id": current_lesson,
+            "username": current_user
+        }))
+
+        user_data = OrderedDict()
+
+        user_data['avg'] = OrderedDict()
+        user_data['avg']['grade'] = ''
+
+        user_data['overall'] = OrderedDict()
+        user_data['overall']['feedback'] = ''
+        user_data['overall']['grade'] = ''
+
+        for ind, task in enumerate(lessons[current_lesson]['tasks']):
+            user_data[task['id']] = OrderedDict()
+            user_data[task['id']]['feedback'] = ''
+            user_data[task['id']]['grade'] = ''
+
+        for user in user_db:
+            if user['is_average']:
+                user_data['avg'] = OrderedDict()
+                user_data['avg']['grade'] = user['grade']
+            elif user['is_overall']:
+                user_data['overall'] = OrderedDict()
+                user_data['overall']['feedback'] = user['feedback']
+                user_data['overall']['grade'] = user['grade']
+            else:
+                user_data[user['task_id']] = OrderedDict()
+                user_data[user['task_id']]['feedback'] = user['feedback']
+                user_data[user['task_id']]['grade'] = user['grade']
+
+        return user_data
+
 
 class IndexPage(ManualPlugin):
     def GET_AUTH(self, courseid):
@@ -65,7 +100,7 @@ class IndexPage(ManualPlugin):
         current_user = users[list(users)[0]]['username'] if len(list(users)) > 0 else None
         current_lesson = list(lessons)[0] if len(list(lessons)) > 0 else None
         buttons = self.get_buttons(current_user, users)
-        user_data = dict()
+        user_submission = dict()
 
         user_task = list(self.database.user_tasks.find({"courseid": course.get_id(), "username": current_user}))
 
@@ -76,10 +111,13 @@ class IndexPage(ManualPlugin):
                     submission = self.submission_manager.get_input_from_submission(submission)
                     submission = self.submission_manager.get_feedback_from_submission(submission, show_everything=True)
 
-                    user_data[task['taskid'].split('-')[1]] = submission
+                    user_submission[task['taskid'].split('-')[1]] = submission
+
+        user_data = self.get_user_data(current_lesson, current_user, lessons)
 
         return self.template_helper.get_custom_renderer('frontend/webapp/plugins/manual')\
-            .admin(course, lessons, users, current_lesson, current_user, buttons, self.webterm_link, user_data)
+            .admin(course, lessons, users, current_lesson,
+                   current_user, buttons, self.webterm_link, user_submission, user_data)
 
 
 class StudentPage(ManualPlugin):
@@ -90,7 +128,7 @@ class StudentPage(ManualPlugin):
         current_lesson = lesson_id
         current_user = student_id
         buttons = self.get_buttons(current_user, users)
-        user_data = dict()
+        user_submission = dict()
 
         user_task = list(self.database.user_tasks.find({"courseid": course.get_id(), "username": current_user}))
 
@@ -101,13 +139,16 @@ class StudentPage(ManualPlugin):
                     submission = self.submission_manager.get_input_from_submission(submission)
                     submission = self.submission_manager.get_feedback_from_submission(submission, show_everything=True)
 
-                    user_data[task['taskid'].split('-')[1]] = submission
+                    user_submission[task['taskid'].split('-')[1]] = submission
+
+        user_data = self.get_user_data(current_lesson, current_user, lessons)
 
         if student_id not in users or lesson_id not in lessons:
             return web.seeother(web.ctx.homepath + '/admin/' + course.get_id() + '/manual')
         else:
             return self.template_helper.get_custom_renderer('frontend/webapp/plugins/manual') \
-                .admin(course, lessons, users, current_lesson, current_user, buttons, self.webterm_link, user_data)
+                .admin(course, lessons, users, current_lesson,
+                       current_user, buttons, self.webterm_link, user_submission, user_data)
 
 
 class TaskPage(INGIniousAdminPage):
@@ -251,6 +292,68 @@ class TaskPage(INGIniousAdminPage):
                 raise web.notfound()
 
 
+class SaveManual(ManualPlugin):
+    def POST_AUTH(self, courseid, lessonid, currentuser):
+        course = self.get_course_and_check_rights(courseid, allow_all_staff=True)[0]
+        lessons = self.get_lessons(course)
+        users = self.get_users(course)
+        data = json.loads(web.data())
+
+        if lessonid not in lessons:
+            return json.dumps({'status': 'error'})
+
+        if currentuser not in users:
+            return json.dumps({'status': 'error'})
+
+        for user in data:
+            feedback = list(self.database.feedbacks.find({
+                "course_id": user['course_id'],
+                "lesson_id": user['lesson_id'],
+                "task_id": user['task_id'],
+                "is_average": user['is_average'],
+                "is_overall": user['is_overall'],
+                "username": currentuser
+            }))
+
+            if feedback:
+                """ Update feedback """
+                if user['grade'] != feedback[0]['grade'] or user['feedback'] != feedback[0]['feedback']:
+                    self.database.feedbacks.update(
+                        {
+                            "_id": feedback[0]['_id']
+                        },
+                        {
+                            "course_id": user['course_id'],
+                            "lesson_id": user['lesson_id'],
+                            "task_id": user['task_id'],
+                            "feedback": user['feedback'],
+                            "grade": user['grade'],
+                            "is_average": user['is_average'],
+                            "is_overall": user['is_overall'],
+                            "username": currentuser,
+                            "updated_at": datetime.now(),
+                            "created_at": feedback[0]['created_at'],
+                        }
+                    )
+            else:
+                """ Create new feedback """
+                if user['grade'] or user['feedback']:
+                    self.database.feedbacks.insert({
+                        "course_id": user['course_id'],
+                        "lesson_id": user['lesson_id'],
+                        "task_id": user['task_id'],
+                        "feedback": user['feedback'],
+                        "grade": user['grade'],
+                        "is_average": user['is_average'],
+                        "is_overall": user['is_overall'],
+                        "username": currentuser,
+                        "updated_at": None,
+                        "created_at": datetime.now()
+                    })
+
+        return json.dumps({'status': 'success'})
+
+
 def add_admin_menu(course):
     """ Add matrix setting to the admin panel """
     return ('manual', '<i class="fa fa-list-ol fa-fw"></i>&nbsp; Manual Assessment')
@@ -273,5 +376,6 @@ def init(plugin_manager, _, _2, _3):
     plugin_manager.add_page("/admin/([^/]+)/manual", IndexPage)
     plugin_manager.add_page("/admin/([^/]+)/manual/([^/]+)/([^/]+)", StudentPage)
     plugin_manager.add_page("/admin/([^/]+)/task-manual/([^/]+)", TaskPage)
+    plugin_manager.add_page("/admin/([^/]+)/task-manual/([^/]+)/save-manual/([^/]+)", SaveManual)
 
 
