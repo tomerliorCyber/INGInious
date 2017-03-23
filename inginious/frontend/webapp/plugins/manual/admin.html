@@ -1,4 +1,4 @@
-$def with (course, lessons, users, current_lesson, current_user, buttons, webterm_link, user_data)
+$def with (course, lessons, users, current_lesson, current_user, buttons, webterm_link, user_submission, user_data)
 
 $var title: $:course.get_name() - Manual Assessment
 
@@ -22,7 +22,9 @@ $def NavbarF():
     </ol>
 $var Navbar: $:NavbarF()
 
-<h2>Manual Assessment</h2>
+
+
+<h2 class="manual-title">Manual Assessment</h2>
 
 <div class="lessons">
     <div class="row">
@@ -37,7 +39,7 @@ $var Navbar: $:NavbarF()
                 No lessons
             $else:
                 <div class="dropdown">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <button class="btn btn-default dropdown-toggle lesson-btn" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                         $current_lesson
                         <span class="caret"></span>
                     </button>
@@ -141,7 +143,7 @@ $var Navbar: $:NavbarF()
 <div class="overall-feedback">
     <h3>Overall feedback</h3>
 
-    <textarea class="feedback" cols="50" rows="10"></textarea>
+    <textarea class="feedback" cols="50" rows="10">$user_data['overall']['feedback']</textarea>
 </div>
 
 <div class="overall-grade">
@@ -166,14 +168,14 @@ $var Navbar: $:NavbarF()
         <tbody>
             <tr>
                 <td style="border-right: 2px solid black">
-                    <input type="number" class="overall-grade-input" min="0" max="100">
+                    <input type="number" class="overall-grade-input" min="0" max="100" value="$user_data['overall']['grade']">
                 </td>
 
-                <td class="avg-grade" style="border-right: 2px solid black"></td>
+                <td class="avg-grade" style="border-right: 2px solid black">$user_data['avg']['grade']</td>
 
                 $for task in lessons[current_lesson]['tasks']:
                     <td class="grade-$task['id']">
-
+                        $user_data[task['id']]['grade']
                     </td>
             </tr>
         </tbody>
@@ -185,14 +187,14 @@ $var Navbar: $:NavbarF()
 <hr>
 
 $for index, task in enumerate(lessons[current_lesson]['tasks']):
-    <div class="task-$task['id']">
+    <div class="task task-$task['id']">
         <h3>Task $current_lesson-$task['id']</h3>
 
         <h4>Feedback</h4>
-        <textarea name="" class="feedback" cols="50" rows="10"></textarea>
+        <textarea name="" class="feedback" cols="50" rows="10">$user_data[task['id']]['feedback']</textarea>
 
         <h4>Grade</h4>
-        <input type="number" class="grade" min="0" max="100">
+        <input type="number" class="grade" min="0" max="100" value="$user_data[task['id']]['grade']">
 
         <h4>Submission</h4>
 
@@ -208,8 +210,8 @@ $for index, task in enumerate(lessons[current_lesson]['tasks']):
                     <div class="panel-body">
                         <div id="task_alert.$problem.get_id()" class="task_alert_problem"></div>
                         <!--?$:problem.get_header()-->
-                        $if task['id'] in user_data:
-                            <textarea class="code-editor form-control" name="program" data-x-language="$problem.get_original_content()['language']" data-x-lines="1">$user_data[task['id']]['input']['program']</textarea>
+                        $if task['id'] in user_submission:
+                            <textarea class="code-editor form-control" name="program" data-x-language="$problem.get_original_content()['language']" data-x-lines="1">$user_submission[task['id']]['input']['program']</textarea>
                         $else:
                             <textarea class="code-editor form-control" name="program" data-x-language="$problem.get_original_content()['language']" data-x-lines="1"></textarea>
                     </div>
@@ -248,4 +250,6 @@ $for index, task in enumerate(lessons[current_lesson]['tasks']):
 
 <script>
     onSubmitAllBtn();
+    onClickSave("$:course.get_id()", "$current_lesson", "$current_user");
 </script>
+
