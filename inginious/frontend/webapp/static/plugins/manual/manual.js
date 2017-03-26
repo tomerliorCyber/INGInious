@@ -1,9 +1,3 @@
-$(document).ready(function() {
-    onClickArrowBtn();
-    onChangeOverallGrade();
-});
-
-
 
 /**
  * On save btn
@@ -172,10 +166,32 @@ function onChangeOverallGrade() {
 /**
  * On close window
  */
-function onCloseWindow() {
-    $(window).on("beforeunload", function() {
-        return 'You have unsaved changes!';
+function onCloseWindow(feedbacksOriginArr) {
+    $(window).on("beforeunload", function(event) {
+        var feedbacks = $('.feedback');
+
+        for (var i = 0; i < feedbacks.length; i++) {
+          if (feedbacks[i].value != feedbacksOriginArr[i]) {
+              return '';
+          }
+        }
     });
+}
+
+
+/**
+ * Get the default feedback value
+ * @returns {Array}
+ */
+function getDefaultFeedbacksValue() {
+    var feedbacksOrigin = $('.feedback');
+    var feedbacksOriginArr = [];
+
+    for (var i = 0; i < feedbacksOrigin.length; i++) {
+      feedbacksOriginArr.push(feedbacksOrigin[i].value);
+    }
+
+    return feedbacksOriginArr;
 }
 
 

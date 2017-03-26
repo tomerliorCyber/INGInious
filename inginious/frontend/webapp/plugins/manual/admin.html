@@ -251,5 +251,8 @@ $for index, task in enumerate(lessons[current_lesson]['tasks']):
 <script>
     onSubmitAllBtn();
     onClickSave("$:course.get_id()", "$current_lesson", "$current_user");
+    onCloseWindow(getDefaultFeedbacksValue());
+    onClickArrowBtn();
+    onChangeOverallGrade();
 </script>
 
