@@ -5,6 +5,8 @@ import json
 from inginious.frontend.common.task_page_helpers import submission_to_json, list_multiple_multiple_choices_and_files
 from bson.objectid import ObjectId
 from datetime import datetime
+import os
+
 
 class ManualPlugin(INGIniousAdminPage):
     """ Manual plugin - show overall feedback about student """
