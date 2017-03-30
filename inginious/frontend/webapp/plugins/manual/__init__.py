@@ -7,7 +7,6 @@ from bson.objectid import ObjectId
 from datetime import datetime
 import os
 import pdfkit
-import tempfile
 
 
 class ManualPlugin(INGIniousAdminPage):
@@ -125,7 +124,7 @@ class IndexPage(ManualPlugin):
             .admin(course, lessons, users, current_lesson,
                    current_user, buttons, self.webterm_link, user_submission, user_data)
 
-
+/inginious/frontend/webapp/static/plugins/manual/out.pdf
 class StudentPage(ManualPlugin):
     def GET_AUTH(self, courseid, lesson_id, student_id):
         course = self.get_course_and_check_rights(courseid, allow_all_staff=True)[0]
@@ -393,6 +392,8 @@ class DownloadPDF(ManualPlugin):
         }
 
         pdfkit.from_url(url, path + 'out.pdf', options=options)
+
+        # TODO: return pdf download
 
 
 def add_admin_menu(course):

@@ -241,7 +241,7 @@ $for index, task in enumerate(lessons[current_lesson]['tasks']):
         </div>
 
         <script>
-            initManualTask("$task['id']");
+            ManualPlugin.initManualTask("$task['id']");
         </script>
     </div>
 
@@ -249,11 +249,11 @@ $for index, task in enumerate(lessons[current_lesson]['tasks']):
         <hr>
 
 <script>
-    onSubmitAllBtn();
-    onClickSave("$:course.get_id()", "$current_lesson", "$current_user");
-    onCloseWindow(getDefaultFeedbacksValue());
-    onClickArrowBtn();
-    onChangeOverallGrade();
-    onKeyboardShortcuts();
+    ManualPlugin.onSubmitAllBtn();
+    ManualPlugin.onClickSave("$:course.get_id()", "$current_lesson", "$current_user");
+    ManualPlugin.onCloseWindow(ManualPlugin.getDefaultFeedbacksValue());
+    ManualPlugin.onClickArrowBtn();
+    ManualPlugin.onChangeOverallGrade();
+
 </script>
 
