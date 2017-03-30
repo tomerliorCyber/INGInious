@@ -6,6 +6,8 @@ from inginious.frontend.common.task_page_helpers import submission_to_json, list
 from bson.objectid import ObjectId
 from datetime import datetime
 import os
+import pdfkit
+import tempfile
 
 
 class ManualPlugin(INGIniousAdminPage):
@@ -41,7 +43,7 @@ class ManualPlugin(INGIniousAdminPage):
                                                  "taskid": tasks[task]})
 
         return lessons
-    """ Get next and back buttons """
+
     def get_buttons(self, current_user, users):
         len_users = len(list(users))
 
@@ -108,12 +110,14 @@ class IndexPage(ManualPlugin):
 
         if user_task:
             for task in user_task:
-                if task['taskid'].split('-')[1] == current_lesson:
+                if task['taskid'].split('-')[0] == current_lesson:
                     submission = self.submission_manager.get_submission(task['submissionid'], False)
-                    submission = self.submission_manager.get_input_from_submission(submission)
-                    submission = self.submission_manager.get_feedback_from_submission(submission, show_everything=True)
 
-                    user_submission[task['taskid'].split('-')[1]] = submission
+                    if submission:
+                        submission = self.submission_manager.get_input_from_submission(submission)
+                        submission = self.submission_manager.get_feedback_from_submission(submission, show_everything=True)
+
+                        user_submission[task['taskid'].split('-')[1]] = submission
 
         user_data = self.get_user_data(current_lesson, current_user, lessons)
 
@@ -136,12 +140,13 @@ class StudentPage(ManualPlugin):
 
         if user_task:
             for task in user_task:
-                if task['taskid'].split('-')[1] == current_lesson:
+                if task['taskid'].split('-')[0] == current_lesson:
                     submission = self.submission_manager.get_submission(task['submissionid'], False)
-                    submission = self.submission_manager.get_input_from_submission(submission)
-                    submission = self.submission_manager.get_feedback_from_submission(submission, show_everything=True)
+                    if submission:
+                        submission = self.submission_manager.get_input_from_submission(submission)
+                        submission = self.submission_manager.get_feedback_from_submission(submission, show_everything=True)
 
-                    user_submission[task['taskid'].split('-')[1]] = submission
+                        user_submission[task['taskid'].split('-')[1]] = submission
 
         user_data = self.get_user_data(current_lesson, current_user, lessons)
 
@@ -299,7 +304,7 @@ class SaveManual(ManualPlugin):
         course = self.get_course_and_check_rights(courseid, allow_all_staff=True)[0]
         lessons = self.get_lessons(course)
         users = self.get_users(course)
-        data = json.loads(web.data())
+        data = json.loads(web.data().decode())
 
         if lessonid not in lessons:
             return json.dumps({'status': 'error'})
@@ -356,6 +361,40 @@ class SaveManual(ManualPlugin):
         return json.dumps({'status': 'success'})
 
 
+class ViewPDF(ManualPlugin):
+    def GET_AUTH(self, courseid, lessonid, currentuser):
+        page = web.template.render(os.path.realpath('.') + '/inginious/frontend/webapp/plugins/manual')
+        course = self.get_course_and_check_rights(courseid, allow_all_staff=True)[0]
+        lessons = self.get_lessons(course)
+        data = self.get_user_data(lessonid, currentuser, lessons)
+
+        return page.pdf(currentuser, lessonid, data)
+
+
+class DownloadPDF(ManualPlugin):
+    def GET_AUTH(self, courseid, lessonid, currentuser):
+        # TODO: check if pdf library is exist and than run the code
+        path = os.path.realpath('.') + '/inginious/frontend/webapp/static/plugins/manual/'
+        url = 'http://' + web.ctx.host + '/admin/' + courseid + '/manual/' + lessonid + '/' + currentuser + '/pdf-view'
+        options = {
+            'page-size': 'Legal',
+            'margin-top': '0.75in',
+            'margin-right': '0.75in',
+            'margin-bottom': '0.75in',
+            'margin-left': '0.75in',
+            'encoding': "UTF-8",
+            'custom-header': [
+                ('Accept-Encoding', 'gzip')
+            ],
+            'cookie': [
+                ('webpy_session_id', web.cookies().get('webpy_session_id'))
+            ],
+            'no-outline': None
+        }
+
+        pdfkit.from_url(url, path + 'out.pdf', options=options)
+
+
 def add_admin_menu(course):
     """ Add matrix setting to the admin panel """
     return ('manual', '<i class="fa fa-list-ol fa-fw"></i>&nbsp; Manual Assessment')
@@ -379,5 +418,7 @@ def init(plugin_manager, _, _2, _3):
     plugin_manager.add_page("/admin/([^/]+)/manual/([^/]+)/([^/]+)", StudentPage)
     plugin_manager.add_page("/admin/([^/]+)/task-manual/([^/]+)", TaskPage)
     plugin_manager.add_page("/admin/([^/]+)/task-manual/([^/]+)/save-manual/([^/]+)", SaveManual)
+    plugin_manager.add_page("/admin/([^/]+)/manual/([^/]+)/([^/]+)/pdf-view", ViewPDF)
+    plugin_manager.add_page("/admin/([^/]+)/manual/([^/]+)/([^/]+)/pdf-export", DownloadPDF)
 
 
