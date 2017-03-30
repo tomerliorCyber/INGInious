@@ -70,7 +70,7 @@ $var Navbar: $:NavbarF()
         No students
     $else:
         <div class="btn-group" role="group" aria-label="...">
-          <a class="btn btn-default btn-arrow
+          <a class="btn btn-default btn-arrow btn-left
                $if list(users)[0] == current_user:
                 btn-disabled
             " href="/admin/$course.get_id()/manual/$current_lesson/$buttons['back']"
@@ -104,7 +104,7 @@ $var Navbar: $:NavbarF()
             </ul>
           </div>
 
-          <a class="btn btn-default btn-arrow
+          <a class="btn btn-default btn-arrow btn-right
             $if list(users)[(len(users) - 1)] == current_user:
                 btn-disabled
             "
@@ -254,5 +254,6 @@ $for index, task in enumerate(lessons[current_lesson]['tasks']):
     onCloseWindow(getDefaultFeedbacksValue());
     onClickArrowBtn();
     onChangeOverallGrade();
+    onKeyboardShortcuts();
 </script>
 
