@@ -12,6 +12,7 @@ import shutil
 from inginious.common.log import get_course_logger
 from inginious.common.tasks import Task
 from inginious.common.base import id_checker
+from inginious.common.tasks_constants import TaskConstants
 from inginious.common.task_file_readers.yaml_reader import TaskYAMLFileReader
 from inginious.common.exceptions import InvalidNameException, TaskNotFoundException, TaskUnreadableException, TaskReaderNotFoundException
 
@@ -248,3 +249,10 @@ class TaskFactory(object):
         shutil.rmtree(task_directory)
 
         get_course_logger(courseid).info("Task %s erased from the factory.", taskid)
+
+    def get_relevant_color_class_for_grade(self, grade):
+        for grade_data in TaskConstants.ORDERED_GRADE_COLORS_RANGE:
+            max_value = grade_data[TaskConstants.MAX_VALUE]
+            if max_value >= grade:
+                return 'grade_'+ str(int(max_value)) + ' grade'
+

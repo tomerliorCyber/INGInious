@@ -403,6 +403,7 @@ function waitForSubmission(submissionid)
                     else
                         displayTaskLoadingAlert(data, submissionid);
                 }
+                // todo make more generic for multiple colors for grades
                 else if("status" in data && "result" in data && "grade" in data)
                 {
                     if("debug" in data)

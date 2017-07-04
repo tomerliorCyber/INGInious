@@ -1,4 +1,4 @@
-$def with (course, data_users, order_tasks, task_start_line)
+$def with (course, data_users, order_tasks, task_start_line, possible_grades)
 
 $var title: $:course.get_name() - Matrix
 
@@ -39,7 +39,7 @@ $def tr(value):
                     $if user['tasks'][task]['name'] == task_start_line:
                         style="border-left: 5px solid black"
                 >
-                    $if user['tasks'][task]['status'] == 'succeeded' or user['tasks'][task]['status'] == 'failed':
+                    $if 'grade' in user['tasks'][task]['status']:
                         $if user['tasks'][task]['submissionid'] == 'None':
                             $int(user['tasks'][task]['grade'])
                         $else:
@@ -85,11 +85,17 @@ $def th(value):
             <div class="color-box notattempted"></div>
         </div>
 
-        <div class="col-xs-2 col-xs-push-1">
-            <div class="color-title">Failed:</div>
+        <!--$for possible_grade_data in possible_grades:-->
+            <!--$ int_grade = int(possible_grade_data['max_value'])-->
+            <!--&lt;!&ndash;$ str_grade = str(int_grade)&ndash;&gt;-->
+            <!--<div class="col-xs-2 col-xs-push-1">-->
+                <!--<div class="color-title">-->
+                    <!---->
+                <!--</div>-->
+    <!---->
+                <!--<div class="color-box"></div>-->
+            <!--</div>-->
 
-            <div class="color-box failed"></div>
-        </div>
 
         <div class="col-xs-2 col-xs-push-1">
             <div class="color-title">Succeeded:</div>

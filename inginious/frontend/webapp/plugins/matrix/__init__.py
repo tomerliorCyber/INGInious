@@ -8,6 +8,7 @@ import logging
 import web
 from collections import OrderedDict
 from inginious.frontend.webapp.pages.course_admin.utils import INGIniousAdminPage
+from inginious.common.tasks_constants import TaskConstants
 from datetime import datetime
 
 
@@ -35,6 +36,7 @@ class MatrixPage(INGIniousAdminPage):
 
         """ Reorder course tasks according to deadline from past to future, no deadline and passed deadline """
         for task in tasks:
+            # todo, extract strings to constants 
             if tasks[task].get_deadline() == 'No deadline':
                 """ Tasks with no deadline, that will always show in tasks """
                 always_tasks.append(tasks[task])
@@ -68,30 +70,32 @@ class MatrixPage(INGIniousAdminPage):
             ordered_tasks_for_user = OrderedDict([(taskid.get_id(), {"taskid": taskid,
                                               "name": taskid.get_name(),
                                               "tried": 0,
-                                              "status": "notviewed",
+                                              "status": TaskConstants.DEFAULT_STATUS,
                                               "grade": 0}) for taskid in order_tasks])
 
             # TODO: Check if we can retrieve all users data once, then reference the needed details in the loop
             user_tasks = list(self.database.user_tasks.find({"username":  users[user]['username'], "courseid": course.get_id()}))
 
             for user_task in user_tasks:
-                if user_task["taskid"] in ordered_tasks_for_user:
-                    ordered_tasks_for_user[user_task["taskid"]]["tried"] = user_task["tried"]
+                task_id = user_task["taskid"]
+                if task_id in ordered_tasks_for_user:
+                    task_for_user = ordered_tasks_for_user[task_id]
+                    user_grade = user_task["grade"]
+                    task_for_user["tried"] = user_task["tried"]
                     if user_task["tried"] == 0:
-                        ordered_tasks_for_user[user_task["taskid"]]["status"] = "notattempted"
-                    elif user_task["succeeded"]:
-                        ordered_tasks_for_user[user_task["taskid"]]["status"] = "succeeded"
+                        task_for_user["status"] = "notattempted"
                     else:
-                        ordered_tasks_for_user[user_task["taskid"]]["status"] = "failed"
+                        task_for_user["status"] = \
+                            self.task_factory.get_relevant_color_class_for_grade(user_grade)
 
-                    ordered_tasks_for_user[user_task["taskid"]]["grade"] = user_task["grade"]
-                    ordered_tasks_for_user[user_task["taskid"]]["submissionid"] = str(user_task["submissionid"])
+                    task_for_user["grade"] = user_task["grade"]
+                    task_for_user["submissionid"] = str(user_task["submissionid"])
 
             data_user = {'name': users[user], 'tasks': ordered_tasks_for_user}
             data_users.append(data_user)
 
         return self.template_helper.get_custom_renderer('frontend/webapp/plugins/matrix')\
-            .admin(course, data_users, order_tasks, task_start_line)
+            .admin(course, data_users, order_tasks, task_start_line, TaskConstants.ORDERED_GRADE_COLORS_RANGE)
 
 
 def add_admin_menu(course):
