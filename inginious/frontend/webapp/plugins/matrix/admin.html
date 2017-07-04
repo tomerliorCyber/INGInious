@@ -85,29 +85,16 @@ $def th(value):
             <div class="color-box notattempted"></div>
         </div>
 
-        <!--$for possible_grade_data in possible_grades:-->
-            <!--$ int_grade = int(possible_grade_data['max_value'])-->
-            <!--&lt;!&ndash;$ str_grade = str(int_grade)&ndash;&gt;-->
-            <!--<div class="col-xs-2 col-xs-push-1">-->
-                <!--<div class="color-title">-->
-                    <!---->
-                <!--</div>-->
-    <!---->
-                <!--<div class="color-box"></div>-->
-            <!--</div>-->
+        $for possible_grade_data in possible_grades:
+            <div class="col-xs-2 col-xs-push-1">
+                <div class="color-title">
+                     $int(possible_grade_data['max_value'])
+                </div>
+
+                <div class="color-box grade_$:int(possible_grade_data['max_value'])"></div>
+            </div>
 
 
-        <div class="col-xs-2 col-xs-push-1">
-            <div class="color-title">Succeeded:</div>
-
-            <div class="color-box succeeded"></div>
-        </div>
-
-        <div class="col-xs-2 col-xs-push-1">
-            <div class="color-title">Manual:</div>
-
-            <div class="color-box manual"></div>
-        </div>
     </div>
 </div>
 
