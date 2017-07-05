@@ -13,6 +13,10 @@
     margin: 0 auto;
 }
 
+.color-item {
+    margin-top: 10px;
+}
+
 .notviewed {
     background: #b9b9b9;
 }
@@ -59,10 +63,6 @@
 }
 
 
-.succeeded {
-    background: #5cb85c;
-    text-align: center;
-}
 
 .grade a{
     text-align: center;

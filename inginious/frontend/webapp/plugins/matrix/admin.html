@@ -73,20 +73,20 @@ $def th(value):
 
 <div class="color-index">
     <div class="row">
-        <div class="col-xs-2 col-xs-push-1">
-            <div class="color-title">Not viewed:</div>
+        <div class="col-xs-2 color-item">
+            <div class="color-title">Not viewed</div>
 
             <div class="color-box notviewed"></div>
         </div>
 
-        <div class="col-xs-2 col-xs-push-1">
-            <div class="color-title">Not attempted:</div>
+        <div class="col-xs-2 color-item">
+            <div class="color-title">Not attempted</div>
 
             <div class="color-box notattempted"></div>
         </div>
 
         $for possible_grade_data in possible_grades:
-            <div class="col-xs-2 col-xs-push-1">
+            <div class="col-xs-2 color-item">
                 <div class="color-title">
                      $int(possible_grade_data['max_value'])
                 </div>
