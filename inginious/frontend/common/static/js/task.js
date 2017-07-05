@@ -645,7 +645,7 @@ function displayTaskStudentErrorAlert(content)
 {
     displayTaskStudentAlertWithProblems(content,
         "<b>There are some errors in your answer. Your score is " + content["grade"] + "%</b>",
-        "danger", false);
+        content["grade_css_class"], false);
 }
 
 //Displays a student success alert in task form
@@ -653,7 +653,7 @@ function displayTaskStudentSuccessAlert(content)
 {
     displayTaskStudentAlertWithProblems(content,
         "<b>Your answer passed the tests! Your score is " + content["grade"] + "%</b>",
-        "success", true);
+        content["grade_css_class"], true);
 }
 
 //Displays a student error alert in task form

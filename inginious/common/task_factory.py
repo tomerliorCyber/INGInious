@@ -251,6 +251,12 @@ class TaskFactory(object):
         get_course_logger(courseid).info("Task %s erased from the factory.", taskid)
 
     def get_relevant_color_class_for_grade(self, grade):
+        '''
+
+        :param grade: the student's grade, float between 0 to 100
+        :return: the css class for the right grade category
+        '''
+        grade = float(grade)
         for grade_data in TaskConstants.ORDERED_GRADE_COLORS_RANGE:
             max_value = grade_data[TaskConstants.MAX_VALUE]
             if max_value >= grade:
