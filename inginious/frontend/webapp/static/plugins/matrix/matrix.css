@@ -78,12 +78,40 @@ td.grade{
 }
 
 .grades-table {
-    overflow: scroll;
+    overflow-x:scroll;
+    overflow-y:visible;
+    margin-left: 40px;
 }
 
-.matrix-table {
-    width: inherit;
-    max-width: inherit;
+
+
+.headcol {
+    position: absolute;
+    width: 5em;
+    left: 0;
+    top: auto;
+    border-top-width: 1px;
+    /*only relevant for first row*/
+    margin-top: -1px;
+    /*compensate for top border*/
+    background: white;
+    border-right: 4px solid black;
+
+}
+
+.header-cell{
+    margin-top: 24px;
+    z-index: 1;
+}
+
+.grades-table th:first-child{
+    padding: 10px 0 ;
+    
+}
+
+.grades-table tbody tr td:nth-child(2){
+    border-left: 5px solid black;
+
 }
 
 .grades-table tbody tr td:not(:first-child) {

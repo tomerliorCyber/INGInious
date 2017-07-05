@@ -25,20 +25,17 @@ $var Navbar: $:NavbarF()
 $def tr(value):
     $for user in data_users:
         <tr>
-            <td>
+            <th class="headcol">
                 <a href="/admin/$:course.get_id()/student/$user['name']['username']">
                     $if user['name']['realname'] is not None:
                         $user['name']['realname']
                     $else:
                         $user['name']['username']
                 </a>
-            </td>
+            </th>
 
             $for task in user['tasks']:
-                <td class="$user['tasks'][task]['status']"
-                    $if user['tasks'][task]['name'] == task_start_line:
-                        style="border-left: 5px solid black"
-                >
+                <td class="$user['tasks'][task]['status']">
                     $if 'grade' in user['tasks'][task]['status']:
                         $if user['tasks'][task]['submissionid'] == 'None':
                             $int(user['tasks'][task]['grade'])
@@ -103,7 +100,7 @@ $def th(value):
     <table class="table matrix-table">
         <thead>
             <tr>
-                <th>Students</th>
+                <th class="headcol header-cell">Students</th>
                 $:th(order_tasks)
             </tr>
         </thead>
