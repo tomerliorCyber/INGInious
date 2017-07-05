@@ -16,15 +16,7 @@ class MatrixPage(INGIniousAdminPage):
     def GET_AUTH(self, courseid):
         """ GET request """
         course = self.get_course_and_check_rights(courseid, allow_all_staff=True)[0]
-        tasks = course.get_tasks()
         data_users = []
-        past_future_tasks = []
-        past_tasks = []
-        future_tasks = []
-        always_tasks = []
-        never_tasks = []
-        black_line = False
-        task_start_line = ''
 
         """ Get all information about the users """
         users = sorted(list(
@@ -35,8 +27,27 @@ class MatrixPage(INGIniousAdminPage):
                                      "realname": user[1][0] if user[1] is not None else None}) for user in users])
 
         """ Reorder course tasks according to deadline from past to future, no deadline and passed deadline """
+        order_tasks = self._get_ordered_task(course)
+
+        """ Get all user tasks """
+        for user in users:
+            data_user = self._calc_user_data(course, order_tasks, users[user])
+            data_users.append(data_user)
+
+        return self.template_helper.get_custom_renderer('frontend/webapp/plugins/matrix')\
+            .admin(course, data_users, order_tasks, TaskConstants.ORDERED_GRADE_COLORS_RANGE)
+
+
+    def _get_ordered_task(self, course):
+        """ Reorder course tasks according to deadline from past to future, no deadline and passed deadline """
+        tasks = course.get_tasks()
+        past_future_tasks = []
+        past_tasks = []
+        future_tasks = []
+        always_tasks = []
+        never_tasks = []
         for task in tasks:
-            # todo, extract strings to constants 
+            # todo, extract strings to constants
             if tasks[task].get_deadline() == 'No deadline':
                 """ Tasks with no deadline, that will always show in tasks """
                 always_tasks.append(tasks[task])
@@ -50,11 +61,6 @@ class MatrixPage(INGIniousAdminPage):
                     if tasks[task].get_accessible_time().get_end_date() < now:
                         """ Past tasks that will show in the beginning """
                         past_tasks.append(tasks[task])
-
-                        """ Check when to start the black line """
-                        if not black_line:
-                            task_start_line = tasks[task].get_name()
-                            black_line = True
                     else:
                         """ Past future tasks that will show at the end """
                         past_future_tasks.append(tasks[task])
@@ -65,37 +71,36 @@ class MatrixPage(INGIniousAdminPage):
 
         order_tasks = past_future_tasks + always_tasks + past_tasks
 
-        """ Get all user tasks """
-        for user in users:
-            ordered_tasks_for_user = OrderedDict([(taskid.get_id(), {"taskid": taskid,
-                                              "name": taskid.get_name(),
-                                              "tried": 0,
-                                              "status": TaskConstants.DEFAULT_STATUS,
-                                              "grade": 0}) for taskid in order_tasks])
+        return order_tasks
 
-            # TODO: Check if we can retrieve all users data once, then reference the needed details in the loop
-            user_tasks = list(self.database.user_tasks.find({"username":  users[user]['username'], "courseid": course.get_id()}))
 
-            for user_task in user_tasks:
-                task_id = user_task["taskid"]
-                if task_id in ordered_tasks_for_user:
-                    task_for_user = ordered_tasks_for_user[task_id]
-                    user_grade = user_task["grade"]
-                    task_for_user["tried"] = user_task["tried"]
-                    if user_task["tried"] == 0:
-                        task_for_user["status"] = "notattempted"
-                    else:
-                        task_for_user["status"] = \
-                            self.task_factory.get_relevant_color_class_for_grade(user_grade)
+    def _calc_user_data(self, course, order_tasks, user_data):
+        ordered_tasks_for_user = OrderedDict([(taskid.get_id(), {"taskid": taskid,
+                                                                 "name": taskid.get_name(),
+                                                                 "tried": 0,
+                                                                 "status": TaskConstants.DEFAULT_STATUS,
+                                                                 "grade": 0}) for taskid in order_tasks])
 
-                    task_for_user["grade"] = user_task["grade"]
-                    task_for_user["submissionid"] = str(user_task["submissionid"])
+        # TODO: Check if we can retrieve all users data once, then reference the needed details in the loop
+        user_tasks = list(self.database.user_tasks.find({"username":  user_data['username'], "courseid": course.get_id()}))
 
-            data_user = {'name': users[user], 'tasks': ordered_tasks_for_user}
-            data_users.append(data_user)
+        for user_task in user_tasks:
+            task_id = user_task["taskid"]
+            if task_id in ordered_tasks_for_user:
+                task_for_user = ordered_tasks_for_user[task_id]
+                user_grade = user_task["grade"]
+                task_for_user["tried"] = user_task["tried"]
+                if user_task["tried"] == 0:
+                    task_for_user["status"] = "notattempted"
+                else:
+                    task_for_user["status"] = \
+                        self.task_factory.get_relevant_color_class_for_grade(user_grade)
 
-        return self.template_helper.get_custom_renderer('frontend/webapp/plugins/matrix')\
-            .admin(course, data_users, order_tasks, task_start_line, TaskConstants.ORDERED_GRADE_COLORS_RANGE)
+                task_for_user["grade"] = user_task["grade"]
+                task_for_user["submissionid"] = str(user_task["submissionid"])
+
+        data_user = {'name': user_data, 'tasks': ordered_tasks_for_user}
+        return data_user
 
 
 def add_admin_menu(course):
