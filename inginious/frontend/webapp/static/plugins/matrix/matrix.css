@@ -80,7 +80,14 @@ td.grade{
 .grades-table {
     overflow-x:scroll;
     overflow-y:visible;
-    margin-left: 40px;
+    margin-left: 3em;
+}
+
+.grades-header,
+.grades-column {
+    min-width: 150px;
+    min-height: 38px;
+    text-align: center;
 }
 
 
@@ -88,12 +95,11 @@ td.grade{
 .headcol {
     position: absolute;
     width: 5em;
+    min-height: 38px;
     left: 0;
     top: auto;
     border-top-width: 1px;
-    /*only relevant for first row*/
     margin-top: -1px;
-    /*compensate for top border*/
     background: white;
     border-right: 4px solid black;
 

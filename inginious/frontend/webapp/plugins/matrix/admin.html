@@ -35,7 +35,7 @@ $def tr(value):
             </th>
 
             $for task in user['tasks']:
-                <td class="$user['tasks'][task]['status']">
+                <td class="grades-column $user['tasks'][task]['status']">
                     $ specific_task = user['tasks'][task]
                     $if 'grade' in specific_task['status']:
                         $if specific_task['submissionid'] == 'None':
@@ -45,8 +45,8 @@ $def tr(value):
                                 $int(specific_task['grade'])
                             </a>
                         $if 'submission_data' in specific_task:
-                            <br/><a href="$specific_task['submission_data']['url']">$specific_task['submission_data']['time_passed']
-                            </a>
+                            (<a href="$specific_task['submission_data']['url']">$specific_task['submission_data']['time_passed']
+                            </a>)
 
                 </td>
         </tr>
@@ -54,7 +54,7 @@ $def tr(value):
 
 $def th(value):
     $for x in value
-        <th>
+        <th class="grades-header">
             <a href="/course/$:course.get_id()/$x.get_id()">
                 $x.get_id()
             </a>
