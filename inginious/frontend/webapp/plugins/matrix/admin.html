@@ -36,13 +36,18 @@ $def tr(value):
 
             $for task in user['tasks']:
                 <td class="$user['tasks'][task]['status']">
-                    $if 'grade' in user['tasks'][task]['status']:
-                        $if user['tasks'][task]['submissionid'] == 'None':
-                            $int(user['tasks'][task]['grade'])
+                    $ specific_task = user['tasks'][task]
+                    $if 'grade' in specific_task['status']:
+                        $if specific_task['submissionid'] == 'None':
+                            $int(specific_task['grade'])
                         $else:
-                            <a href="/admin/$:course.get_id()/student/$user['name']['username']/$task/$user['tasks'][task]['submissionid']">
-                                $int(user['tasks'][task]['grade'])
+                            <a href="/admin/$:course.get_id()/student/$user['name']['username']/$task/$specific_task['submissionid']">
+                                $int(specific_task['grade'])
                             </a>
+                        $if 'submission_data' in specific_task:
+                            <br/><a href="$specific_task['submission_data']['url']">$specific_task['submission_data']['time_passed']
+                            </a>
+
                 </td>
         </tr>
 

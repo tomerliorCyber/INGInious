@@ -10,6 +10,7 @@ from collections import OrderedDict
 from inginious.frontend.webapp.pages.course_admin.utils import INGIniousAdminPage
 from inginious.common.tasks_constants import TaskConstants
 from datetime import datetime
+import pymongo
 
 
 class MatrixPage(INGIniousAdminPage):
@@ -75,6 +76,8 @@ class MatrixPage(INGIniousAdminPage):
 
 
     def _calc_user_data(self, course, order_tasks, user_data):
+        username = user_data['username']
+        course_id = course.get_id()
         ordered_tasks_for_user = OrderedDict([(taskid.get_id(), {"taskid": taskid,
                                                                  "name": taskid.get_name(),
                                                                  "tried": 0,
@@ -82,10 +85,14 @@ class MatrixPage(INGIniousAdminPage):
                                                                  "grade": 0}) for taskid in order_tasks])
 
         # TODO: Check if we can retrieve all users data once, then reference the needed details in the loop
-        user_tasks = list(self.database.user_tasks.find({"username":  user_data['username'], "courseid": course.get_id()}))
+        user_tasks = list(self.database.user_tasks.find({"username":  username, "courseid": course_id}))
+        submission_ids = [user_task['submissionid'] for user_task in user_tasks]
+        user_task_last_submissions = list(self.database.submissions.find({"username":  username, "_id": {"$in": submission_ids}}))
+        # get all the relevant submissions (whether it's the last ones or the ones with the highest score)
 
         for user_task in user_tasks:
             task_id = user_task["taskid"]
+
             if task_id in ordered_tasks_for_user:
                 task_for_user = ordered_tasks_for_user[task_id]
                 user_grade = user_task["grade"]
@@ -98,6 +105,12 @@ class MatrixPage(INGIniousAdminPage):
 
                 task_for_user["grade"] = user_task["grade"]
                 task_for_user["submissionid"] = str(user_task["submissionid"])
+                # take the submission id from the task (will be the last submitted ) and query the submission 'submissionid'
+                last_submissions_for_task = {'a': 1}
+                if last_submissions_for_task:
+                    a = 1 # calc last submission from now
+                    task_for_user['submission_data'] = {'url': 'http://google.com', 'time_passed': '3 days ago'}
+                    # link to the all submissions page, example http://localhost:8080/admin/tutorial/student/ohad/03_tasks
 
         data_user = {'name': user_data, 'tasks': ordered_tasks_for_user}
         return data_user
