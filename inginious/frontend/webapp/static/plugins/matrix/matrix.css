@@ -124,3 +124,7 @@ td.grade{
 .grades-table tbody tr td:not(:first-child) {
     border: 1px solid white;
 }
+
+#students-cell{
+    color: black;
+}
