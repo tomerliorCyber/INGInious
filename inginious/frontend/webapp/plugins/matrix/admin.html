@@ -45,8 +45,7 @@ $def tr(value):
                                 $int(specific_task['grade'])
                             </a>
                         $if 'submission_data' in specific_task:
-                            (<a href="$specific_task['submission_data']['url']">$specific_task['submission_data']['time_passed']
-                            </a>)
+                            (<a target="_blank" href="$specific_task['submission_data']['url']">$specific_task['submission_data']['time_passed']</a>)
 
                 </td>
         </tr>

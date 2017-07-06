@@ -7,7 +7,7 @@
 import logging
 import web
 from collections import OrderedDict
-from inginious.frontend.webapp.pages.course_admin.utils import INGIniousAdminPage
+from inginious.frontend.webapp.pages.course_admin.utils import INGIniousAdminPage, calculate_time_passed_since
 from inginious.common.tasks_constants import TaskConstants
 from datetime import datetime
 import pymongo
@@ -84,12 +84,19 @@ class MatrixPage(INGIniousAdminPage):
                                                                  "status": TaskConstants.DEFAULT_STATUS,
                                                                  "grade": 0}) for taskid in order_tasks])
 
-        # TODO: Check if we can retrieve all users data once, then reference the needed details in the loop
         user_tasks = list(self.database.user_tasks.find({"username":  username, "courseid": course_id}))
-        submission_ids = [user_task['submissionid'] for user_task in user_tasks]
-        user_task_last_submissions = list(self.database.submissions.find({"username":  username, "_id": {"$in": submission_ids}}))
-        # get all the relevant submissions (whether it's the last ones or the ones with the highest score)
+        user_task_submissions_by_task_id = self._get_user_task_submissions(username, course_id)
 
+        ordered_tasks_for_user = self._calculate_user_tasks(
+                                    user_tasks, ordered_tasks_for_user,
+                                    user_task_submissions_by_task_id, course_id, username)
+
+        data_user = {'name': user_data, 'tasks': ordered_tasks_for_user}
+        return data_user
+
+
+    def _calculate_user_tasks(self, user_tasks, ordered_tasks_for_user,
+                             user_task_submissions_by_task_id, course_name, student_name):
         for user_task in user_tasks:
             task_id = user_task["taskid"]
 
@@ -106,14 +113,36 @@ class MatrixPage(INGIniousAdminPage):
                 task_for_user["grade"] = user_task["grade"]
                 task_for_user["submissionid"] = str(user_task["submissionid"])
                 # take the submission id from the task (will be the last submitted ) and query the submission 'submissionid'
-                last_submissions_for_task = {'a': 1}
-                if last_submissions_for_task:
-                    a = 1 # calc last submission from now
-                    task_for_user['submission_data'] = {'url': 'http://google.com', 'time_passed': '3 days ago'}
-                    # link to the all submissions page, example http://localhost:8080/admin/tutorial/student/ohad/03_tasks
+                user_task_latest_submission = user_task_submissions_by_task_id.get(task_id)
+                if user_task_latest_submission:
+                    # link to the all submissions page, for example /admin/tutorial/student/ohad/03_tasks
+                    href_to_submissions = self._build_student_submissions_url(course_name, student_name, task_id)
+                    time_passed = calculate_time_passed_since(user_task_latest_submission["submitted_on"])
+                    task_for_user['submission_data'] = {'url': href_to_submissions, 'time_passed':  time_passed}
 
-        data_user = {'name': user_data, 'tasks': ordered_tasks_for_user}
-        return data_user
+        return ordered_tasks_for_user
+
+    def _build_student_submissions_url(self, course_name, student_name, task_name):
+          return '/admin/'+ course_name + '/student/' + student_name + '/' +task_name
+
+
+    def _get_user_task_submissions(self, username, course_id):
+        '''
+        get all the relevant submissions - the last ones and not the ones with the highest score
+        group by taskid and select the latest one,
+        since we are sorting by date, the first we'll encounter
+        will be the latest one 
+        '''
+        user_task_submissions = list(self.database.submissions.find({"username":  username, "courseid": course_id})
+                                     .sort([("submitted_on", pymongo.DESCENDING)]))
+
+        user_task_submissions_by_task_id = {}
+        for user_task_submission in user_task_submissions:
+            task_id = user_task_submission['taskid']
+            if not user_task_submissions_by_task_id.get(task_id):
+                user_task_submissions_by_task_id[task_id] = user_task_submission
+
+        return user_task_submissions_by_task_id
 
 
 def add_admin_menu(course):

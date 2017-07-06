@@ -81,6 +81,7 @@ td.grade{
     overflow-x:scroll;
     overflow-y:visible;
     margin-left: 3em;
+    color: white;
 }
 
 .grades-header,
