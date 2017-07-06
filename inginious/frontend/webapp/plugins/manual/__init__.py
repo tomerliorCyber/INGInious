@@ -124,7 +124,7 @@ class IndexPage(ManualPlugin):
             .admin(course, lessons, users, current_lesson,
                    current_user, buttons, self.webterm_link, user_submission, user_data)
 
-/inginious/frontend/webapp/static/plugins/manual/out.pdf
+# /inginious/frontend/webapp/static/plugins/manual/out.pdf
 class StudentPage(ManualPlugin):
     def GET_AUTH(self, courseid, lesson_id, student_id):
         course = self.get_course_and_check_rights(courseid, allow_all_staff=True)[0]
