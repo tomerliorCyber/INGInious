@@ -290,6 +290,16 @@ def get_menu(course, current, renderer, plugin_manager, user_manager):
     return renderer.course_admin.menu(course, default_entries + additionnal_entries, current)
 
 
+def get_course_menu(course, user_manager, plugin_manager):
+    default_entries = []
+    admin_entries = []
+    if user_manager.has_admin_rights_on_course(course):
+        admin_entries += [entry for entry in plugin_manager.call_hook('course_admin_main_menu', course=course) if entry is not None]
+
+
+    return admin_entries + default_entries
+
+
 class CourseRedirect(INGIniousAdminPage):
     """ Redirect admins to /settings and tutors to /task """
 
