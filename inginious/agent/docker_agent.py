@@ -24,9 +24,8 @@ from inginious.agent._killer_watchers import TimeoutWatcher
 from inginious.agent._pipeline import PipelinePush, PipelinePull
 from inginious.common.asyncio_utils import AsyncIteratorWrapper
 from inginious.common.message_meta import ZMQUtils
-from inginious.common.messages import BackendNewJob, AgentJobStarted, BackendNewBatchJob, BackendKillJob, AgentHello, BackendJobId, AgentJobDone, \
-    KWPRegisterContainer, KWPKilledStatus, SPResult, EventContainerDied, EventContainerOOM, AgentJobSSHDebug, AgentBatchJobDone, AgentBatchJobStarted, \
-    Ping, Pong
+from inginious.common.messages import BackendNewJob, AgentJobStarted, BackendKillJob, AgentHello, BackendJobId, AgentJobDone, \
+    KWPRegisterContainer, KWPKilledStatus, SPResult, EventContainerDied, EventContainerOOM, AgentJobSSHDebug, Ping, Pong
 
 
 class DockerAgent(object):
@@ -55,12 +54,10 @@ class DockerAgent(object):
         # data about running containers
         self._containers_running = {}
         self._student_containers_running = {}
-        self._batch_containers_running = {}
         self._containers_ending = {}
         self._student_containers_ending = {}
         self._container_for_job = {}
         self._student_containers_for_job = {}
-        self._batch_container_for_job = {}
 
         self.tmp_dir = tmp_dir
         self.task_directory = task_directory
@@ -82,7 +79,6 @@ class DockerAgent(object):
         # Auto discover containers
         self._logger.info("Discovering containers")
         self._containers = self._docker.get_containers()
-        self._batch_containers = self._docker.get_batch_containers()
 
         # SSH remote debug
         self.ssh_host = ssh_host
@@ -157,7 +153,6 @@ class DockerAgent(object):
     async def handle_backend_message(self, message):
         """Dispatch messages received from clients to the right handlers"""
         message_handlers = {
-            BackendNewBatchJob: self.handle_new_batch_job,
             BackendNewJob: self.handle_new_job,
             BackendKillJob: self.handle_kill_job,
             Ping: self.handle_ping
@@ -197,77 +192,6 @@ class DockerAgent(object):
     async def handle_ping(self, _: Ping):
         """ Handle an Ping message. Pong the backend """
         await ZMQUtils.send(self._backend_socket, Pong())
-
-    async def handle_new_batch_job(self, message: BackendNewBatchJob):
-        """
-        Handles a new batch job: starts the container
-        """
-        try:
-            self._logger.info("Received request for jobid %s (batch job)", message.job_id)
-
-            if message.container_name not in self._batch_containers:
-                self._logger.info("Backend asked for batch container %s but it is not available in this agent", message.container_name)
-                await ZMQUtils.send(self._backend_socket, AgentBatchJobDone(message.job_id, -1, "No such batch container on this agent", "", None))
-                return
-
-            environment = self._batch_containers[message.container_name]["id"]
-            batch_args = self._batch_containers[message.container_name]["parameters"]
-
-            container_path = tempfile.mkdtemp(dir=self.tmp_dir)  # tmp_dir/id/
-            input_path = os.path.join(container_path, 'input')  # tmp_dir/id/input/
-            output_path = os.path.join(container_path, 'output')  # tmp_dir/id/output/
-
-            os.mkdir(input_path)
-            os.mkdir(output_path)
-            os.chmod(container_path, 0o777)
-            os.chmod(input_path, 0o777)
-            os.chmod(output_path, 0o777)
-
-            input_data = message.input_data
-            try:
-                if set(input_data.keys()) != set(batch_args.keys()):
-                    raise Exception("Invalid keys for inputdata")
-
-                for key in batch_args:
-                    if batch_args[key]["type"] == "text":
-                        if not isinstance(input_data[key], str):
-                            raise Exception("Invalid value for inputdata: the value for key {} should be a string".format(key))
-                        open(os.path.join(input_path, batch_args[key]["path"]), 'w').write(input_data[key])
-                    elif batch_args[key]["type"] == "file":
-                        if isinstance(input_data[key], str):
-                            raise Exception("Invalid value for inputdata: the value for key {} should be a file object".format(key))
-                        open(os.path.join(input_path, batch_args[key]["path"]), 'wb').write(input_data[key])
-            except:
-                rmtree(container_path)
-                self._logger.info("Invalid input for batch container %s in job %s", message.container_name, message.job_id)
-                await ZMQUtils.send(self._backend_socket, AgentBatchJobDone(message.job_id, -1, "Invalid input", "", None))
-                return
-
-            # Create the container
-            try:
-                container_id = await self._loop.run_in_executor(None, lambda: self._docker.create_batch_container(environment, input_path, output_path))
-            except:
-                await self._loop.run_in_executor(None, lambda: rmtree(container_path))
-                self._logger.info("Cannot create container %s for batch job %s", message.container_name, message.job_id)
-                await ZMQUtils.send(self._backend_socket, AgentBatchJobDone(message.job_id, -1, "Cannot create container", "", None))
-                return
-
-            self._batch_containers_running[container_id] = message, container_path, output_path
-            self._batch_container_for_job[message.job_id] = container_id
-
-            # Start the container
-            try:
-                await self._loop.run_in_executor(None, lambda: self._docker.start_container(container_id))
-            except:
-                await self._loop.run_in_executor(None, lambda: rmtree(container_path))
-                self._logger.info("Cannot start container %s %s for batch job %s", message.container_name, container_id, message.job_id)
-                await ZMQUtils.send(self._backend_socket, AgentBatchJobDone(message.job_id, -1, "Cannot start container", "", None))
-                return
-
-            # Tell the backend/client the job has started
-            await ZMQUtils.send(self._backend_socket, AgentBatchJobStarted(message.job_id))
-        except:
-            self._logger.exception("Exception in handle_new_batch_job")
 
     async def handle_new_job(self, message: BackendNewJob):
         """
@@ -318,7 +242,7 @@ class DockerAgent(object):
                 # select a port
                 if len(self.ssh_ports) == 0:
                     self._logger.warning("User asked for an ssh debug but no ports are available")
-                    await self.send_job_result(message.job_id, "crash", 'No slots are available for SSH debug right now. Please retry later.')
+                    await self.send_job_result(message.job_id, "crash", 'No ports are available for SSH debug right now. Please retry later.')
                     return
                 ssh_port = self.ssh_ports.pop()
 
@@ -464,7 +388,7 @@ class DockerAgent(object):
         try:
             read_stream, write_stream = await asyncio.open_connection(sock=sock.get_socket())
         except:
-            self._logger.exception("Exception occured while creating read/write stream to container")
+            self._logger.exception("Exception occurred while creating read/write stream to container")
             return None
 
         # Send hello msg
@@ -474,13 +398,13 @@ class DockerAgent(object):
         try:
             while not read_stream.at_eof():
                 msg_header = await read_stream.readexactly(8)
-                type, length = struct.unpack_from('>BxxxL', msg_header)  # format imposed by docker in the attach endpoint
+                outtype, length = struct.unpack_from('>BxxxL', msg_header)  # format imposed by docker in the attach endpoint
                 if length != 0:
                     content = await read_stream.readexactly(length)
-                    if type == 1:  # stdout
+                    if outtype == 1:  # stdout
                         buffer += content
 
-                    if type == 2:  # stderr
+                    if outtype == 2:  # stderr
                         self._logger.debug("Received stderr from containers:\n%s", content)
 
                     # 4 first bytes are the lenght of the message. If we have a complete message...
@@ -556,7 +480,7 @@ class DockerAgent(object):
             container_id = killed_msg.container_id
             self._logger.debug("Closing student (p2) for %s", container_id)
             try:
-                job_id, parent_container_id, socket_id, write_stream, retval = self._student_containers_ending[container_id]
+                _, parent_container_id, socket_id, write_stream, retval = self._student_containers_ending[container_id]
                 del self._student_containers_ending[container_id]
             except:
                 self._logger.warning("Student container %s that has finished(p2) was not launched by this agent", str(container_id))
@@ -595,8 +519,8 @@ class DockerAgent(object):
 
             # Close sub containers
             for student_container_id_loop in self._student_containers_for_job[message.job_id]:
-                student_container_id = student_container_id_loop
-                def close_and_delete():
+                # little hack to ensure the value of student_container_id_loop is copied into the closure
+                def close_and_delete(student_container_id=student_container_id_loop):
                     try:
                         self._docker.kill_container(student_container_id)
                         self._docker.remove_container(student_container_id)
@@ -693,7 +617,7 @@ class DockerAgent(object):
                 await self._loop.run_in_executor(None, lambda: rmtree(container_path))
             except PermissionError:
                 self._logger.debug("Cannot remove old container path!")
-                pass # todo: run a docker container to force removal
+                # todo: run a docker container to force removal
             
             # Return!
             await self.send_job_result(message.job_id, result, error_msg, grade, problems, tests, custom, archive, stdout, stderr)
@@ -704,57 +628,6 @@ class DockerAgent(object):
                 del self._containers_killed[container_id]
         except:
             self._logger.exception("Exception in handle_job_closing_p2")
-
-    async def handle_batch_job_closing(self, container_id, retval):
-        """
-        Get the results of a batch container and returns it to the client
-        :param container_id:
-        :param retval: return value of the container main process
-        """
-        try:
-            try:
-                message, container_path, output_path = self._batch_containers_running[container_id]
-                del self._batch_containers_running[container_id]
-            except:
-                self._logger.error("Batch container %s that has finished was not launched by this agent", str(container_id))
-                return
-
-            del self._batch_container_for_job[message.job_id]
-
-            if retval == -1:
-                self._logger.info("Batch container for job id %s crashed", message.job_id)
-                await self._loop.run_in_executor(None, lambda: rmtree(container_path))
-                await ZMQUtils.send(self._backend_socket, AgentBatchJobDone(message.job_id, -1, "Container crashed at startup", "", None))
-                return
-
-            # Get logs back
-            try:
-                stdout, stderr = await self._loop.run_in_executor(None, lambda: self._docker.get_logs(container_id))
-            except:
-                self._logger.warning("Cannot get back stdout of container %s!", container_id)
-                await self._loop.run_in_executor(None, lambda: rmtree(container_path))
-                await ZMQUtils.send(self._backend_socket, AgentBatchJobDone(message.job_id, -1, 'Cannot retrieve stdout/stderr from container', "", None))
-                return
-
-            # Tgz the files in /output
-            with tempfile.TemporaryFile() as tmpfile:
-                try:
-                    tar = tarfile.open(fileobj=tmpfile, mode='w:gz')
-                    await self._loop.run_in_executor(None, lambda: tar.add(output_path, '/', True))
-                    await self._loop.run_in_executor(None, lambda: tar.close())
-                    tmpfile.flush()
-                    tmpfile.seek(0)
-                except:
-                    await self._loop.run_in_executor(None, lambda:rmtree(container_path))
-                    await ZMQUtils.send(self._backend_socket,
-                                        AgentBatchJobDone(message.job_id, -1, 'The agent was unable to archive the /output directory', "", None))
-                    return
-
-                # And then return!
-                await self._loop.run_in_executor(None, lambda: rmtree(container_path))
-                await ZMQUtils.send(self._backend_socket, AgentBatchJobDone(message.job_id, retval, stdout, stderr, tmpfile.read()))
-        except:
-            self._logger.exception("Exception in handle_batch_job_closing")
 
     async def handle_kill_job(self, message: BackendKillJob):
         """ Handles `kill` messages. Kill things. """
@@ -775,8 +648,6 @@ class DockerAgent(object):
                     self._loop.create_task(self.handle_job_closing_p1(message.container_id, message.retval))
                 elif message.container_id in self._student_containers_running:
                     self._loop.create_task(self.handle_student_job_closing_p1(message.container_id, message.retval))
-                elif message.container_id in self._batch_containers_running:
-                    self._loop.create_task(self.handle_batch_job_closing(message.container_id, message.retval))
             elif type(message) == EventContainerOOM:
                 if message.container_id in self._containers_running or message.container_id in self._student_containers_running:
                     self._logger.info("Container %s did OOM, killing it", message.container_id)
@@ -816,7 +687,7 @@ class DockerAgent(object):
 
         # Tell the backend we are up and have `nb_sub_agents` threads available
         self._logger.info("Saying hello to the backend")
-        await ZMQUtils.send(self._backend_socket, AgentHello(self._friendly_name, self._nb_sub_agents, self._containers, self._batch_containers))
+        await ZMQUtils.send(self._backend_socket, AgentHello(self._friendly_name, self._nb_sub_agents, self._containers))
 
         # And then run the agent
         try:
