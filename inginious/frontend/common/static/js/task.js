@@ -271,7 +271,7 @@ function taskFormValid()
     {
         var filename = $(this).val().split(/(\\|\/)/g).pop();
 
-        //file input fields cannot be optionnal
+        //file input fields cannot be optional
         if(filename == "")
         {
             answered_to_all = false;
@@ -403,6 +403,7 @@ function waitForSubmission(submissionid)
                     else
                         displayTaskLoadingAlert(data, submissionid);
                 }
+                // todo make more generic for multiple colors for grades
                 else if("status" in data && "result" in data && "grade" in data)
                 {
                     if("debug" in data)
@@ -635,7 +636,7 @@ function displayTimeOutAlert(content)
 function displayTaskErrorAlert(content)
 {
     displayTaskStudentAlertWithProblems(content,
-        "<b>An internal error occured. Please retry later. If the error persists, send an email to the course administrator.</b>",
+        "<b>An internal error occurred. Please retry later. If the error persists, send an email to the course administrator.</b>",
         "danger", false);
 }
 
@@ -644,7 +645,7 @@ function displayTaskStudentErrorAlert(content)
 {
     displayTaskStudentAlertWithProblems(content,
         "<b>There are some errors in your answer. Your score is " + content["grade"] + "%</b>",
-        "danger", false);
+        content["grade_css_class"], false);
 }
 
 //Displays a student success alert in task form
@@ -652,7 +653,7 @@ function displayTaskStudentSuccessAlert(content)
 {
     displayTaskStudentAlertWithProblems(content,
         "<b>Your answer passed the tests! Your score is " + content["grade"] + "%</b>",
-        "success", true);
+        content["grade_css_class"], true);
 }
 
 //Displays a student error alert in task form

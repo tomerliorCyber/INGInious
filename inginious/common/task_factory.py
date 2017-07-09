@@ -12,6 +12,7 @@ import shutil
 from inginious.common.log import get_course_logger
 from inginious.common.tasks import Task
 from inginious.common.base import id_checker
+from inginious.common.tasks_constants import TaskConstants
 from inginious.common.task_file_readers.yaml_reader import TaskYAMLFileReader
 from inginious.common.exceptions import InvalidNameException, TaskNotFoundException, TaskUnreadableException, TaskReaderNotFoundException
 
@@ -51,7 +52,7 @@ class TaskFactory(object):
             raise InvalidNameException("Course with invalid name: " + courseid)
         if not id_checker(taskid):
             raise InvalidNameException("Task with invalid name: " + taskid)
-        path_to_descriptor, descriptor_ext, descriptor_manager = self._get_task_descriptor_info(courseid, taskid)
+        path_to_descriptor, _, descriptor_manager = self._get_task_descriptor_info(courseid, taskid)
         try:
             with codecs.open(path_to_descriptor, 'r', 'utf-8') as fd:
                 task_content = descriptor_manager.load(fd.read())
@@ -204,7 +205,7 @@ class TaskFactory(object):
         :param taskid: a (valid) task id
         :raise InvalidNameException, TaskNotFoundException, TaskUnreadableException
         """
-        path_to_descriptor, descriptor_ext, descriptor_reader = self._get_task_descriptor_info(course.get_id(), taskid)
+        path_to_descriptor, _, descriptor_reader = self._get_task_descriptor_info(course.get_id(), taskid)
         try:
             with codecs.open(path_to_descriptor, 'r', 'utf-8') as fd:
                 task_content = descriptor_reader.load(fd.read())
@@ -248,3 +249,16 @@ class TaskFactory(object):
         shutil.rmtree(task_directory)
 
         get_course_logger(courseid).info("Task %s erased from the factory.", taskid)
+
+    def get_relevant_color_class_for_grade(self, grade):
+        '''
+
+        :param grade: the student's grade, float between 0 to 100
+        :return: the css class for the right grade category
+        '''
+        grade = float(grade)
+        for grade_data in TaskConstants.ORDERED_GRADE_COLORS_RANGE:
+            max_value = grade_data[TaskConstants.MAX_VALUE]
+            if max_value >= grade:
+                return 'grade_'+ str(int(max_value)) + ' grade'
+

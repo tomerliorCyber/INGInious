@@ -1,4 +1,4 @@
-$def with (course, data_users, order_tasks, task_start_line)
+$def with (course, data_users, order_tasks, possible_grades)
 
 $var title: $:course.get_name() - Matrix
 
@@ -25,37 +25,38 @@ $var Navbar: $:NavbarF()
 $def tr(value):
     $for user in data_users:
         <tr>
-            <td>
+            <th class="headcol">
                 <a href="/admin/$:course.get_id()/student/$user['name']['username']">
                     $if user['name']['realname'] is not None:
                         $user['name']['realname']
                     $else:
                         $user['name']['username']
                 </a>
-            </td>
+            </th>
 
             $for task in user['tasks']:
-                <td class="$user['tasks'][task]['status']"
-                    $if user['tasks'][task]['name'] == task_start_line:
-                        style="border-left: 5px solid black"
-                >
-                    $if user['tasks'][task]['status'] == 'succeeded' or user['tasks'][task]['status'] == 'failed':
-                        $if user['tasks'][task]['submissionid'] == 'None':
-                            $int(user['tasks'][task]['grade'])
+                <td class="grades-column $user['tasks'][task]['status']">
+                    $ specific_task = user['tasks'][task]
+                    $if 'grade' in specific_task['status']:
+                        $if specific_task['submissionid'] == 'None':
+                            $int(specific_task['grade'])
                         $else:
-                            <a href="/admin/$:course.get_id()/student/$user['name']['username']/$task/$user['tasks'][task]['submissionid']">
-                                $int(user['tasks'][task]['grade'])
+                            <a href="/admin/$:course.get_id()/student/$user['name']['username']/$task/$specific_task['submissionid']">
+                                $int(specific_task['grade'])
                             </a>
+                        $if 'submission_data' in specific_task:
+                            (<a target="_blank" href="$specific_task['submission_data']['url']">$specific_task['submission_data']['time_passed']</a>)
+
                 </td>
         </tr>
 
 
 $def th(value):
     $for x in value
-        <th>
+        <th class="grades-header">
             <a href="/course/$:course.get_id()/$x.get_id()">
                 $x.get_id()
-            </a>
+            </a><br/>
 
             <div class="btn-group" role="group">
                 <a href="/admin/$:course.get_id()/edit/task/$x.get_id()" class="btn btn-default btn-xs"
@@ -73,35 +74,28 @@ $def th(value):
 
 <div class="color-index">
     <div class="row">
-        <div class="col-xs-2 col-xs-push-1">
-            <div class="color-title">Not viewed:</div>
+        <div class="col-xs-2 color-item">
+            <div class="color-title">Not viewed</div>
 
             <div class="color-box notviewed"></div>
         </div>
 
-        <div class="col-xs-2 col-xs-push-1">
-            <div class="color-title">Not attempted:</div>
+        <div class="col-xs-2 color-item">
+            <div class="color-title">Not attempted</div>
 
             <div class="color-box notattempted"></div>
         </div>
 
-        <div class="col-xs-2 col-xs-push-1">
-            <div class="color-title">Failed:</div>
+        $for possible_grade_data in possible_grades:
+            <div class="col-xs-2 color-item">
+                <div class="color-title">
+                     $int(possible_grade_data['max_value'])
+                </div>
 
-            <div class="color-box failed"></div>
-        </div>
+                <div class="color-box grade_$:int(possible_grade_data['max_value'])"></div>
+            </div>
 
-        <div class="col-xs-2 col-xs-push-1">
-            <div class="color-title">Succeeded:</div>
 
-            <div class="color-box succeeded"></div>
-        </div>
-
-        <div class="col-xs-2 col-xs-push-1">
-            <div class="color-title">Manual:</div>
-
-            <div class="color-box manual"></div>
-        </div>
     </div>
 </div>
 
@@ -110,7 +104,7 @@ $def th(value):
     <table class="table matrix-table">
         <thead>
             <tr>
-                <th>Students</th>
+                <th id="students-cell"class="headcol header-cell">Students</th>
                 $:th(order_tasks)
             </tr>
         </thead>

@@ -180,6 +180,8 @@ class TaskPage(INGIniousAuthPage):
                     web.header('Content-Type', 'application/json')
                     result = self.submission_manager.get_input_from_submission(result)
                     result = self.submission_manager.get_feedback_from_submission(result, show_everything=is_staff)
+                    # space is because frontend is attaching this to alert-'grade_css_class' so we need a separation.
+                    result['grade_css_class'] = ' ' + self.task_factory.get_relevant_color_class_for_grade(result.get('grade', 0.0))
 
                     # user_task always exists as we called user_saw_task before
                     user_task = self.database.user_tasks.find_one({

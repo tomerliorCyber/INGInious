@@ -15,7 +15,6 @@ from inginious.common.task_factory import TaskFactory
 from inginious.frontend.common.plugin_manager import PluginManager
 from inginious.frontend.common.submission_manager import SubmissionManager
 from inginious.frontend.common.template_helper import TemplateHelper
-from inginious.frontend.webapp.batch_manager import BatchManager
 from inginious.frontend.webapp.user_manager import UserManager
 
 
@@ -51,11 +50,6 @@ class INGIniousPage(object):
         return self.app.submission_manager
 
     @property
-    def batch_manager(self) -> BatchManager:
-        """ Returns the batch manager singleton """
-        return self.app.batch_manager
-
-    @property
     def user_manager(self) -> UserManager:
         """ Returns the user manager singleton """
         return self.app.user_manager
@@ -76,7 +70,7 @@ class INGIniousPage(object):
         return self.app.gridfs
 
     @property
-    def default_allowed_file_extensions(self) -> List[str]:
+    def default_allowed_file_extensions(self) -> List[str]:  # pylint: disable=invalid-sequence-index
         """ List of allowed file extensions """
         return self.app.default_allowed_file_extensions
 
@@ -91,7 +85,7 @@ class INGIniousPage(object):
         return self.app.backup_dir
 
     @property
-    def containers(self) -> List[str]:
+    def containers(self) -> List[str]:  # pylint: disable=invalid-sequence-index
         """ Available containers """
         return self.app.submission_manager.get_available_environments()
 

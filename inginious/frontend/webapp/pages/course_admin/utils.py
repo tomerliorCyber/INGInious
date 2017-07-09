@@ -11,6 +11,7 @@ import csv
 
 import web
 from bson.objectid import ObjectId
+from datetime import datetime
 from inginious.common.base import id_checker
 from collections import OrderedDict
 from inginious.frontend.webapp.pages.utils import INGIniousAuthPage
@@ -107,7 +108,7 @@ class INGIniousSubmissionAdminPage(INGIniousAdminPage):
         return submissions, aggregations
 
     def show_page_params(self, course, user_input):
-        tasks = sorted(list(course.get_tasks().items()), key=lambda task: task[1].get_order())
+        tasks = sorted(list(course.get_tasks().items()), key=lambda task: (task[1].get_order(), task[1].get_id()))
 
         user_list = self.user_manager.get_course_registered_users(course, False)
         users = OrderedDict(sorted(list(self.user_manager.get_users_info(user_list).items()),
@@ -244,12 +245,33 @@ def make_csv(data):
     return csv_string.read()
 
 
+def calculate_time_passed_since(time_of_event):
+    '''
+
+    :param time_of_event: datetime
+    :return: time passed in string.
+    if more than 3 months, than X months ago
+    if more than a day, than X days ago
+    if more than an hour, than X hours ago
+    if less than an hour, than X minutes ago
+    '''
+    time_passed = datetime.now() - time_of_event
+    if time_passed.days > 90:
+        return str(int(time_passed.days / 30)) + ' months ago'
+    elif time_passed.days > 0:
+        return str(time_passed.days) + ' days ago'
+    else: # time_passed.days  == 0
+        if time_passed.seconds > 60 * 60:
+            return str(int(time_passed.seconds / 60 / 60)) + ' hours ago'
+        else:
+            return str(int(time_passed.seconds / 60)) + ' minutes ago'
+
+
 def get_menu(course, current, renderer, plugin_manager, user_manager):
     """ Returns the HTML of the menu used in the administration. ```current``` is the current page of section """
     default_entries = []
     if user_manager.has_admin_rights_on_course(course):
-        default_entries += [("settings", "<i class='fa fa-cog fa-fw'></i>&nbsp; Course settings"),
-                            ("batch", "<i class='fa fa-rocket fa-fw'></i>&nbsp; Batch operations")]
+        default_entries += [("settings", "<i class='fa fa-cog fa-fw'></i>&nbsp; Course settings")]
 
     default_entries += [("students", "<i class='fa fa-user fa-fw'></i>&nbsp; Students"),
                         ("aggregations", "<i class='fa fa-group fa-fw'></i>&nbsp; " +
@@ -262,9 +284,19 @@ def get_menu(course, current, renderer, plugin_manager, user_manager):
                              ("danger", "<i class='fa fa-bomb fa-fw'></i>&nbsp; Danger zone")]
 
     # Hook should return a tuple (link,name) where link is the relative link from the index of the course administration.
-    additionnal_entries = [entry for entry in plugin_manager.call_hook('course_admin_menu', course=course) if entry is not None]
+    additional_entries = [entry for entry in plugin_manager.call_hook('course_admin_menu', course=course) if entry is not None]
 
-    return renderer.course_admin.menu(course, default_entries + additionnal_entries, current)
+    return renderer.course_admin.menu(course, default_entries + additional_entries, current)
+
+
+def get_course_menu(course, user_manager, plugin_manager):
+    default_entries = []
+    admin_entries = []
+    if user_manager.has_admin_rights_on_course(course):
+        admin_entries += [entry for entry in plugin_manager.call_hook('course_admin_main_menu', course=course) if entry is not None]
+
+
+    return admin_entries + default_entries
 
 
 class CourseRedirect(INGIniousAdminPage):

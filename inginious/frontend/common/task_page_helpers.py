@@ -18,7 +18,8 @@ def submission_to_json(data, debug, reloading=False, replace=False):
         'id': str(data["_id"]),
         'submitted_on': str(data['submitted_on']),
         'grade': str(data.get("grade", 0.0)),
-        'replace': replace and not reloading  # Replace the evaluated submission
+        'replace': replace and not reloading,  # Replace the evaluated submission
+        'grade_css_class': data['grade_css_class']
     }
 
     if reloading:
@@ -34,6 +35,7 @@ def submission_to_json(data, debug, reloading=False, replace=False):
 
     if debug:
         tojson["debug"] = data
+
     return json.dumps(tojson, default=str)
 
 

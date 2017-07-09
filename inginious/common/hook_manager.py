@@ -18,8 +18,8 @@ class HookManager(object):
         """ A wrapper that remove all exceptions raised from hooks """
         try:
             return callback(*args, **kwargs)
-        except Exception as e:
-            self._logger.exception("An exception occured while calling a hook! ",exc_info=True)
+        except Exception:
+            self._logger.exception("An exception occurred while calling a hook! ",exc_info=True)
             return None
 
     def add_hook(self, name, callback):

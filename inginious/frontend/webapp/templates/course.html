@@ -1,4 +1,4 @@
-$def with (course,submissions, tasks, tasks_data, grade)
+$def with (course,submissions, tasks, tasks_data, grade, plugins_menu_entries)
 
 $#
 $# This file is part of INGInious. See the LICENSE and the COPYRIGHTS files for
@@ -48,6 +48,11 @@ $def ColumnF():
             <a class="list-group-item list-group-item-info" href="$get_homepath()/admin/$course.get_id()">
                 <i class="fa fa-user-secret fa-fw"></i>&nbsp; Course administration
             </a>
+            $for link, name in plugins_menu_entries:
+                <a href="$get_homepath()/admin/${course.get_id()}/${link}" class="list-group-item list-group-item-info
+                  $if link=='danger':
+                      list-group-item-danger
+                  ">$:name</a>
         </div>
     $else:
         <div class="list-group">

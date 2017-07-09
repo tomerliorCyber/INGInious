@@ -53,7 +53,8 @@ class SubmissionManager(object, metaclass=ABCMeta):
             return None
         return sub
 
-    def _job_done_callback(self, submissionid, task, result, grade, problems, tests, custom, archive, stdout, stderr, newsub=True):
+    def _job_done_callback(self, submissionid, task, result, grade, problems,
+                           tests, custom, archive, stdout, stderr, newsub=True):  # pylint: disable=unused-argument
         """ Callback called by Client when a job is done. Updates the submission in the database with the data returned after the completion of the
         job """
         submission = self.get_submission(submissionid, False)
@@ -121,7 +122,7 @@ class SubmissionManager(object, metaclass=ABCMeta):
 
         submissionid = self._database.submissions.insert(obj)
 
-        # Send additionnal data to the client in inputdata. For now, the username and the group
+        # Send additional data to the client in inputdata. For now, the username and the group
         if "username" not in [p.get_id() for p in task.get_problems()]:  # do not overwrite
             inputdata["username"] = username
 
@@ -292,7 +293,7 @@ class SubmissionManager(object, metaclass=ABCMeta):
         """ Attempt to kill the remote job associated with this submission id.
         :param submissionid:
         :param user_check: Check if the current user owns this submission
-        :return: True if the job was killed, False if an error occured
+        :return: True if the job was killed, False if an error occurred
         """
         submission = self.get_submission(submissionid, user_check)
         if not submission:
@@ -318,23 +319,51 @@ class SubmissionManager(object, metaclass=ABCMeta):
         cursor.sort([("submitted_on", -1)])
         return list(cursor)
 
-    def get_user_last_submissions(self, limit=5, request={}):
+    def get_user_last_submissions(self, limit=5, request=None):
         """ Get last submissions of a user """
+        if request is None:
+            request = {}
+
         request.update({"username": self._user_manager.session_username()})
 
-        # We only want the last x unique tasks tried, modify the request
+        # Before, submissions were first sorted by submission date, then grouped
+        # and then resorted by submission date before limiting. Actually, grouping
+        # and pushing, keeping the max date, followed by result filtering is much more
+        # efficient
         data = self._database.submissions.aggregate([
             {"$match": request},
-            {"$sort": {"submitted_on": pymongo.DESCENDING}},
-            {"$group": {"_id": {"courseid": "$courseid", "taskid": "$taskid"}, "orig_id": {"$first": "$_id"},
-                        "submitted_on": {"$first": "$submitted_on"}, "result": {"$first": "$result"},
-                        "status" : {"$first": "$status"}, "courseid": {"$first": "$courseid"},
-                        "taskid": {"$first": "$taskid"}}},
+            {"$group": {"_id": {"courseid": "$courseid", "taskid": "$taskid"},
+                        "submitted_on": {"$max": "$submitted_on"},
+                        "submissions": {"$push": {
+                            "_id": "$_id",
+                            "result": "$result",
+                            "status" : "$status",
+                            "courseid": "$courseid",
+                            "taskid": "$taskid",
+                            "submitted_on": "$submitted_on"
+                        }},
+            }},
+            {"$project": {
+                "submitted_on": 1,
+                "submissions": {
+                    # This could be replaced by $filter if mongo v3.2 is set as dependency
+                    "$setDifference": [
+                        {"$map": {
+                            "input": "$submissions",
+                            "as": "submission",
+                            "in": {
+                                "$cond": [{"$eq": ["$submitted_on", "$$submission.submitted_on"]}, "$$submission", False]
+                            }
+                        }},
+                        [False]
+                    ]
+                }
+            }},
             {"$sort": {"submitted_on": pymongo.DESCENDING}},
             {"$limit": limit}
         ])
 
-        return list(data)
+        return [item["submissions"][0] for item in data]
 
     def get_gridfs(self):
         """ Returns the GridFS used by the submission manager """
@@ -453,23 +482,21 @@ class SubmissionManager(object, metaclass=ABCMeta):
 
         Return a tuple of two lists (None, None):
         jobs_running: a list of tuples in the form
-            (job_id, is_current_client_job, is_batch, info, launcher, started_at, max_end)
+            (job_id, is_current_client_job, info, launcher, started_at, max_end)
             where
             - job_id is a job id. It may be from another client.
             - is_current_client_job is a boolean indicating if the client that asked the request has started the job
             - agent_name is the agent name
-            - is_batch is True if the job is a batch job, false else
-            - info is either the batch container name if is_batch is True, or "courseid/taskid"
+            - info is "courseid/taskid"
             - launcher is the name of the launcher, which may be anything
             - started_at the time (in seconds since UNIX epoch) at which the job started
             - max_end the time at which the job will timeout (in seconds since UNIX epoch), or -1 if no timeout is set
         jobs_waiting: a list of tuples in the form
-            (job_id, is_current_client_job, is_batch, info, launcher, max_time)
+            (job_id, is_current_client_job, info, launcher, max_time)
             where
             - job_id is a job id. It may be from another client.
             - is_current_client_job is a boolean indicating if the client that asked the request has started the job
-            - is_batch is True if the job is a batch job, false else
-            - info is either the batch container name if is_batch is True, or "courseid/taskid"
+            - info is "courseid/taskid"
             - launcher is the name of the launcher, which may be anything
             - max_time the maximum time that can be used, or -1 if no timeout is set
         """
@@ -492,7 +519,3 @@ def update_pending_jobs(database):
     database.submissions.update({'status': 'waiting'},
                                 {"$unset": {'jobid': ""},
                                  "$set": {'status': 'error', 'grade': 0.0, 'text': 'Internal error. Server restarted'}}, multi=True)
-
-    # Updates all batch job still running
-    database.batch_jobs.update({'result': {'$exists': False}},
-                               {"$set": {"result": {"retval": -1, "stderr": "Internal error. Server restarted"}}}, multi=True)
