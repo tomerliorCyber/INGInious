@@ -382,6 +382,7 @@ class DownloadPDF(ManualPlugin):
     def GET_AUTH(self, courseid, lessonid, evaluated_student):
 
         url = 'http://' + web.ctx.host + '/admin/' + courseid + '/manual/' + lessonid + '/' + evaluated_student + '/pdf-view'
+        file_name_downloaded = 'assessment_'+courseid + '_' + lessonid + '_' + evaluated_student+'.pdf'
         options = {
             'page-size': 'Legal',
             'margin-top': '0.75in',
@@ -399,6 +400,7 @@ class DownloadPDF(ManualPlugin):
         }
 
         temp_file = tempfile.mktemp()
+        # will activate the os's wkhtmltopdf (https://wkhtmltopdf.org/) and generate the pdf
         success = pdfkit.from_url(url, temp_file, options=options)
         if not success:
             raise Exception('failed to create a pdf file for ' + evaluated_student)
@@ -409,7 +411,7 @@ class DownloadPDF(ManualPlugin):
         '''
         pdf_file = open(temp_file, 'rb')
         web.header('Content-Type','application/pdf', unique=True)
-        web.header('Content-Disposition', 'attachment; filename="assessment_'+evaluated_student+'.pdf"', unique=True)
+        web.header('Content-Disposition', 'attachment; filename="'+file_name_downloaded+'"', unique=True)
 
         return pdf_file
 
