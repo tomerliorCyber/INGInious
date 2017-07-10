@@ -297,6 +297,14 @@ def get_course_menu(course, user_manager, plugin_manager):
 
     return admin_entries + default_entries
 
+# according to a naming convention lesson-task
+def get_task_and_lesson(task_name):
+    task_splitted = task_name.split('-')
+    lesson_name = task_splitted[0]
+    task_name = task_splitted[len(task_splitted) - 1]
+
+    return lesson_name, task_name
+
 
 class CourseRedirect(INGIniousAdminPage):
     """ Redirect admins to /settings and tutors to /task """
