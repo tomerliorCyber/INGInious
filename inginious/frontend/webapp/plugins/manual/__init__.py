@@ -1,12 +1,13 @@
 import web
 from collections import OrderedDict
-from inginious.frontend.webapp.pages.course_admin.utils import INGIniousAdminPage
+from inginious.frontend.webapp.pages.course_admin.utils import INGIniousAdminPage, get_task_and_lesson
 import json
 from inginious.frontend.common.task_page_helpers import submission_to_json, list_multiple_multiple_choices_and_files
 from bson.objectid import ObjectId
 from datetime import datetime
 import os
 import pdfkit
+import tempfile
 
 
 class ManualPlugin(INGIniousAdminPage):
@@ -29,14 +30,15 @@ class ManualPlugin(INGIniousAdminPage):
         lessons = []
 
         for task in tasks:
-            lessons_list.add(task.split('-')[0])
+            lessons_list.add(get_task_and_lesson(task)[0])
 
         if lessons_list:
+            # sorted_lessons = sorted(lessons_list, key=int)
+            sorted_lessons = sorted(lessons_list)
             lessons = OrderedDict([(lesson, {"name": lesson,
-                                             "tasks": []}) for lesson in sorted(lessons_list, key=int)])
+                                             "tasks": []}) for lesson in sorted_lessons])
         for task in tasks:
-            lesson_num = task.split('-')[0]
-            task_num = task.split('-')[1]
+            lesson_num, task_num = get_task_and_lesson(task)
 
             lessons[lesson_num]['tasks'].append({"id": task_num,
                                                  "taskid": tasks[task]})
@@ -95,6 +97,8 @@ class ManualPlugin(INGIniousAdminPage):
         return user_data
 
 
+
+
 class IndexPage(ManualPlugin):
     def GET_AUTH(self, courseid):
         course = self.get_course_and_check_rights(courseid, allow_all_staff=True)[0]
@@ -109,14 +113,15 @@ class IndexPage(ManualPlugin):
 
         if user_task:
             for task in user_task:
-                if task['taskid'].split('-')[0] == current_lesson:
+                lesson_name, task_name = get_task_and_lesson(task['taskid'])
+                if lesson_name == current_lesson:
                     submission = self.submission_manager.get_submission(task['submissionid'], False)
 
                     if submission:
                         submission = self.submission_manager.get_input_from_submission(submission)
                         submission = self.submission_manager.get_feedback_from_submission(submission, show_everything=True)
 
-                        user_submission[task['taskid'].split('-')[1]] = submission
+                        user_submission[task_name] = submission
 
         user_data = self.get_user_data(current_lesson, current_user, lessons)
 
@@ -139,13 +144,14 @@ class StudentPage(ManualPlugin):
 
         if user_task:
             for task in user_task:
-                if task['taskid'].split('-')[0] == current_lesson:
+                lesson_name, task_name = get_task_and_lesson(task['taskid'])
+                if lesson_name == current_lesson:
                     submission = self.submission_manager.get_submission(task['submissionid'], False)
                     if submission:
                         submission = self.submission_manager.get_input_from_submission(submission)
                         submission = self.submission_manager.get_feedback_from_submission(submission, show_everything=True)
 
-                        user_submission[task['taskid'].split('-')[1]] = submission
+                        user_submission[task_name] = submission
 
         user_data = self.get_user_data(current_lesson, current_user, lessons)
 
@@ -299,7 +305,7 @@ class TaskPage(INGIniousAdminPage):
 
 
 class SaveManual(ManualPlugin):
-    def POST_AUTH(self, courseid, lessonid, currentuser):
+    def POST_AUTH(self, courseid, lessonid, evaluated_student):
         course = self.get_course_and_check_rights(courseid, allow_all_staff=True)[0]
         lessons = self.get_lessons(course)
         users = self.get_users(course)
@@ -308,7 +314,7 @@ class SaveManual(ManualPlugin):
         if lessonid not in lessons:
             return json.dumps({'status': 'error'})
 
-        if currentuser not in users:
+        if evaluated_student not in users:
             return json.dumps({'status': 'error'})
 
         for user in data:
@@ -318,7 +324,7 @@ class SaveManual(ManualPlugin):
                 "task_id": user['task_id'],
                 "is_average": user['is_average'],
                 "is_overall": user['is_overall'],
-                "username": currentuser
+                "username": evaluated_student
             }))
 
             if feedback:
@@ -336,7 +342,7 @@ class SaveManual(ManualPlugin):
                             "grade": user['grade'],
                             "is_average": user['is_average'],
                             "is_overall": user['is_overall'],
-                            "username": currentuser,
+                            "username": evaluated_student,
                             "updated_at": datetime.now(),
                             "created_at": feedback[0]['created_at'],
                         }
@@ -352,36 +358,37 @@ class SaveManual(ManualPlugin):
                         "grade": user['grade'],
                         "is_average": user['is_average'],
                         "is_overall": user['is_overall'],
-                        "username": currentuser,
+                        "username": evaluated_student,
                         "updated_at": None,
                         "created_at": datetime.now()
                     })
 
         return json.dumps({'status': 'success'})
 
-
 class ViewPDF(ManualPlugin):
-    def GET_AUTH(self, courseid, lessonid, currentuser):
+    '''
+    Used by DownloadPDF to generate the pdf 
+    '''
+    def GET_AUTH(self, courseid, lessonid, evaluated_student):
         page = web.template.render(os.path.realpath('.') + '/inginious/frontend/webapp/plugins/manual')
         course = self.get_course_and_check_rights(courseid, allow_all_staff=True)[0]
         lessons = self.get_lessons(course)
-        data = self.get_user_data(lessonid, currentuser, lessons)
+        data = self.get_user_data(lessonid, evaluated_student, lessons)
 
-        return page.pdf(currentuser, lessonid, data)
+        return page.pdf(evaluated_student, lessonid, data)
 
 
 class DownloadPDF(ManualPlugin):
-    def GET_AUTH(self, courseid, lessonid, currentuser):
-        # TODO: check if pdf library is exist and than run the code
-        path = os.path.realpath('.') + '/inginious/frontend/webapp/static/plugins/manual/'
-        url = 'http://' + web.ctx.host + '/admin/' + courseid + '/manual/' + lessonid + '/' + currentuser + '/pdf-view'
+    def GET_AUTH(self, courseid, lessonid, evaluated_student):
+
+        url = 'http://' + web.ctx.host + '/admin/' + courseid + '/manual/' + lessonid + '/' + evaluated_student + '/pdf-view'
         options = {
             'page-size': 'Legal',
             'margin-top': '0.75in',
             'margin-right': '0.75in',
             'margin-bottom': '0.75in',
             'margin-left': '0.75in',
-            'encoding': "UTF-8",
+            'encoding': 'UTF-8',
             'custom-header': [
                 ('Accept-Encoding', 'gzip')
             ],
@@ -391,9 +398,20 @@ class DownloadPDF(ManualPlugin):
             'no-outline': None
         }
 
-        pdfkit.from_url(url, path + 'out.pdf', options=options)
+        temp_file = tempfile.mktemp()
+        success = pdfkit.from_url(url, temp_file, options=options)
+        if not success:
+            raise Exception('failed to create a pdf file for ' + evaluated_student)
 
-        # TODO: return pdf download
+        '''
+        todo, this could be dangerous, sending a file without file.close().
+        could cause a memory leak
+        '''
+        pdf_file = open(temp_file, 'rb')
+        web.header('Content-Type','application/pdf', unique=True)
+        web.header('Content-Disposition', 'attachment; filename="assessment_'+evaluated_student+'.pdf"', unique=True)
+
+        return pdf_file
 
 
 def add_admin_menu(course):

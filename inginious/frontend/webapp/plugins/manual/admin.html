@@ -130,7 +130,7 @@ $var Navbar: $:NavbarF()
             Save
         </a>
 
-        <a href="#" class="btn btn-default btn-xs">
+        <a href="#" class="btn btn-default btn-xs export-btn">
             Export
         </a>
 
@@ -251,6 +251,7 @@ $for index, task in enumerate(lessons[current_lesson]['tasks']):
 <script>
     ManualPlugin.onSubmitAllBtn();
     ManualPlugin.onClickSave("$:course.get_id()", "$current_lesson", "$current_user");
+    ManualPlugin.onClickExport("$:course.get_id()", "$current_lesson", "$current_user");
     ManualPlugin.onCloseWindow(ManualPlugin.getDefaultFeedbacksValue());
     ManualPlugin.onClickArrowBtn();
     ManualPlugin.onChangeOverallGrade();

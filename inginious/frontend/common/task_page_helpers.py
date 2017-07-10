@@ -19,7 +19,7 @@ def submission_to_json(data, debug, reloading=False, replace=False):
         'submitted_on': str(data['submitted_on']),
         'grade': str(data.get("grade", 0.0)),
         'replace': replace and not reloading,  # Replace the evaluated submission
-        'grade_css_class': data['grade_css_class']
+        'grade_css_class': data.get('grade_css_class')
     }
 
     if reloading:

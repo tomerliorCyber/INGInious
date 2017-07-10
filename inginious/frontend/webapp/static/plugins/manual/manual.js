@@ -22,10 +22,35 @@ var ManualPlugin = (function() {
     }
 
     /**
+     * On export button
+     * @param courseId
+     * @param lessonId
+     * @param evaluatedStudent
+     */
+    function onClickExport(courseId, lessonId, evaluatedStudent) {
+        var exportBtn =  $('.export-btn');
+
+        exportBtn.on('click', function () {
+            _exportToPdf(courseId, lessonId, evaluatedStudent);
+        });
+    }
+
+
+    var _exportToPdf = function (courseId, lessonId, evaluatedStudent) {
+        var url = '/admin/' + courseId + '/manual/' + lessonId + '/' + evaluatedStudent + '/pdf-export';
+        try {
+            var child = window.open(url); child.focus();
+        } catch (e) {
+            console.log(e)
+        }
+        
+    };
+
+    /**
      * Add or update task grade and feedback
      * @param courseId
      * @param lessonId
-     * @param current_user
+     * @param current_user - is the student currently being evaluated 
      */
     var _sendTasks = function(courseId, lessonId, current_user) {
         var url = '/admin/' + courseId + '/task-manual/' + lessonId + '/save-manual/' + current_user;
@@ -552,6 +577,7 @@ var ManualPlugin = (function() {
     return {
         onClickSave: onClickSave,
         onSubmitAllBtn: onSubmitAllBtn,
+        onClickExport: onClickExport,
         onCloseWindow: onCloseWindow,
         getDefaultFeedbacksValue: getDefaultFeedbacksValue,
         onClickArrowBtn: onClickArrowBtn,
