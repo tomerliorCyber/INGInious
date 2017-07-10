@@ -295,7 +295,6 @@ def get_course_menu(course, user_manager, plugin_manager):
     if user_manager.has_admin_rights_on_course(course):
         admin_entries += [entry for entry in plugin_manager.call_hook('course_admin_main_menu', course=course) if entry is not None]
 
-
     return admin_entries + default_entries
 
 
