@@ -74,7 +74,6 @@ class MatrixPage(INGIniousAdminPage):
 
         return order_tasks
 
-
     def _calc_user_data(self, course, order_tasks, user_data):
         username = user_data['username']
         course_id = course.get_id()
@@ -93,7 +92,6 @@ class MatrixPage(INGIniousAdminPage):
 
         data_user = {'name': user_data, 'tasks': ordered_tasks_for_user}
         return data_user
-
 
     def _calculate_user_tasks(self, user_tasks, ordered_tasks_for_user,
                              user_task_submissions_by_task_id, course_name, student_name):
@@ -124,7 +122,6 @@ class MatrixPage(INGIniousAdminPage):
 
     def _build_student_submissions_url(self, course_name, student_name, task_name):
           return '/admin/'+ course_name + '/student/' + student_name + '/' +task_name
-
 
     def _get_user_task_submissions(self, username, course_id):
         '''
