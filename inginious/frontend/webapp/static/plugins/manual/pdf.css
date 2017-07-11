@@ -2,6 +2,7 @@ body {
     font-family: arial;
     direction: ltr;
     text-align: left;
+    padding: 20px;
 }
 
 hr {
@@ -9,19 +10,16 @@ hr {
 }
 
 h1 {
-    font-size: 120px;
     text-align: center;
 }
 
 h2 {
-    font-size: 80px;
     margin-bottom: 0;
     padding-bottom: 0;
 }
 
 p {
-    font-size: 50px;
-    margin-bottom: 120px;
+    margin-bottom: 20px;
 }
 
 .space {
@@ -35,13 +33,11 @@ table {
 
 table thead tr th {
     border-bottom: 2px solid gray;
-    font-size: 50px;
     padding: 20px;
     text-align: left;
 }
 
 table tbody td {
-    font-size: 50px;
     padding: 20px;
     border-bottom: 1px solid gray;
 }
