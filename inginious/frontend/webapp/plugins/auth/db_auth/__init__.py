@@ -195,9 +195,9 @@ To activate your account, please click on the following link :
 Someone (probably you) asked to reset your INGInious password. If this was you, please click on the following link :
 """ + web.ctx.home + "/register?reset=" + reset_hash)
                     msg = "An email has been sent to you to reset your password."
-                except:
+                except Exception as err:
                     error = True
-                    msg = "Something went wrong while sending you reset email. Please contact the administrator."
+                    msg = "Something went wrong while sending you reset email ("+repr(err)+"). Please contact the administrator."
 
         return msg, error
 
