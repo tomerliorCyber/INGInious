@@ -33,6 +33,30 @@ var ManualPlugin = (function() {
         exportBtn.on('click', function () {
             _exportToPdf(courseId, lessonId, evaluatedStudent);
         });
+
+    }
+
+    /**
+     * On export and Next button
+     * @param courseId
+     * @param lessonId
+     * @param evaluatedStudent
+     */
+    function onClickExportAndNext(courseId, lessonId, evaluatedStudent) {
+        var exportNextBtn =  $('.export-next-btn');
+
+        exportNextBtn.on('click', function () {
+            var urlOfNextStudent, isEndOfStudents = $('.btn-arrow.btn-right').hasClass('btn-disabled');
+            _exportToPdf(courseId, lessonId, evaluatedStudent);
+            if (isEndOfStudents){
+                alert('You have reached the end')
+            }else{
+                urlOfNextStudent = $('.btn-arrow.btn-right').attr('href');
+                window.location.href = urlOfNextStudent
+            }
+
+
+        });
     }
 
 
@@ -578,6 +602,7 @@ var ManualPlugin = (function() {
         onClickSave: onClickSave,
         onSubmitAllBtn: onSubmitAllBtn,
         onClickExport: onClickExport,
+        onClickExportAndNext: onClickExportAndNext,
         onCloseWindow: onCloseWindow,
         getDefaultFeedbacksValue: getDefaultFeedbacksValue,
         onClickArrowBtn: onClickArrowBtn,
