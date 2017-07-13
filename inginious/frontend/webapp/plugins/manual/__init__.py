@@ -372,7 +372,7 @@ class ViewPDF(ManualPlugin):
     '''
     def GET_AUTH(self, courseid, lessonid, evaluated_student):
 
-        page = web.template.render(MANUAL_DIR_PATHMANUAL_DIR_PATH)
+        page = web.template.render(MANUAL_DIR_PATH)
         course = self.get_course_and_check_rights(courseid, allow_all_staff=True)[0]
         lessons = self.get_lessons(course)
         data = self.get_user_data(lessonid, evaluated_student, lessons)
