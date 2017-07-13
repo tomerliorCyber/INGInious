@@ -9,6 +9,7 @@ import os
 import pdfkit
 import tempfile
 
+MANUAL_DIR_PATH = os.path.dirname(os.path.abspath(__file__))
 
 class ManualPlugin(INGIniousAdminPage):
     """ Manual plugin - show overall feedback about student """
@@ -370,7 +371,8 @@ class ViewPDF(ManualPlugin):
     Used by DownloadPDF to generate the pdf 
     '''
     def GET_AUTH(self, courseid, lessonid, evaluated_student):
-        page = web.template.render(os.path.realpath('.') + '/inginious/frontend/webapp/plugins/manual')
+
+        page = web.template.render(MANUAL_DIR_PATHMANUAL_DIR_PATH)
         course = self.get_course_and_check_rights(courseid, allow_all_staff=True)[0]
         lessons = self.get_lessons(course)
         data = self.get_user_data(lessonid, evaluated_student, lessons)
