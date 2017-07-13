@@ -222,7 +222,7 @@ Someone (probably you) asked to reset your INGInious password. If this was you, 
                 error = True
                 msg = "Invalid reset hash."
             else:
-                msg = "Your password has been successfully changed."
+                msg = "Your password has been successfully changed. click <a href='/' id='reset-get-back'>here</a> to re login"
 
         return msg, error
 
