@@ -826,12 +826,11 @@ function loadInput(submissionid, input)
 function uploadFile(e){
     var myFile = e.target.files[0];
     var reader = new FileReader();
-    // potential issues with this find.
-    var numberOfPres = $('.upload-file-btn-js').closest('div').find('pre').length;
-    var fileDisplayArea = $('.upload-file-btn-js').closest('div').find('pre')[numberOfPres-1];
+    var problemIndex = $(this).attr('data-index');
+    var fileDisplayArea = codeEditors[problemIndex];
     reader.onload = function(e){
         var output = e.target.result;
-        $(fileDisplayArea).text(output)
+        fileDisplayArea.getDoc().setValue(output)
     };
     reader.readAsText(myFile)
 }

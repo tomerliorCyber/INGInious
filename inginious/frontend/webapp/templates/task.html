@@ -210,13 +210,13 @@ $if user_manager.has_admin_rights_on_course(course):
     $if webterm_link is not None:
         <input type="hidden" value="$webterm_link" id="webterm_link"/>
     <input type="hidden" name="@action" value="submit"/>
-    $for key, problem in enumerate(task.get_problems()):
+    $for index, problem in enumerate(task.get_problems()):
         <div class="panel panel-default">
             $if len(task.get_problems()) != 1 or problem.get_name() != "":
                 <div class="panel-heading">
                     <h3 class="panel-title">
                         $if len(task.get_problems()) != 1:
-                            Question ${key+1}:
+                            Question ${index+1}:
                         $problem.get_name()
                     </h3>
                 </div>
@@ -225,7 +225,7 @@ $if user_manager.has_admin_rights_on_course(course):
                 <div id="task_alert.$problem.get_id()" class="task_alert_problem"></div>
                 $if problem.get_type() == 'code':
                     upload solution from computer
-                    <input type="file" class="upload-file-btn-js">
+                    <input type="file" class="upload-file-btn-js" data-index="$index">
                     <br/>
                 $:problem.get_header()
                 $:problem.show_input(template_helper.get_common_renderer())
