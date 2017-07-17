@@ -826,22 +826,11 @@ function loadInput(submissionid, input)
 function uploadFile(e){
     var myFile = e.target.files[0];
     var reader = new FileReader();
-    $('.upload-file-btn-js').closest('div').find('pre')[1].innerHTML = 'etetet';
+    // potential issues with this find. 
     var fileDisplayArea = $('.upload-file-btn-js').closest('div').find('pre')[1];
     reader.onload = function(e){
         var output = e.target.result;
-        // alert(output)
-        fileDisplayArea.innerHtml = 'asdfasdf'
+        $(fileDisplayArea).text(output)
     };
     reader.readAsText(myFile)
-    //
-    // var fileDisplayArea = $('.upload-file-btn-js').closest('div').find('pre')[1];
-    // var reader = new FileReader();
-    // var file = this.files[0];
-    // reader.onload = function(e) {
-    //     console.log(reader.result);
-    //     // fileDisplayArea.innerHtml = reader.result
-    // };
-    // reader.readAsText(file);
-
 }

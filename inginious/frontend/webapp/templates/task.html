@@ -200,7 +200,6 @@ $if user_manager.has_admin_rights_on_course(course):
             </div>
         </div>
     </div>
-
 <form id="task" method="post" action="$get_homepath()/course/${task.get_course().get_id()}/${task.get_id()}" enctype="multipart/form-data"
     $for submission in submissions:
         $if submission["status"] == "waiting":
@@ -225,9 +224,12 @@ $if user_manager.has_admin_rights_on_course(course):
 
                 <div id="task_alert.$problem.get_id()" class="task_alert_problem"></div>
                 $if problem.get_type() == 'code':
-                    <input type="file" class="upload-file-btn-js">upload solution from computer
+                    upload solution from computer
+                    <input type="file" class="upload-file-btn-js">
+                    <br/>
                 $:problem.get_header()
                 $:problem.show_input(template_helper.get_common_renderer())
+
             </div>
         </div>
 
