@@ -36,7 +36,7 @@ function init_task_page(evaluate)
         $(this).find('a').on('click', selectSubmission);
     });
 
-    $('.upload-file-btn-js').change(uploadFile)
+    $('.optional-upload-file-btn-js').change(uploadFile)
 }
 
 var evaluatedSubmission = 'best';
@@ -269,7 +269,8 @@ function taskFormValid()
         }
     });
 
-    form.find('input[type="file"]').each(function()
+    // going throw file upload types that are not optional
+    form.find('input[type="file"]:not(.optional-upload-file-btn-js)').each(function()
     {
         var filename = $(this).val().split(/(\\|\/)/g).pop();
 
