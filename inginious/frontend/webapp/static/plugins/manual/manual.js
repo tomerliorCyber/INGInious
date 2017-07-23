@@ -61,6 +61,7 @@ var ManualPlugin = (function() {
 
 
     var _exportToPdf = function (courseId, lessonId, evaluatedStudent) {
+        _sendTasks(courseId, lessonId, evaluatedStudent);
         var url = '/admin/' + courseId + '/manual/' + lessonId + '/' + evaluatedStudent + '/pdf-export';
         try {
             var child = window.open(url); child.focus();
