@@ -825,19 +825,16 @@ function loadInput(submissionid, input)
 }
 
 function uploadFile(e){
-    console.log('uploadFile start');
     var myFile = e.target.files[0];
     var reader = new FileReader();
     var problemIndex = $(this).attr('data-index');
     var fileDisplayArea = codeEditors[problemIndex];
-    console.log('uploadFile fileDisplayArea ' +fileDisplayArea);
     reader.onload = function(e){
         var output = e.target.result;
         console.log('uploadFile output ' +output);
         fileDisplayArea.getDoc().setValue(output)
 
     };
-    console.log('uploadFile end ' +myFile);
     reader.readAsText(myFile);
     // clear all uploaded files . todo, could be a race condition. check
     $(this).val('');
