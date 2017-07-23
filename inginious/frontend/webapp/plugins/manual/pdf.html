@@ -15,7 +15,7 @@ $var title: pdf
         <hr>
 
         <h2>Overall Feedback</h2>
-        <p>
+        <p class="feedback">
             $if data['overall']['feedback'] == '':
                 --
             $else:
@@ -43,7 +43,7 @@ $var title: pdf
                     $if task != 'avg' and task != 'overall':
                         <tr>
                             <td>$task</td>
-                            <td>
+                            <td style="direction: rtl">
                                 Feedback:<br>
                                 $if data[task]['feedback'] == '':
                                     ---

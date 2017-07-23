@@ -17,6 +17,7 @@
 .feedback {
     width: 100%;
     max-width: 100%;
+    direction: rtl;
 }
 
 .overall-grade {

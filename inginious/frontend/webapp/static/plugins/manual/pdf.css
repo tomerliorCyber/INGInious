@@ -42,4 +42,9 @@ table tbody td {
     border-bottom: 1px solid gray;
 }
 
+.feedback {
+    direction: rtl;
+    float: right;
+}
+
 
