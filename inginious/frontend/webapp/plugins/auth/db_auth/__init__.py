@@ -235,11 +235,13 @@ Someone (probably you) asked to reset your INGInious password. If this was you, 
         msg = ""
         error = False
         data = web.input()
+
         if "register" in data:
             msg, error = self.register_user(data)
         elif "lostpasswd" in data:
             msg, error = self.lost_passwd(data)
         elif "resetpasswd" in data:
+            _, _, reset = self.get_reset_data(data)
             msg, error = self.reset_passwd(data)
 
         return self.template_helper.get_custom_renderer('frontend/webapp/plugins/auth/db_auth').register(reset, msg, error)
