@@ -62,10 +62,10 @@ class ManualPlugin(INGIniousAdminPage):
 
         return {"next": next, "back": back}
 
-    def get_user_data(self, current_lesson, current_user, lessons):
+    def get_user_data(self, current_lesson, current_username, lessons):
         user_db = list(self.database.feedbacks.find({
             "lesson_id": current_lesson,
-            "username": current_user
+            "username": current_username
         }))
 
         user_data = OrderedDict()
@@ -376,8 +376,9 @@ class ViewPDF(ManualPlugin):
         course = self.get_course_and_check_rights(courseid, allow_all_staff=True)[0]
         lessons = self.get_lessons(course)
         data = self.get_user_data(lessonid, evaluated_student, lessons)
+        user_real_name = self.user_manager.get_user_realname(evaluated_student)
 
-        return page.pdf(evaluated_student, lessonid, data)
+        return page.pdf(user_real_name, lessonid, data)
 
 
 class DownloadPDF(ManualPlugin):
