@@ -420,7 +420,7 @@ class DownloadPDF(ManualPlugin):
 
 def add_admin_menu(course):
     """ Add matrix setting to the admin panel """
-    return ('manual', '<i class="fa fa-list-ol fa-fw"></i>&nbsp; Manual Assessment')
+    return ('manual', '<i class="fa fa-list-ol fa-fw"></i>&nbsp; Manual Feedback')
 
 
 def add_css_file():

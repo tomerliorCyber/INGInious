@@ -1,6 +1,6 @@
 $def with (course, lessons, users, current_lesson, current_user, buttons, webterm_link, user_submission, user_data)
 
-$var title: $:course.get_name() - Manual Assessment
+$var title: $:course.get_name() - Manual Feedback
 
 $var Column: $:template_helper.call('course_admin_menu',course=course,current='manual')
 
@@ -17,14 +17,14 @@ $def NavbarF():
         </li>
 
         <li class="active">
-            <a href="#"><i class="fa fa-graduation-cap"></i> Manual Assessment <span class="sr-only">(current)</span></a>
+            <a href="#"><i class="fa fa-graduation-cap"></i> Manual Feedback <span class="sr-only">(current)</span></a>
         </li>
     </ol>
 $var Navbar: $:NavbarF()
 
 
 
-<h2 class="manual-title">Manual Assessment</h2>
+<h2 class="manual-title">Manual Feedback</h2>
 
 <div class="lessons">
     <div class="row">
