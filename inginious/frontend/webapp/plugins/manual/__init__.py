@@ -435,6 +435,7 @@ def add_js_file():
 
 def init(plugin_manager, _, _2, _3):
     plugin_manager.add_hook("course_admin_menu", add_admin_menu)
+    plugin_manager.add_hook('course_admin_main_menu', add_admin_menu)
     plugin_manager.add_hook('javascript_header', add_js_file)
     plugin_manager.add_hook('css', add_css_file)
     plugin_manager.add_page("/admin/([^/]+)/manual", IndexPage)
