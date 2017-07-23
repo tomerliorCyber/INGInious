@@ -143,12 +143,7 @@ $def ColumnF():
 	        $if submissions:
 	            $for submission in submissions:
 	                <li class="submission list-group-item
-	                    $if submission['status'] == 'done' and submission['result'] == 'success':
-	                        list-group-item-success
-	                    $elif submission['status'] == 'waiting':
-	                        list-group-item-warning
-	                    $else:
-	                        list-group-item-danger
+	                    $submission.get('grade_css_class', '')
 	                    "
 	                    data-submission-id="$submission['_id']">
                         $if task.get_accessible_time().is_open() or user_manager.has_admin_rights_on_course(course):

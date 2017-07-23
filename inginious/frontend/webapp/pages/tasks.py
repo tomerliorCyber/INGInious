@@ -114,9 +114,12 @@ class TaskPage(INGIniousAuthPage):
                     students = group["groups"][0]["students"]
                 # we don't care for the other case, as the student won't be able to submit.
 
+            submissions = self.submission_manager.get_user_submissions(task)
+            submissions = [self.submission_manager.get_feedback_from_submission(submission, inginious_page_object=self) for submission in submissions]
+
             # Display the task itself
             return self.template_helper.get_renderer().task(course, task,
-                                                            self.submission_manager.get_user_submissions(task),
+                                                            submissions,
                                                             students, eval_submission, user_task, self.webterm_link)
 
     def POST_AUTH(self, courseid, taskid):  # pylint: disable=arguments-differ
@@ -179,9 +182,7 @@ class TaskPage(INGIniousAuthPage):
                 elif self.submission_manager.is_done(result):
                     web.header('Content-Type', 'application/json')
                     result = self.submission_manager.get_input_from_submission(result)
-                    result = self.submission_manager.get_feedback_from_submission(result, show_everything=is_staff)
-                    # space is because frontend is attaching this to alert-'grade_css_class' so we need a separation.
-                    result['grade_css_class'] = ' ' + self.task_factory.get_relevant_color_class_for_grade(result.get('grade', 0.0))
+                    result = self.submission_manager.get_feedback_from_submission(result, show_everything=is_staff, inginious_page_object=self)
 
                     # user_task always exists as we called user_saw_task before
                     user_task = self.database.user_tasks.find_one({
@@ -212,7 +213,7 @@ class TaskPage(INGIniousAuthPage):
             elif "@action" in userinput and userinput["@action"] == "load_submission_input" and "submissionid" in userinput:
                 submission = self.submission_manager.get_submission(userinput["submissionid"])
                 submission = self.submission_manager.get_input_from_submission(submission)
-                submission = self.submission_manager.get_feedback_from_submission(submission, show_everything=is_staff)
+                submission = self.submission_manager.get_feedback_from_submission(submission, show_everything=is_staff, inginious_page_object=self)
                 if not submission:
                     raise web.notfound()
                 web.header('Content-Type', 'application/json')

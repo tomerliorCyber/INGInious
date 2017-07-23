@@ -250,7 +250,7 @@ class SubmissionManager(object, metaclass=ABCMeta):
                 submission["input"] = inp
                 return submission
 
-    def get_feedback_from_submission(self, submission, only_feedback=False, show_everything=False):
+    def get_feedback_from_submission(self, submission, only_feedback=False, show_everything=False, inginious_page_object=None):
         """
             Get the input of a submission. If only_input is False, returns the full submissions with a dictionnary object at the key "input".
             Else, returns only the dictionnary.
@@ -271,6 +271,11 @@ class SubmissionManager(object, metaclass=ABCMeta):
                     submission["problems"][problem] = (submission["problems"][problem][0], ParsableText(submission["problems"][problem][1],
                                                                                                         submission["response_type"],
                                                                                                         show_everything).parse())
+        if 'grade' in submission:
+            # space is because frontend is attaching this to alert-'grade_css_class' so we need a separation.
+            if inginious_page_object:
+                submission['grade_css_class'] = ' ' + inginious_page_object.task_factory.get_relevant_color_class_for_grade(submission['grade'])
+
         return submission
 
     def is_running(self, submissionid, user_check=True):

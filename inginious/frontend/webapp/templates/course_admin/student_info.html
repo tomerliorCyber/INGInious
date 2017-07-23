@@ -48,12 +48,7 @@ $var Navbar: $:NavbarF()
     <tbody>
     $for task in data:
     	<tr
-            $if task["status"] == "notattempted":
-                class="warning"
-            $elif task["status"] == "succeeded":
-                class="success"
-            $elif task["status"] == "failed":
-                class="danger"
+            class="${task.get('grade_css_class', '')}"
         >
     		<td><a href="$get_homepath()/admin/${course.get_id()}/student/$username/$task['taskid']">$task["name"]</a></td>
     		<td>

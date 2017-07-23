@@ -70,17 +70,7 @@ $var Navbar: $:NavbarF()
 <div class="student_view">
     $:task.get_context()
 </div>
-$if submission["status"] == "waiting":
-    $ color="warning"
-$elif "result" not in submission:
-    $ color="danger"
-$elif submission["result"] == "success":
-    $ color="success"
-$elif submission["result"] in ["timeout", "overflow"]:
-    $ color="warning"
-$else:
-    $ color="danger"
-<div class="alert alert-$color">
+<div class="alert ${submission['grade_css_class']}">
     $if submission["status"] == "waiting":
         Grading in progress, reload the page to refresh status.
     $elif "result" not in submission:
