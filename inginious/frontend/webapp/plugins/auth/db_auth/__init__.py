@@ -356,6 +356,11 @@ def main_menu(template_helper, database):
     return str(template_helper.get_custom_renderer('frontend/webapp/plugins/auth/db_auth', layout=False).main_menu(is_user_in_db))
 
 
+def last_tried_exercises(template_helper, submissions):
+    return str(template_helper.get_custom_renderer('frontend/webapp/templates', layout=False).last_tried_exercises(submissions))
+
+
+
 def init(plugin_manager, _, _2, conf):
     """
         Allow authentication from database
@@ -365,5 +370,7 @@ def init(plugin_manager, _, _2, conf):
     allow_deletion = conf.get("allow_deletion", False)
     plugin_manager.register_auth_method(DatabaseAuthMethod(conf.get('name', 'WebApp'), plugin_manager.get_database()))
     plugin_manager.add_hook("main_menu", lambda template_helper: main_menu(template_helper, plugin_manager.get_database()))
+    # get out of here to main 
+    plugin_manager.add_hook("last_tried_exercises", lambda template_helper, submissions: last_tried_exercises(template_helper, submissions))
     plugin_manager.add_page('/register', RegistrationPage)
     plugin_manager.add_page('/profile', ProfilePage)

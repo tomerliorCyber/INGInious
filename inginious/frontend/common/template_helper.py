@@ -30,6 +30,7 @@ class TemplateHelper(object):
                               "main_menu": (lambda **kwargs: self._generic_hook('main_menu', **kwargs)),
                               "course_menu": (lambda **kwargs: self._generic_hook('course_menu', **kwargs)),
                               "task_menu": (lambda **kwargs: self._generic_hook('task_menu', **kwargs)),
+                              "last_tried_exercises": (lambda **kwargs: self._generic_hook('last_tried_exercises', **kwargs)),
                               "welcome_text": (lambda **kwargs: self._generic_hook('welcome_text', **kwargs)),
                               "javascript_header": (lambda **_: self._javascript_helper("header")),
                               "javascript_footer": (lambda **_: self._javascript_helper("footer")),

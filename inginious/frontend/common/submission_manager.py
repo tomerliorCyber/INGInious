@@ -345,10 +345,12 @@ class SubmissionManager(object, metaclass=ABCMeta):
                             "status" : "$status",
                             "courseid": "$courseid",
                             "taskid": "$taskid",
-                            "submitted_on": "$submitted_on"
+                            "submitted_on": "$submitted_on",
+                            "grade": "$grade"
                         }},
             }},
             {"$project": {
+                "grade": 1,
                 "submitted_on": 1,
                 "submissions": {
                     # This could be replaced by $filter if mongo v3.2 is set as dependency

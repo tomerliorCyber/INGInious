@@ -46,6 +46,7 @@ class CoursePage(INGIniousAuthPage):
         else:
             tasks = course.get_tasks()
             last_submissions = self.submission_manager.get_user_last_submissions(5, {"courseid": course.get_id(), "taskid": {"$in": list(tasks.keys())}})
+            last_submissions = [self.submission_manager.get_feedback_from_submission(submission, inginious_page_object=self) for submission in last_submissions]
 
             for submission in last_submissions:
                     submission["taskname"] = tasks[submission['taskid']].get_name()
