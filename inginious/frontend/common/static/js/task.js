@@ -835,7 +835,10 @@ function uploadFile(e){
         var output = e.target.result;
         console.log('uploadFile output ' +output);
         fileDisplayArea.getDoc().setValue(output)
+
     };
     console.log('uploadFile end ' +myFile);
-    reader.readAsText(myFile)
+    reader.readAsText(myFile);
+    // clear all uploaded files . todo, could be a race condition. check
+    $(this).val('');
 }
