@@ -95,11 +95,11 @@ class _CustomHTMLWriter(html4css1.Writer, object):
                 if token.strip():
                     # Protect text like "--an-option" and the regular expression
                     # ``[+]?(\d+(\.\d*)?|\.\d+)`` from bad line wrapping
-                    if self.sollbruchstelle.search(token):
-                        self.body.append('<span class="pre">%s</span>'
-                                         % self.encode(token))
-                    else:
-                        self.body.append(self.encode(token))
+                    # if self.sollbruchstelle.search(token):
+                    #     self.body.append('<span class="pre">%s</span>'
+                    #                      % self.encode(token))
+                    # else:
+                    self.body.append(self.encode(token))
                 elif token in ('\n', ' '):
                     # Allow breaks at whitespace:
                     self.body.append(token)
