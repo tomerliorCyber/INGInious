@@ -63,7 +63,11 @@
 }
 
 
-.grade a{
+a.grade{
+    color: white;
+}
+
+td.grade a{
     text-align: center;
     color: white;
     text-decoration: underline;

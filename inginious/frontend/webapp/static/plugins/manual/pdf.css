@@ -44,6 +44,7 @@ table tbody td {
 
 .feedback {
     direction: rtl;
+    text-align: right;
     float: right;
 }
 

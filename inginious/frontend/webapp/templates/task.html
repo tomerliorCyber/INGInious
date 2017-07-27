@@ -219,7 +219,7 @@ $if user_manager.has_admin_rights_on_course(course):
 
                 <div id="task_alert.$problem.get_id()" class="task_alert_problem"></div>
                 $if problem.get_type() == 'code':
-                    upload solution from computer
+                    <button class="btn btn-sm btn-ignore-click">upload solution from computer</button>
                     <input type="file" class="optional-upload-file-btn-js" data-index="$index">
                     <br/>
                 $:problem.get_header()

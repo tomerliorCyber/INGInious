@@ -385,7 +385,7 @@ class DownloadPDF(ManualPlugin):
     def GET_AUTH(self, courseid, lessonid, evaluated_student):
 
         url = 'http://' + web.ctx.host + '/admin/' + courseid + '/manual/' + lessonid + '/' + evaluated_student + '/pdf-view'
-        file_name_downloaded = 'assessment_'+courseid + '_' + lessonid + '_' + evaluated_student+'.pdf'
+        file_name_downloaded = 'feedback_'+courseid + '_' + lessonid + '_' + evaluated_student+'.pdf'
         options = {
             'page-size': 'Legal',
             'margin-top': '0.75in',

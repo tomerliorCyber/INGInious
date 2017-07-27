@@ -6,7 +6,8 @@
 var ManualPlugin = (function() {
     var isSaved = false;
     var $ = jQuery;
-
+    var alertID = 'alert-manual-feedback';
+    var secondsDelayToDissolveAlert = 3;
     /**
      * On save btn
      * @param courseId
@@ -140,10 +141,10 @@ var ManualPlugin = (function() {
             dataType: 'json',
             success: function(data) {
                 if (data.status == 'success') {
-                    _manualAlertMessage("Your assessment saved!", 'success');
+                    _manualAlertMessage("Your feedback saved!", 'success');
                     isSaved = true;
                 } else {
-                    _manualAlertMessage("Your assessment failed!", 'danger');
+                    _manualAlertMessage("Your feedback failed!", 'danger');
                 }
             },
             error: function(data) {
@@ -154,7 +155,8 @@ var ManualPlugin = (function() {
 
     var _manualAlertMessage = function(message, type) {
         var manualTitle = $('.manual-title');
-        var alert = $('<div></div>');
+        var alertIDForDiv='#'+alertID;
+        var alert = $('<div id="'+alertID+'"></div>');
         var closeBtn = $("<button></button>");
 
         closeBtn.addClass("close");
@@ -170,6 +172,10 @@ var ManualPlugin = (function() {
         if (!$('.alert').length) {
             manualTitle.after(alert);
         }
+
+        $(alertIDForDiv).fadeTo(secondsDelayToDissolveAlert*1000, 500).slideUp(500, function(){
+            $(alertIDForDiv).slideUp(500);
+        });
     };
 
 

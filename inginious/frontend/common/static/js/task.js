@@ -36,7 +36,11 @@ function init_task_page(evaluate)
         $(this).find('a').on('click', selectSubmission);
     });
 
-    $('.optional-upload-file-btn-js').change(uploadFile)
+    $('.optional-upload-file-btn-js').change(uploadFile);
+    $('button').click(function(e){
+        e.preventDefault();
+        $(this).parent().find('.optional-upload-file-btn-js').click()
+    });
 }
 
 var evaluatedSubmission = 'best';

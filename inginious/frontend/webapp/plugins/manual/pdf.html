@@ -9,7 +9,7 @@ $var title: pdf
         <link rel="stylesheet" href="/static/webapp/plugins/manual/pdf.css">
     </head>
 
-    <body>
+    <body style="white-space: pre-line">
         <h1>$currentuser.title() - Lesson $lessonid</h1>
 
         <hr>
@@ -21,7 +21,6 @@ $var title: pdf
             $else:
                 $data['overall']['feedback']
 
-            <br>
             <br>
             Grade:
             $if data['overall']['grade'] == '':
@@ -43,7 +42,7 @@ $var title: pdf
                     $if task != 'avg' and task != 'overall':
                         <tr>
                             <td>$task</td>
-                            <td style="direction: rtl">
+                            <td style="direction: rtl; white-space: pre-line">
                                 Feedback:<br>
                                 $if data[task]['feedback'] == '':
                                     ---

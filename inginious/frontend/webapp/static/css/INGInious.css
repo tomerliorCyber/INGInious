@@ -432,3 +432,12 @@ li.placeholder:before {
 #reset-get-back{
   color: red;
 }
+
+
+/* to hide the submission no file chosen button and to overwrite with our button */
+input[type='file'] {
+  display: block;
+  visibility: hidden;
+  width: 0;
+  height: 0;
+}
