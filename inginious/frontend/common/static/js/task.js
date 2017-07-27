@@ -37,7 +37,7 @@ function init_task_page(evaluate)
     });
 
     $('.optional-upload-file-btn-js').change(uploadFile);
-    $('button').click(function(e){
+    $('.btn-ignore-click').click(function(e){
         e.preventDefault();
         $(this).parent().find('.optional-upload-file-btn-js').click()
     });
