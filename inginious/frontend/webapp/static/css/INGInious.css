@@ -68,11 +68,9 @@ form#task label {
 }
 #task_alert {
   position: relative;
-}
-
-#task_alert b{
   color: white;
 }
+
 #task_alert .alert#ssh_remote_info {
   font-size: 14px;
 }
