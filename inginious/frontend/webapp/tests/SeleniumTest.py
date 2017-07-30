@@ -66,7 +66,7 @@ def _drop_database(config):
 class SeleniumTest(unittest.TestCase):
     def setUp(self):
         self.frontend_config = {
-            "backend": "local",
+            "backend": "remote",
             "docker_daemons": [{
                 "remote_host": "192.168.59.103",
                 "remote_docker_port": 2375,
