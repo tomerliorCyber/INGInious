@@ -251,7 +251,7 @@ class DockerAgent(object):
                 container_path = tempfile.mkdtemp(dir=self.tmp_dir)
             except Exception as e:
                 self._logger.error("Cannot make container temp directory! %s", str(e), exc_info=True)
-                await self.send_job_result(message.job_id, "crash", 'Cannot make container temp directory. ' +repr(e))
+                await self.send_job_result(message.job_id, "crash", 'Cannot make container temp directory - ' +repr(e))
                 if ssh_port is not None:
                     self.ssh_ports.add(ssh_port)
                 return
