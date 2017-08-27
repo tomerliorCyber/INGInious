@@ -835,7 +835,6 @@ function uploadFile(e){
     var fileDisplayArea = codeEditors[problemIndex];
     reader.onload = function(e){
         var output = e.target.result;
-        console.log('uploadFile output ' +output);
         fileDisplayArea.getDoc().setValue(output)
 
     };
