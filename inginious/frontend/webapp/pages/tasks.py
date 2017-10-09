@@ -164,6 +164,8 @@ class TaskPage(INGIniousAuthPage):
                     if userinput["@debug-mode"] == "ssh" and debug:
                         debug = "ssh"
                     del userinput['@debug-mode']
+                    # userinput['html_template'] = \
+                    #     self.template_helper.get_renderer(with_layout=False).feedback()
 
                 # Start the submission
                 try:
@@ -195,6 +197,8 @@ class TaskPage(INGIniousAuthPage):
                     default_submission = self.database.submissions.find_one({'_id': ObjectId(submissionid)}) if submissionid else None
                     if default_submission is None:
                         self.set_selected_submission(course, task, userinput['submissionid'])
+                    result['text'] = self.template_helper.get_renderer(with_layout=False).feedback()
+                    result['result'] = 'success'
                     return submission_to_json(result, is_admin, False, True if default_submission is None else default_submission['_id'] == result['_id'])
 
                 else:
