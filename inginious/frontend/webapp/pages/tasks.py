@@ -199,7 +199,9 @@ class TaskPage(INGIniousAuthPage):
                     try:
                         result['text'] = self.template_helper.get_renderer(with_layout=False).task_page.feedback()
                     except Exception as error:
-                        self.logger.error('error template_helper --- ' + repr(error))
+                        import locale
+                        prefered_encoding = locale.getpreferredencoding()
+                        self.logger.error('error template_helper --- ' + repr(error) + ' ---- prefered_encoding ' + repr(prefered_encoding))
                         self.logger.error('traceback data is ' + traceback.format_exc())
                         result['text'] = 'error ' +repr(error)
                         
