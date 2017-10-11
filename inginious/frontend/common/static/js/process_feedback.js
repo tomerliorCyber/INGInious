@@ -3,10 +3,6 @@ function processFeedback(feedbackData, scenarioId) {
     var comments = [];
     console.log('scenarioIdStr is ' + scenarioIdStr);
 
-
-
-
-
     // The modal's Terminal initialization
     var command_line = "C:\\Magshimim> program.exe";
     for (var i = 0; i < feedbackData.args.length; i++) {

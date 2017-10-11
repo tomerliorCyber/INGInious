@@ -21,96 +21,22 @@
 
         <!-- CSS
         –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-        <!--Font Awesome https://www.w3schools.com/icons/fontawesome_icons_intro.asp -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <!-- Loaded by Ingenious. Font Awesome https://www.w3schools.com/icons/fontawesome_icons_intro.asp -->
+        <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">-->
         <!--bootstrap is already loaded by Inginious remove after testing -->
-        <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+        <!--Loaded by Ingenious. if loaded twice, causes a bug in inginious <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>-->
 
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <!--Loaded by Ingenious. <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">-->
         <!-- Right to lef -->
-        <!--<link rel="stylesheet" href="//cdn.rawgit.com/morteza/bootstrap-rtl/v3.3.4/dist/css/bootstrap-rtl.min.css">-->
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" crossorigin="anonymous"></script>
+        <!--Loaded by Ingenious. <link rel="stylesheet" href="//cdn.rawgit.com/morteza/bootstrap-rtl/v3.3.4/dist/css/bootstrap-rtl.min.css">-->
+        <!--Loaded by Ingenious. <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" crossorigin="anonymous"></script>-->
 
         <!-- Frontend templates js -->
-        <script src="https://cdn.rawgit.com/blueimp/JavaScript-Templates/master/js/tmpl.min.js" crossorigin="anonymous"></script>
+        <!--Loaded by Ingenious. <script src="https://cdn.rawgit.com/blueimp/JavaScript-Templates/master/js/tmpl.min.js" crossorigin="anonymous"></script>-->
 
-        <!--TODO move this a separate css file-->
-        <style>
-
-            .feedback-table{
-                font-family: 'Arimo', sans-serif;
-                font-size: 16px;
-                background-color: white;
-                margin: 15px;
-                direction: rtl;
-                text-align: right;
-            }
-
-            .feedback-modal{
-                font-family: 'Arimo', sans-serif !important;
-                font-size: 16px;
-                direction: rtl;
-                text-align: center;
-
-            }
-
-            .feedback-table tbody tr td:first-child {
-                width: 40px;
-                min-width: 40px;
-                max-width: 40px;
-                word-break: break-all;
-            }
-
-            .feedback-link{
-                font-size: 14px;
-            }
-
-            .feedback-icon{
-                margin: auto 7.5px;
-                color: white;
-            }
-
-
-            .feedback-modal-title{
-                font-size: 35px;
-                margin: 30px 50px 10px 50px;
-            }
-
-            .feedback-modal-failure-text{
-                color: #e7413b;
-            }
-
-            .red{
-                background-color: #e7413b;
-            }
-            .red-text{
-                color: #e7413b;
-            }
-            .black-text{
-                color: #1a1a1a;
-            }
-
-            .green{
-                background-color: #43ac6a;
-            }
-
-            .feedback-row{
-                min-height: 100px;
-            }
-
-            .modal.modal-wide .modal-dialog {
-                width: 850px;
-            }
-
-            .feedback-shell{
-                direction: ltr;
-                text-align: left;
-            }
-        </style>
+        <!-- task-feedback.css will be loaded by inginious -->
     </head>
     <body>
-
-
 
         <!-- Primary Page Layout
         –––––––––––––––––––––––––––––––––––––––––––––––––– -->
@@ -141,14 +67,13 @@
 
         </table>
 
-        <div id="myModal" class="modal modal-wide fade feedback-modal" role="dialog">
-
-        </div>
+        <div id="myModal" class="modal modal-wide fade feedback-modal" role="dialog"></div>
 
     <!-- End Document
 
+
     –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-        <script type="text/x-tmpl" id="tmpl-demo">
+        <script type="text/x-tmpl" id="tmpl-modal">
             <div class="modal-dialog">
 
                 <!-- Modal content-->
@@ -210,7 +135,9 @@
             var data = {
                 "title": "JavaScript Templates"
             };
-            document.getElementById("myModal").innerHTML = tmpl("tmpl-demo", data);
+            document.getElementById("myModal").innerHTML = tmpl("tmpl-modal", data);
+
+//            document.getElementById("").innerHTML = tmpl("tmpl-feedback-row", data);
 
         </script>
 
