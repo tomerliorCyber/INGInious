@@ -198,7 +198,12 @@ class TaskPage(INGIniousAuthPage):
                     default_submission = self.database.submissions.find_one({'_id': ObjectId(submissionid)}) if submissionid else None
                     if default_submission is None:
                         self.set_selected_submission(course, task, userinput['submissionid'])
-                    result['text'] = self.template_helper.get_renderer(with_layout=False).task_page.feedback()
+                    try:
+                        result['text'] = self.template_helper.get_renderer(with_layout=False).task_page.feedback()
+                    except Exception as error:
+                        self.logger.error('error template_helper --- ' + repr(error))
+                        result['text'] = 'error ' +repr(error)
+                        
                     result['result'] = 'success'
                     return submission_to_json(result, is_admin, False, True if default_submission is None else default_submission['_id'] == result['_id'])
 
