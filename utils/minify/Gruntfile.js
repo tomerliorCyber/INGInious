@@ -17,6 +17,7 @@ module.exports = function(grunt)
                         '../../inginious/frontend/common/static/js/libs/bootstrap-datetimepicker.min.js',
                         '../../inginious/frontend/common/static/js/libs/checked-list-group.js',
                         '../../inginious/frontend/common/static/js/libs/side-comments.js',
+                        '../../inginious/frontend/common/static/js/libs/tmpl.js',
                         '../../inginious/frontend/common/static/js/codemirror/codemirror.js',
                         '../../inginious/frontend/common/static/js/codemirror/mode/meta.js',
                         '../../inginious/frontend/common/static/js/common.js',

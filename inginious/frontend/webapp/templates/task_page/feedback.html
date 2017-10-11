@@ -30,16 +30,13 @@
         <!-- Right to lef -->
         <!--<link rel="stylesheet" href="//cdn.rawgit.com/morteza/bootstrap-rtl/v3.3.4/dist/css/bootstrap-rtl.min.css">-->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" crossorigin="anonymous"></script>
-        <!--<link rel="stylesheet" href="{resources_path}css/terminal.css">-->
 
+        <!-- Frontend templates js -->
+        <script src="https://cdn.rawgit.com/blueimp/JavaScript-Templates/master/js/tmpl.min.js" crossorigin="anonymous"></script>
 
-        <!--<link rel="stylesheet" href="{resources_path}css/side-comments.css" />-->
-        <!--<link rel="stylesheet" href="{resources_path}css/default-theme.css" />-->
         <!--TODO move this a separate css file-->
         <style>
-            /*body{*/
-                /*direction: rtl;*/
-            /*}*/
+
             .feedback-table{
                 font-family: 'Arimo', sans-serif;
                 font-size: 16px;
@@ -50,7 +47,7 @@
             }
 
             .feedback-modal{
-                font-family: 'Arimo', sans-serif;
+                font-family: 'Arimo', sans-serif !important;
                 font-size: 16px;
                 direction: rtl;
                 text-align: center;
@@ -63,12 +60,24 @@
                 max-width: 40px;
                 word-break: break-all;
             }
+
             .feedback-link{
                 font-size: 14px;
             }
+
             .feedback-icon{
                 margin: auto 7.5px;
                 color: white;
+            }
+
+
+            .feedback-modal-title{
+                font-size: 35px;
+                margin: 30px 50px 10px 50px;
+            }
+
+            .feedback-modal-failure-text{
+                color: #e7413b;
             }
 
             .red{
@@ -90,7 +99,12 @@
             }
 
             .modal.modal-wide .modal-dialog {
-                width: 70%;
+                width: 850px;
+            }
+
+            .feedback-shell{
+                direction: ltr;
+                text-align: left;
             }
         </style>
     </head>
@@ -128,21 +142,30 @@
         </table>
 
         <div id="myModal" class="modal modal-wide fade feedback-modal" role="dialog">
+
+        </div>
+
+    <!-- End Document
+
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+        <script type="text/x-tmpl" id="tmpl-demo">
             <div class="modal-dialog">
 
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">
+                        <h4 class="modal-title feedback-modal-title">
                             חישוב האיברים הראשונים בסדרה של איבר ראשון חיובי ויחס שלילי:
                             <span class="red-text">אי הצלחה</span>
 
                         </h4>
                     </div>
                     <div class="modal-body">
-                        <div class="row red-text">
+                        <div class="row feedback-modal-failure-text">
+                            <b>
                             ריצת התוכנית הסתיימה, אך פלט האיבר השני בסדרה לא הופיע או הופיע במקום הלא מתאים
+                            </b>
                         </div>
 
                         <table class="table table-condensed">
@@ -162,7 +185,7 @@
 
                                 </td>
                                 <td class="col-md-11 col-xs-11">
-                                    <div class="shell-wrap">
+                                    <div class="shell-wrap feedback-shell">
                                         <p class="shell-top-bar">Command Line</p>
                                         <ul class="shell-body">
                                             <div id="commentable-container-1" class="commentable-container">
@@ -174,20 +197,22 @@
                             </tr>
                         </table>
                     </div>
-                    
+
                 </div>
 
             </div>
 
-        </div>
-        <!--<a-->
-                <!--href="$get_homepath()/static">-->
-            <!--ohad-->
-        <!--</a>-->
-    <!-- End Document
+        </script>
 
-    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+        <script>
+//            TODO use this tmpl to render the hidden modals
 
+            var data = {
+                "title": "JavaScript Templates"
+            };
+            document.getElementById("myModal").innerHTML = tmpl("tmpl-demo", data);
+
+        </script>
 
         <script>
             var feedbackData1 = {
@@ -517,16 +542,15 @@
                     "strictness": false,
                     "timeout": 10.0,
                     "verbosity": 5
-                }
-            ;
+                };
         </script>
 
         <script type="application/javascript">
             var COMMENTS_IMAGES = {
-                output: "{resources_path}img/output.png",
-                    input: "{resources_path}img/input.png",
-                    false_: "{resources_path}img/false.png",
-                };
+                output: "$get_homepath()/static/common/images/side-comments/output.png",
+                input: "$get_homepath()/static/common/images/side-comments/input.png",
+                false_: "$get_homepath()/static/common/images/side-comments/false.png",
+            };
             
             processFeedback(feedbackData1, 1);
             // loading jquery twice creates a bug in inginious.
