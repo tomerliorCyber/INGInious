@@ -184,15 +184,16 @@ class TaskPage(INGIniousAuthPage):
                 elif self.submission_manager.is_done(result):
                     web.header('Content-Type', 'application/json')
                     result = self.submission_manager.get_input_from_submission(result)
+                    self.logger.info('result from submission ' +repr(result))
                     result = self.submission_manager.get_feedback_from_submission(result, show_everything=is_staff, inginious_page_object=self)
-
+                    self.logger.info('get_feedback_from_submission ' +repr(result))
                     # user_task always exists as we called user_saw_task before
                     user_task = self.database.user_tasks.find_one({
                         "courseid":task.get_course_id(),
                         "taskid": task.get_id(),
                         "username": self.user_manager.session_username()
                     })
-
+                    self.logger.info('user_task ' +repr(user_task))
                     submissionid = user_task.get('submissionid', None)
                     default_submission = self.database.submissions.find_one({'_id': ObjectId(submissionid)}) if submissionid else None
                     if default_submission is None:
