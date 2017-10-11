@@ -201,9 +201,10 @@ class TaskPage(INGIniousAuthPage):
                     except Exception as error:
                         import locale
                         prefered_encoding = locale.getpreferredencoding()
-                        self.logger.error('error template_helper --- ' + repr(error) + ' ---- prefered_encoding ' + repr(prefered_encoding))
+                        text = 'error template_helper --- ' + repr(error) + ' ---- prefered_encoding ' + repr(prefered_encoding)
+                        self.logger.error(text)
                         self.logger.error('traceback data is ' + traceback.format_exc())
-                        result['text'] = 'error ' +repr(error)
+                        result['text'] = text
                         
                     result['result'] = 'success'
                     return submission_to_json(result, is_admin, False, True if default_submission is None else default_submission['_id'] == result['_id'])
