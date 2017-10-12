@@ -274,7 +274,7 @@ class SubmissionManager(object, metaclass=ABCMeta):
         if 'grade' in submission:
             # space is because frontend is attaching this to alert-'grade_css_class' so we need a separation.
             if inginious_page_object:
-                submission['grade_css_class'] = ' grade gray '
+                submission['grade_css_class'] = ' grade gray feedback-box'
 
         return submission
 

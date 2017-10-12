@@ -67,3 +67,8 @@
     direction: ltr;
     text-align: left;
 }
+
+/* The main graybox that surrounds the feedback html */
+.feedback-box{
+    font-size: 18px;
+}
