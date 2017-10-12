@@ -8,7 +8,6 @@ from gridfs import GridFS
 from pymongo import MongoClient
 import web
 from web.debugerror import debugerror
-import os
 
 from inginious.frontend.common.arch_helper import create_arch, start_asyncio_and_zmq
 from inginious.frontend.webapp.database_updater import update_database
@@ -108,12 +107,6 @@ def get_app(config):
 
     zmq_context, _ = start_asyncio_and_zmq()
 
-    # trying to set environemtn vars for the apache WSGI to find them
-    # due to a bug in rendering hebrew html
-    # https://stackoverflow.com/q/46703221/1574104
-    os.environ['LC_ALL'] = 'en_US.UTF-8'
-    os.environ['LANG'] = 'en_US.UTF-8'
-    os.environ['LANGUAGE'] = 'en_US.UTF-8'
 
     # Init the different parts of the app
     plugin_manager = PluginManager()
