@@ -165,14 +165,16 @@ class TaskPage(INGIniousAuthPage):
                     if userinput["@debug-mode"] == "ssh" and debug:
                         debug = "ssh"
                     del userinput['@debug-mode']
+                    self.logger.info('before opening feebdack.html')
                     try:
                         # couldn't open with  get_renderer, errors on js, tries to render the page and run the js
                         userinput['html_template'] = open(self.template_helper._root_path + '/'+ self.template_helper._template_dir + '/task_page/feedback.html').read()
                     except Exception as err:
-                        self.logger('erro in opening feedback.html '+repr(err))
+                        self.logger.error('erro in opening feedback.html '+repr(err))
 
                 # Start the submission
                 try:
+                    self.logger.info('before submitting to docker')
                     submissionid, oldsubids = self.submission_manager.add_job(task, userinput, debug)
                     web.header('Content-Type', 'application/json')
                     return json.dumps({"status": "ok", "submissionid": str(submissionid), "remove": oldsubids})
