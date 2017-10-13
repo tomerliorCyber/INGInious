@@ -165,8 +165,8 @@ class TaskPage(INGIniousAuthPage):
                     if userinput["@debug-mode"] == "ssh" and debug:
                         debug = "ssh"
                     del userinput['@debug-mode']
-                    # userinput['html_template'] = \
-                    #     self.template_helper.get_renderer(with_layout=False).feedback()
+                    # couldn't open with  get_renderer, errors on js, tries to render the page and run the js
+                    userinput['html_template'] = open(self.template_helper._root_path + '/'+ self.template_helper._template_dir + '/task_page/feedback.html').read()
 
                 # Start the submission
                 try:
@@ -197,7 +197,18 @@ class TaskPage(INGIniousAuthPage):
                     if default_submission is None:
                         self.set_selected_submission(course, task, userinput['submissionid'])
                     try:
-                        result['text'] = self.template_helper.get_renderer(with_layout=False).task_page.feedback()
+                        a = 1
+                        # var feedbackData{id} = {feedback_json};
+                        # scenario_feedback = u'eval(' + scenario_feedback + u')'
+                        # scenario_feedback  = {
+                        #     "1": exampleFeedbackData,
+                        #     "2": exampleFeedbackData,
+                        #     "3": exampleFeedbackData
+                        # }
+                        # OUTPUT_HTML_PAGE = open(self.template_helper._root_path + '/'+ self.template_helper._template_dir + '/task_page/feedback.html').read()
+                        # scenario_output_html = OUTPUT_HTML_PAGE.format(
+                        #         feedbackData=scenario_feedback)
+                        # result['text'] = scenario_output_html
                     except Exception as error:
                         import locale
                         prefered_encoding = locale.getpreferredencoding()
@@ -205,8 +216,8 @@ class TaskPage(INGIniousAuthPage):
                         self.logger.error(text)
                         self.logger.error('traceback data is ' + traceback.format_exc())
                         result['text'] = text
-                        
-                    result['result'] = 'success'
+
+                    # result['result'] = 'success'
                     return submission_to_json(result, is_admin, False, True if default_submission is None else default_submission['_id'] == result['_id'])
 
                 else:

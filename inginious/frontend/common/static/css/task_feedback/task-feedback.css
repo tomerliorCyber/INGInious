@@ -5,6 +5,7 @@
     margin: 15px;
     direction: rtl;
     text-align: right;
+    table-layout: fixed;
 }
 
 .feedback-modal{
@@ -69,6 +70,6 @@
 }
 
 /* The main graybox that surrounds the feedback html */
-.feedback-box{
+#task-alert .feedback-box{
     font-size: 18px;
 }

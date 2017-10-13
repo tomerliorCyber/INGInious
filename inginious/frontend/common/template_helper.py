@@ -38,6 +38,7 @@ class TemplateHelper(object):
         self._plugin_manager = plugin_manager
         self._template_dir = default_template_dir
         self._layout = default_layout
+        self._root_path = inginious.get_root_path()
 
         self._template_globals = {}
 
