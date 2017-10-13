@@ -184,8 +184,11 @@ class TaskPage(INGIniousAuthPage):
                     return json.dumps({'status': "error"})
                 elif self.submission_manager.is_done(result):
                     web.header('Content-Type', 'application/json')
+                    self.logger.error('result 1  is ' +repr(result))
                     result = self.submission_manager.get_input_from_submission(result)
+                    self.logger.error('result 2  is ' +repr(result))
                     result = self.submission_manager.get_feedback_from_submission(result, show_everything=is_staff, inginious_page_object=self)
+                    self.logger.error('result 3  is ' +repr(result))
                     # user_task always exists as we called user_saw_task before
                     user_task = self.database.user_tasks.find_one({
                         "courseid":task.get_course_id(),
@@ -197,7 +200,7 @@ class TaskPage(INGIniousAuthPage):
                     if default_submission is None:
                         self.set_selected_submission(course, task, userinput['submissionid'])
                     try:
-                        a = 1
+                        self.logger.error('result 4 is ' +repr(result))
                         # var feedbackData{id} = {feedback_json};
                         # scenario_feedback = u'eval(' + scenario_feedback + u')'
                         # scenario_feedback  = {
@@ -217,7 +220,6 @@ class TaskPage(INGIniousAuthPage):
                         self.logger.error('traceback data is ' + traceback.format_exc())
                         result['text'] = text
 
-                    # result['result'] = 'success'
                     return submission_to_json(result, is_admin, False, True if default_submission is None else default_submission['_id'] == result['_id'])
 
                 else:
