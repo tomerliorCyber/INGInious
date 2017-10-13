@@ -170,6 +170,11 @@ class TaskPage(INGIniousAuthPage):
                         # couldn't open with  get_renderer, errors on js, tries to render the page and run the js
                         userinput['html_template'] = open(self.template_helper._root_path + '/'+ self.template_helper._template_dir + '/task_page/feedback.html').read()
                     except Exception as err:
+                        import locale
+                        prefered_encoding = locale.getpreferredencoding()
+                        text = 'error template_helper --- ' + repr(err) + ' ---- prefered_encoding ' + repr(prefered_encoding)
+                        self.logger.error(text)
+                        self.logger.error('traceback data is ' + traceback.format_exc())
                         self.logger.error('erro in opening feedback.html '+repr(err))
 
                 # Start the submission
@@ -206,6 +211,7 @@ class TaskPage(INGIniousAuthPage):
                         self.set_selected_submission(course, task, userinput['submissionid'])
                     try:
                         self.logger.error('result 4 is ' +repr(result))
+
                         # var feedbackData{id} = {feedback_json};
                         # scenario_feedback = u'eval(' + scenario_feedback + u')'
                         # scenario_feedback  = {
