@@ -176,7 +176,7 @@ class TaskPage(INGIniousAuthPage):
                         self.logger.error(text)
                         self.logger.error( ' ---- prefered_encoding ' + repr(prefered_encoding))
                         self.logger.error('traceback data is ' + traceback.format_exc())
-                        self.logger.error('erro in opening feedback.html '+repr(err))
+                        userinput['html_template'] = ''
 
                 # Start the submission
                 try:
