@@ -172,9 +172,9 @@ class TaskPage(INGIniousAuthPage):
                     except Exception as err:
                         import locale
                         prefered_encoding = locale.getpreferredencoding()
-                        text = 'error template_helper --- ' + repr(err)
-                        self.logger.error(text)
                         self.logger.error( ' ---- prefered_encoding ' + repr(prefered_encoding))
+                        # text = 'error template_helper --- ' + repr(err)
+                        # self.logger.error(text)
                         self.logger.error('traceback data is ' + traceback.format_exc())
                         userinput['html_template'] = ''
 
