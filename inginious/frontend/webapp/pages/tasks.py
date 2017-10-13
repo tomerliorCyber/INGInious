@@ -165,6 +165,9 @@ class TaskPage(INGIniousAuthPage):
                     if userinput["@debug-mode"] == "ssh" and debug:
                         debug = "ssh"
                     del userinput['@debug-mode']
+                    self.logger.error('html_template  ' +repr(self.template_helper))
+                    self.logger.error('self.template_helper._root_path  ' +repr(self.template_helper._root_path))
+                    self.logger.error('self.template_helper._template_dir  ' +repr(self.template_helper._template_dir))
                     # couldn't open with  get_renderer, errors on js, tries to render the page and run the js
                     userinput['html_template'] = open(self.template_helper._root_path + '/'+ self.template_helper._template_dir + '/task_page/feedback.html').read()
 
