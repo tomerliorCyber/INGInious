@@ -84,7 +84,7 @@
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                             <h4 class="modal-title feedback-modal-title">
-                                חישוב האיברים הראשונים בסדרה של איבר ראשון חיובי ויחס שלילי:
+                                {{%=o.name%}}
                                 <span class="red-text">אי הצלחה</span>
 
                             </h4>
@@ -92,19 +92,19 @@
                         <div class="modal-body">
                             <div class="row feedback-modal-failure-text">
                                 <b>
-                                ריצת התוכנית הסתיימה, אך פלט האיבר השני בסדרה לא הופיע או הופיע במקום הלא מתאים
+                                {{% if (o.feedback) {{ %}}
+                                    {{%=o.feedback.text%}}
+                                {{% }} %}}
                                 </b>
                             </div>
 
                             <table class="table table-condensed">
                                 <tr class="row feedback-row">
                                     <td class="col-md-1 col-xs-1">
-                                        <b>תרחיש:</b>
+                                        <b>scenario: (change to hebrew)</b>
                                     </td>
                                     <td class="col-md-11 col-xs-11">
-
-                                        התוכנית תקלוט את האיבר הראשון טקסט ארוך מאוד, עם פסיקים, (50) סוגריים ועוד. טקסט ארוך מאוד.
-                                        טקסט ארוך מאוד. טקסט ארוך מאוד.
+                                       {{%=o.description%}}
                                     </td>
                                 </tr>
 
