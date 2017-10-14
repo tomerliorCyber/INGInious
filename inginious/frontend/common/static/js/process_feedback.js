@@ -115,5 +115,5 @@ function renderScenarioRows(feedbackData){
 
 // whether a scenario is success or failure
 function isSuccess(data) {{
-    return data.feedback
+    return data.result.bool
 }}
