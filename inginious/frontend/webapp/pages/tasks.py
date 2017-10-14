@@ -11,6 +11,7 @@ import os
 import posixpath
 import urllib.request, urllib.parse, urllib.error
 import traceback
+import codecs
 
 import web
 
@@ -169,7 +170,7 @@ class TaskPage(INGIniousAuthPage):
                     try:
                         # couldn't open with  get_renderer, errors on js, tries to render the page and run the js
                         file_path = self.template_helper._root_path + '/'+ self.template_helper._template_dir + '/task_page/feedback.html'
-                        import codecs
+
                         with codecs.open(file_path,'r',encoding='utf8') as f:
                             text = f.read()
                         # open(file_path).read()
