@@ -168,7 +168,12 @@ class TaskPage(INGIniousAuthPage):
                     self.logger.info('before opening feebdack.html')
                     try:
                         # couldn't open with  get_renderer, errors on js, tries to render the page and run the js
-                        userinput['html_template'] = open(self.template_helper._root_path + '/'+ self.template_helper._template_dir + '/task_page/feedback.html').read()
+                        file_path = self.template_helper._root_path + '/'+ self.template_helper._template_dir + '/task_page/feedback.html'
+                        import codecs
+                        with codecs.open(file_path,'r',encoding='utf8') as f:
+                            text = f.read()
+                        # open(file_path).read()
+                        userinput['html_template'] = text
                     except Exception as err:
                         import locale
                         prefered_encoding = locale.getpreferredencoding()
