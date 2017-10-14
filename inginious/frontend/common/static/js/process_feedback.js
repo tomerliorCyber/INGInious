@@ -97,9 +97,9 @@ function renderScenarioRows(feedbackData){
         data.id = id;
         data.indexId = parseInt(id) + 1;
         if (isSuccess(data)){{
-            data.color = 'red'
-        }}else{{
             data.color = 'green'
+        }}else{{
+            data.color = 'red'
         }}
         //add the hidden modal
         modal = $(tmpl('tmpl-modal', data));
