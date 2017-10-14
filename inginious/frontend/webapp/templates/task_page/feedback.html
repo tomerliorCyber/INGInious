@@ -85,8 +85,9 @@
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                             <h4 class="modal-title feedback-modal-title">
                                 {{%=o.name%}}
-                                <span class="red-text">אי הצלחה</span>
-
+                                {{% if (o.feedback) {{ %}}
+                                    <span class="red-text">אי הצלחה</span>
+                                {{% }} %}}
                             </h4>
                         </div>
                         <div class="modal-body">
