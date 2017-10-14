@@ -22,8 +22,7 @@ function fillModalTerminalBoxes(feedbackData, scenarioId) {
     for (var i = 0; i < feedbackData.log.quotes.length; i++) {
         var line = $('<li></li>');
         line.text(feedbackData.log.quotes[i].value);
-        console.log("feedbackData.log.quotes[i].value - " +  feedbackData.log.quotes[i].value);
-        // todo, return this if 
+        // todo, return this if
         if (feedbackData.log.quotes[i].type.en == "input" || feedbackData.log.quotes[i].type.en == "output") {
             console.log('inside input output ');
             line.addClass("commentable-section");
@@ -47,7 +46,6 @@ function fillModalTerminalBoxes(feedbackData, scenarioId) {
     }
 
     if (!feedbackData.result.bool) {
-        console.log('inside feedbackData.result.bool');
         var line = $('<li></li>');
         line.html("<br>");
         line.addClass("commentable-section");
