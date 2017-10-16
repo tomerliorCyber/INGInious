@@ -50,7 +50,12 @@
         <script type="text/x-tmpl" id="tmpl-scenario-row">
             <tr>
                 <td class="col-md-1 col-xs-1 {{%=o.color%}}">
-                    <i class="fa fa-times-circle-o feedback-icon" aria-hidden="true"></i>
+
+                    {{% if (!o.result.bool) {{ %}}
+                        <i class="fa fa-times-circle-o feedback-icon" aria-hidden="true"></i>
+                    {{% }} else {{ %}}
+                        <i class="fa fa-check-circle-o feedback-icon" aria-hidden="true"></i>
+                    {{% }} %}}
                 </td>
 
                 <td class="col-md-9 col-xs-9 black-text">
@@ -84,25 +89,25 @@
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                             <h4 class="modal-title feedback-modal-title">
-                                {{%=o.name%}}
+                                {{%=o.name%}}:
                                 <span class="{{%=o.color%}}-text">{{%=o.result.text%}}</span>
                             </h4>
                         </div>
-                        <div class="modal-body">
+                        <div class="modal-body feedback-modal-body">
                             <div class="row feedback-modal-failure-text">
                                 <b>
-                                {{% if (o.feedback) {{ %}}
+                                {{% if (!o.result.bool) {{ %}}
                                     {{%=o.feedback.text%}}
                                 {{% }} %}}
                                 </b>
                             </div>
 
-                            <table class="table table-condensed">
+                            <table class="table table-condensed feedback-modal-table">
                                 <tr class="row feedback-row">
-                                    <td class="col-md-1 col-xs-1">
+                                    <td class="col-md-1 col-xs-1 scenario-text">
                                         <b>תרחיש:</b>
                                     </td>
-                                    <td class="col-md-11 col-xs-11">
+                                    <td class="col-md-11 col-xs-11 feedback-description">
                                        {{%=o.description%}}
                                     </td>
                                 </tr>

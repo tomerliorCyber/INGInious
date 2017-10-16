@@ -74,7 +74,23 @@
     text-align: left;
 }
 
+.feedback-description{
+    text-align: right;
+}
+
 /* The main graybox that surrounds the feedback html */
-#task-alert .feedback-box{
+#task_alert b{
     font-size: 18px;
+}
+
+.feedback-modal-table>tbody>tr>td {
+    border: none;
+}
+
+.feedback-modal-body{
+    margin: auto 35px;
+}
+
+.scenario-text{
+    font-weight: 900;
 }
