@@ -16,7 +16,6 @@
 }
 .commentable-section {
   position: relative;
-  padding: 15px;
 }
 .commentable-section:hover .side-comment .marker {
   display: block;

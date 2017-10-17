@@ -70,5 +70,5 @@ https://guides.codechewing.com/mac-terminal-shell-css-html/
 .shell-body li {
     word-wrap: break-word;
     position: relative;
-    /* padding: 0 0 0 15px; */
+    padding: 5px;
 }

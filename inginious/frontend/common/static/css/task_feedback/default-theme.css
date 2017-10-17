@@ -1,6 +1,7 @@
 .commentable-container {
   -webkit-transition: all 0.22s ease;
   transition: all 0.22s ease;
+  padding: 15px;
 }
 
 /*.side-comments-open {
