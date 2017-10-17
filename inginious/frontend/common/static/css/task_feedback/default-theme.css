@@ -79,6 +79,7 @@
   padding: 15px 0;
   margin-top: -1px;
   background: #FFFFFF; /* NEW */
+  text-align: right;
 }
 .side-comment .comment,
 .side-comment .comment-box {

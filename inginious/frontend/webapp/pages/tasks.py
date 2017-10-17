@@ -201,11 +201,10 @@ class TaskPage(INGIniousAuthPage):
                     return json.dumps({'status': "error"})
                 elif self.submission_manager.is_done(result):
                     web.header('Content-Type', 'application/json')
-                    self.logger.error('result 1  is ' +repr(result))
                     result = self.submission_manager.get_input_from_submission(result)
-                    self.logger.error('result 2  is ' +repr(result))
                     result = self.submission_manager.get_feedback_from_submission(result, show_everything=is_staff, inginious_page_object=self)
-                    self.logger.error('result 3  is ' +repr(result))
+                    # per ana's design, this alert box should always be gray no matter what the grade is.
+                    result['grade_css_class'] = ' grade gray feedback-box'
                     # user_task always exists as we called user_saw_task before
                     user_task = self.database.user_tasks.find_one({
                         "courseid":task.get_course_id(),
@@ -216,27 +215,6 @@ class TaskPage(INGIniousAuthPage):
                     default_submission = self.database.submissions.find_one({'_id': ObjectId(submissionid)}) if submissionid else None
                     if default_submission is None:
                         self.set_selected_submission(course, task, userinput['submissionid'])
-                    try:
-                        self.logger.error('result 4 is ' +repr(result))
-
-                        # var feedbackData{id} = {feedback_json};
-                        # scenario_feedback = u'eval(' + scenario_feedback + u')'
-                        # scenario_feedback  = {
-                        #     "1": exampleFeedbackData,
-                        #     "2": exampleFeedbackData,
-                        #     "3": exampleFeedbackData
-                        # }
-                        # OUTPUT_HTML_PAGE = open(self.template_helper._root_path + '/'+ self.template_helper._template_dir + '/task_page/feedback.html').read()
-                        # scenario_output_html = OUTPUT_HTML_PAGE.format(
-                        #         feedbackData=scenario_feedback)
-                        # result['text'] = scenario_output_html
-                    except Exception as error:
-                        import locale
-                        prefered_encoding = locale.getpreferredencoding()
-                        text = 'error template_helper --- ' + repr(error) + ' ---- prefered_encoding ' + repr(prefered_encoding)
-                        self.logger.error(text)
-                        self.logger.error('traceback data is ' + traceback.format_exc())
-                        result['text'] = text
 
                     return submission_to_json(result, is_admin, False, True if default_submission is None else default_submission['_id'] == result['_id'])
 

@@ -1,7 +1,8 @@
+// font awesome icons for terminal feedback (in modal popup)
 var COMMENTS_IMAGES = {
-    output: "/static/common/images/side-comments/output.png",
-        input: "/static/common/images/side-comments/input.png",
-        false_: "/static/common/images/side-comments/false.png",
+    output: "fa-desktop",
+    input: "fa-keyboard-o",
+    false_: "fa-times-circle-o",
 };
 
 

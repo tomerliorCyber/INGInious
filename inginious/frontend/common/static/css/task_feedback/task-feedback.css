@@ -32,6 +32,11 @@
     color: white;
 }
 
+.terminal-feedback-icon{
+    margin: auto 7.5px;
+    color: #999999;
+}
+
 
 .feedback-modal-title{
     font-size: 35px;
