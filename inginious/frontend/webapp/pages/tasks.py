@@ -12,6 +12,7 @@ import posixpath
 import urllib.request, urllib.parse, urllib.error
 import traceback
 import codecs
+import locale
 
 import web
 
@@ -166,17 +167,19 @@ class TaskPage(INGIniousAuthPage):
                     if userinput["@debug-mode"] == "ssh" and debug:
                         debug = "ssh"
                     del userinput['@debug-mode']
-                    self.logger.info('before opening feebdack.html')
+                    self.logger.error('before opening feebdack.html')
                     try:
+
                         # couldn't open with  get_renderer, errors on js, tries to render the page and run the js
                         file_path = self.template_helper._root_path + '/'+ self.template_helper._template_dir + '/task_page/feedback.html'
-
+                        self.logger.error('file_path ' +repr(file_path))
                         with codecs.open(file_path,'r',encoding='utf8') as f:
                             text = f.read()
                         # open(file_path).read()
+                        self.logger.error('here text is ' + repr(text))
                         userinput['html_template'] = text
+                        self.logger.error('trace')
                     except Exception as err:
-                        import locale
                         prefered_encoding = locale.getpreferredencoding()
                         self.logger.error( ' ---- prefered_encoding ' + repr(prefered_encoding))
                         # text = 'error template_helper --- ' + repr(err)
