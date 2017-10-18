@@ -168,16 +168,14 @@ class TaskPage(INGIniousAuthPage):
                         debug = "ssh"
                     del userinput['@debug-mode']
 
-                self.logger.error('before opening feebdack.html')
+                self.logger.info('before opening feebdack.html')
                 try:
 
                     # couldn't open with  get_renderer, errors on js, tries to render the page and run the js
                     file_path = self.template_helper._root_path + '/'+ self.template_helper._template_dir + '/task_page/feedback.html'
-                    self.logger.error('file_path ' +repr(file_path))
+                    self.logger.info('file_path ' +repr(file_path))
                     with codecs.open(file_path,'r',encoding='utf8') as f:
                         text = f.read()
-                    # open(file_path).read()
-                    self.logger.error('here text is ' + repr(text))
                     userinput['html_template'] = text
                 except Exception as err:
                     prefered_encoding = locale.getpreferredencoding()
