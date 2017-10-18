@@ -25,7 +25,6 @@ class BetterParanoidPirateClient(object, metaclass=abc.ABCMeta):
 
     def __init__(self, context, router_addr):
         self._logger = logging.getLogger("inginious.client")
-        self._logger.info("degug context " +repr(context) + ' router_addr ' +repr(router_addr) )
         self._context = context
         self._router_addr = router_addr
         self._socket = self._context.socket(zmq.DEALER)
@@ -47,7 +46,6 @@ class BetterParanoidPirateClient(object, metaclass=abc.ABCMeta):
         :param recv_msg:
         :param coroutine_recv:
         """
-        self._logger.info("_register_handler")
         self._handlers_registered[recv_msg.__msgtype__] = coroutine_recv
 
     def _register_transaction(self, send_msg, recv_msg, coroutine_recv, coroutine_abrt, get_key=None, inter_msg=None):
@@ -66,7 +64,6 @@ class BetterParanoidPirateClient(object, metaclass=abc.ABCMeta):
         :param inter_msg: a list of `(message_class, coroutine_recv)`, that can be received during the resolution of the transaction but will not
         finalize it. `get_key` is used on these `message_class` to get the key of the transaction.
         """
-        self._logger.info("_register_transaction")
         if get_key is None:
             get_key = lambda x: None
         if inter_msg is None:
@@ -90,7 +87,6 @@ class BetterParanoidPirateClient(object, metaclass=abc.ABCMeta):
         :param args: args to be sent to the coroutines given to `register_transaction`
         :param kwargs: kwargs to be sent to the coroutines given to `register_transaction`
         """
-        self._logger.info("_create_transaction")
         recv_msgs, get_key, _1, _2, _3 = self._msgs_registered[msg.__msgtype__]
         key = get_key(msg)
 
@@ -108,7 +104,6 @@ class BetterParanoidPirateClient(object, metaclass=abc.ABCMeta):
         """
         Send a msg to the distant server
         """
-        self._logger.info("_simple_send " + repr(msg))
         await ZMQUtils.send(self._socket, msg)
 
     async def _handle_pong(self, _):
