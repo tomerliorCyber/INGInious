@@ -104,7 +104,7 @@ function renderScenarioRows(feedbackData){
         }}
         //add the hidden modal
         modal = $(tmpl('tmpl-modal', data));
-        $('body').append(modal);
+        $('#modals').append(modal);
 
         // add row to scenario table
         scenario_row = $(tmpl('tmpl-scenario-row', data));
