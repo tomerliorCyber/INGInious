@@ -79,6 +79,7 @@ class DockerAgent(object):
         # Auto discover containers
         self._logger.info("Discovering containers")
         self._containers = self._docker.get_containers()
+        self._logger.info("self._containers " + repr(self._containers))
 
         # SSH remote debug
         self.ssh_host = ssh_host
