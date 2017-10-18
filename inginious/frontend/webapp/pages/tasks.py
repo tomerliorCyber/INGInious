@@ -167,25 +167,25 @@ class TaskPage(INGIniousAuthPage):
                     if userinput["@debug-mode"] == "ssh" and debug:
                         debug = "ssh"
                     del userinput['@debug-mode']
-                    self.logger.error('before opening feebdack.html')
-                    try:
 
-                        # couldn't open with  get_renderer, errors on js, tries to render the page and run the js
-                        file_path = self.template_helper._root_path + '/'+ self.template_helper._template_dir + '/task_page/feedback.html'
-                        self.logger.error('file_path ' +repr(file_path))
-                        with codecs.open(file_path,'r',encoding='utf8') as f:
-                            text = f.read()
-                        # open(file_path).read()
-                        self.logger.error('here text is ' + repr(text))
-                        userinput['html_template'] = text
-                        self.logger.error('trace')
-                    except Exception as err:
-                        prefered_encoding = locale.getpreferredencoding()
-                        self.logger.error( ' ---- prefered_encoding ' + repr(prefered_encoding))
-                        # text = 'error template_helper --- ' + repr(err)
-                        # self.logger.error(text)
-                        self.logger.error('traceback data is ' + traceback.format_exc())
-                        userinput['html_template'] = ''
+                self.logger.error('before opening feebdack.html')
+                try:
+
+                    # couldn't open with  get_renderer, errors on js, tries to render the page and run the js
+                    file_path = self.template_helper._root_path + '/'+ self.template_helper._template_dir + '/task_page/feedback.html'
+                    self.logger.error('file_path ' +repr(file_path))
+                    with codecs.open(file_path,'r',encoding='utf8') as f:
+                        text = f.read()
+                    # open(file_path).read()
+                    self.logger.error('here text is ' + repr(text))
+                    userinput['html_template'] = text
+                except Exception as err:
+                    prefered_encoding = locale.getpreferredencoding()
+                    self.logger.error( ' ---- prefered_encoding ' + repr(prefered_encoding))
+                    # text = 'error template_helper --- ' + repr(err)
+                    # self.logger.error(text)
+                    self.logger.error('traceback data is ' + traceback.format_exc())
+                    userinput['html_template'] = ''
 
                 # Start the submission
                 try:
