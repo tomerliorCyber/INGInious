@@ -46,29 +46,6 @@ function fillModalTerminalBoxes(feedbackData, scenarioId) {
         $("#scenario_log" + scenarioIdStr).append(line);
     }
 
-    if (!feedbackData.result.bool) {
-        var line = $('<li></li>');
-        line.html("<br>");
-        line.addClass("commentable-section");
-        line.attr("data-section-id", "feedback");
-
-        comments.push({
-            "sectionId": "feedback",
-            "comments": [
-                {
-                    "id": "feedback",
-                    "authorAvatarUrl": COMMENTS_IMAGES[feedbackData.result.bool.toString() + "_"],
-                    "authorName": feedbackData.result.text,
-                    "comment": feedbackData.feedback.text
-                }
-            ]
-        });
-        console.log('append in g inside feedbackData.result.bool');
-        console.log(line);
-        $("#scenario_log" + scenarioIdStr).append(line);
-
-    }
-
 
     var currentUser = {
         "id": 4,
