@@ -218,9 +218,9 @@ $if user_manager.has_admin_rights_on_course(course):
             <div class="panel-body">
 
                 <div id="task_alert.$problem.get_id()" class="task_alert_problem"></div>
-                $if problem.get_type() in ['code', 'code-file']:
+                $if problem.get_type() in ['code']:
                     <button class="btn btn-sm btn-ignore-click">upload solution from computer</button>
-                    <input type="file" class="optional-upload-file-btn-js" data-index="$index">
+                    <input type="file" class="hidden optional-upload-file-btn-js" data-index="$index">
                     <br/>
                 $:problem.get_header()
                 $:problem.show_input(template_helper.get_common_renderer())
