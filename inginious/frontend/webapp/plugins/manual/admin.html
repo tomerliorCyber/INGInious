@@ -211,9 +211,9 @@ $for index, task in enumerate(lessons[current_lesson]['tasks']):
                         <div id="task_alert.$problem.get_id()" class="task_alert_problem"></div>
                         <!--?$:problem.get_header()-->
                         $if task['id'] in user_submission:
-                            <textarea class="code-editor form-control" name="program" data-x-language="$problem.get_original_content()['language']" data-x-lines="1">$user_submission[task['id']]['input']['program']</textarea>
+                            <textarea class="code-editor form-control" name="program" data-x-language="$problem.get_original_content().get('language', 'no lang specified')" data-x-lines="1">$user_submission[task['id']]['input']['program']</textarea>
                         $else:
-                            <textarea class="code-editor form-control" name="program" data-x-language="$problem.get_original_content()['language']" data-x-lines="1"></textarea>
+                            <textarea class="code-editor form-control" name="program" data-x-language="$problem.get_original_content().get('language', 'no lang specified')" data-x-lines="1"></textarea>
                     </div>
                 </div>
 
