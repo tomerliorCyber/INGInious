@@ -168,22 +168,9 @@ class TaskPage(INGIniousAuthPage):
                         debug = "ssh"
                     del userinput['@debug-mode']
 
-                self.logger.info('before opening feebdack.html')
-                try:
+                if len(task._problems) > 0 and task._problems[0].get_type() == 'code':
+                    userinput = self.add_feedback_html_to_user_input(userinput)
 
-                    # couldn't open with  get_renderer, errors on js, tries to render the page and run the js
-                    file_path = self.template_helper._root_path + '/'+ self.template_helper._template_dir + '/task_page/feedback.html'
-                    self.logger.info('file_path ' +repr(file_path))
-                    with codecs.open(file_path,'r',encoding='utf8') as f:
-                        text = f.read()
-                    userinput['html_template'] = text
-                except Exception as err:
-                    prefered_encoding = locale.getpreferredencoding()
-                    self.logger.error( ' ---- prefered_encoding ' + repr(prefered_encoding))
-                    # text = 'error template_helper --- ' + repr(err)
-                    # self.logger.error(text)
-                    self.logger.error('traceback data is ' + traceback.format_exc())
-                    userinput['html_template'] = ''
 
                 # Start the submission
                 try:
@@ -260,6 +247,26 @@ class TaskPage(INGIniousAuthPage):
                 raise
             else:
                 raise web.notfound()
+
+    def add_feedback_html_to_user_input(self, user_input):
+        self.logger.info('before opening feebdack.html')
+        try:
+
+            # couldn't open with  get_renderer, errors on js, tries to render the page and run the js
+            file_path = self.template_helper._root_path + '/'+ self.template_helper._template_dir + '/task_page/feedback.html'
+            self.logger.info('file_path ' +repr(file_path))
+            with codecs.open(file_path,'r',encoding='utf8') as f:
+                text = f.read()
+            user_input['html_template'] = text
+        except Exception as err:
+            prefered_encoding = locale.getpreferredencoding()
+            self.logger.error( ' ---- prefered_encoding ' + repr(prefered_encoding))
+            # text = 'error template_helper --- ' + repr(err)
+            # self.logger.error(text)
+            self.logger.error('traceback data is ' + traceback.format_exc())
+            user_input['html_template'] = ''
+
+        return user_input
 
 
 class TaskPageStaticDownload(INGIniousAuthPage):
