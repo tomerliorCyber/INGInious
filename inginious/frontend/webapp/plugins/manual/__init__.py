@@ -145,12 +145,17 @@ class StudentPage(ManualPlugin):
 
         if user_task:
             for task in user_task:
-                lesson_name, task_name = get_task_and_lesson(task['taskid'])
+                task_id = task['taskid']
+                lesson_name, task_name = get_task_and_lesson(task_id)
+
                 if lesson_name == current_lesson:
                     submission = self.submission_manager.get_submission(task['submissionid'], False)
+                    task_object = self.task_factory.get_task(course, task_id)
                     if submission:
+
                         submission = self.submission_manager.get_input_from_submission(submission)
                         submission = self.submission_manager.get_feedback_from_submission(submission, show_everything=True)
+                        submission = self.submission_manager.get_input_extra_data(submission, task_object, courseid, task_name)
 
                         user_submission[task_name] = submission
 

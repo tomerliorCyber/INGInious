@@ -80,7 +80,7 @@ class TaskPage(INGIniousAuthPage):
         userinput = web.input()
         if "submissionid" in userinput and "questionid" in userinput:
             # Download a previously submitted file
-            submission = self.submission_manager.get_submission(userinput["submissionid"], True)
+            submission = self.submission_manager.get_submission(userinput["submissionid"], user_check=True, course=course)
             if submission is None:
                 raise web.notfound()
             sinput = self.submission_manager.get_input_from_submission(submission, True)
