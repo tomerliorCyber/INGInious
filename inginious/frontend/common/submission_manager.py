@@ -46,11 +46,19 @@ class SubmissionManager(object, metaclass=ABCMeta):
         """:return a list of available environments """
         return self._client.get_available_containers()
 
-    def get_submission(self, submissionid, user_check=True):
+    def get_submission(self, submissionid, user_check=True, course=None):
         """ Get a submission from the database """
         sub = self._database.submissions.find_one({'_id': ObjectId(submissionid)})
-        if user_check and not self.user_is_submission_owner(sub):
-            return None
+        if user_check:
+            should_have_permission = False
+            if course:
+                username = self._user_manager.session_username()
+                is_staff = self._user_manager.has_staff_rights_on_course(course, username)
+                is_admin = self._user_manager.has_admin_rights_on_course(course, username)
+                should_have_permission = is_admin or is_staff
+
+            if not (self.user_is_submission_owner(sub) or should_have_permission):
+                return None
         return sub
 
     def _job_done_callback(self, submissionid, task, result, grade, problems,
@@ -237,9 +245,9 @@ class SubmissionManager(object, metaclass=ABCMeta):
             Get the input of a submission. If only_input is False, returns the full submissions with a dictionnary object at the key "input".
             Else, returns only the dictionnary.
         """
-        if isinstance(submission.get("input", {}), dict):
+        if isinstance(submission.get('input', {}), dict):
             if only_input:
-                return submission.get("input", {})
+                return submission.get('input', {})
             else:
                 return submission
         else:
@@ -247,8 +255,18 @@ class SubmissionManager(object, metaclass=ABCMeta):
             if only_input:
                 return inp
             else:
-                submission["input"] = inp
+                submission['input'] = inp
                 return submission
+
+    # was created for manual plugin to form a view links for the instructor to view.
+    def get_input_extra_data(self, submission, task, course_id, task_name):
+        program_key = list(submission['input'].keys())[0]
+        # note, this assumes one problem (file upload problem) per task
+        submission['download_link'] = '/course/' + course_id + '/' + task_name + '?submissionid=' + str(submission['_id']) + '&questionid=' + program_key
+        # assuming 1 submission to 1 problem .could be wrong
+        submission['problem_type'] = task.get_problems()[0].get_type()
+
+        return submission
 
     def get_feedback_from_submission(self, submission, only_feedback=False, show_everything=False, inginious_page_object=None):
         """
