@@ -213,7 +213,7 @@ $for index, task in enumerate(lessons[current_lesson]['tasks']):
 
                         $if task['id'] in user_submission and user_submission[task['id']]['input'].get('program'):
                             $if user_submission[task['id']].get('problem_type') == 'code-file':
-                                <a href="$user_submission[task['id']]['download_link']" target="_blank">צפה בהגשה</a>
+                                <a href="$user_submission[task['id']]['download_link']" target="_blank">open submission</a>
                             $else:
                                 <textarea class="code-editor form-control" name="program" data-x-language="$problem.get_original_content().get('language', 'no lang specified')" data-x-lines="1">$user_submission[task['id']]['input'].get('program')</textarea>
                         $else:
