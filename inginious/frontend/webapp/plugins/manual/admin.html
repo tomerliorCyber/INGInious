@@ -220,21 +220,23 @@ $for index, task in enumerate(lessons[current_lesson]['tasks']):
                             $if problem_type == 'code-file':
                                 <a href="$submission['download_link']" target="_blank">open submission</a>
                             $elif problem_type == 'multiple-choice':
+                                <p>multiple choice</p>
                                 $ first_and_only_key = list(submission_input.keys())[0]
-                                $ first_and_only_key
+                                <p>$first_and_only_key</p>>
                                 $ submission_answer = submission_input[first_and_only_key]
-                                $ answer_text = problem.get_choice_with_index(int(submission_answer))['text'] if type(submission_answer) is str else repr(submission_answer)
+                                <!--answer_text = problem.get_choice_with_index(int(submission_answer))['text']-->
+                                $ answer_text = problem.get_choice_with_index(0)['text']
                                 <p> answer number "$submission_answer". answer is "$answer_text"</p>
                             $else:
                                 <textarea class="code-editor form-control" name="program" data-x-language="$problem.get_original_content().get('language', 'no lang specified')" data-x-lines="1">$submission_input.get('program')</textarea>
                     </div>
                 </div>
 
-            <div class="row">
-                <div class="col-lg-12">
-                    <button type="submit" class="btn btn-default btn-lg btn-block center-block submit-btn" id="task-submit-$task['id']">Submit</button>
-                </div>
-            </div>
+            <!--<div class="row">-->
+                <!--<div class="col-lg-12">-->
+                    <!--<button type="submit" class="btn btn-default btn-lg btn-block center-block submit-btn" id="task-submit-$task['id']">Submit</button>-->
+                <!--</div>-->
+            <!--</div>-->
         </form>
 
 
