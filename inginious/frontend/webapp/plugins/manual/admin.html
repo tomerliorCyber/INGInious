@@ -216,10 +216,14 @@ $for index, task in enumerate(lessons[current_lesson]['tasks']):
                                 $ problem_type = user_submission[task['id']].get('problem_type')
                                 $ submission = user_submission[task['id']]
                                 $ submission_input = submission.get('input', {})
+                            
                                 $if problem_type == 'code-file':
                                     <a href="$submission['download_link']" target="_blank">open submission</a>
                                 $elif problem_type == 'multiple-choice':
                                     <p>multiple choice</p>
+                                    $for index, key in enumerate(submission_input.keys()):
+                                        <p>$index</p>
+                                        <p>$key</p>
                                     $ first_and_only_key = list(submission_input.keys())[0]
                                     <p>$first_and_only_key</p>
                                     <p>$submission_input.keys()</p>
