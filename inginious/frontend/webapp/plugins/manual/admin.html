@@ -221,6 +221,8 @@ $for index, task in enumerate(lessons[current_lesson]['tasks']):
                                     <a href="$submission['download_link']" target="_blank">open submission</a>
                                 $elif problem_type == 'multiple-choice':
                                     <p>multiple choice</p>
+                                    <p>$submission_input</p>
+                                    <p>$submission</p>
                                     $for index, key in enumerate(submission_input.keys()):
                                         <p>$index</p>
                                         <p>$key</p>
