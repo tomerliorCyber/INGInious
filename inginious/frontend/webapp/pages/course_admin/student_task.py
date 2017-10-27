@@ -31,7 +31,8 @@ class CourseStudentTaskPage(INGIniousAdminPage):
             return make_csv(data)
 
         user_task = self.database.user_tasks.find_one({"username": username, "courseid": course.get_id(), "taskid": task.get_id()})
-        color_css_class = self.task_factory.get_relevant_color_class_for_grade(user_task.get('grade', 0))
+        grade = 0 if not user_task else user_task.get('grade', 0)
+        color_css_class = self.task_factory.get_relevant_color_class_for_grade(grade)
         if color_css_class:
             user_task["grade_css_class"] = color_css_class
         submissionid = None if not user_task else user_task.get("submissionid", None)
