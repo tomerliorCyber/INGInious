@@ -208,32 +208,22 @@ $for index, task in enumerate(lessons[current_lesson]['tasks']):
 
             $for key, problem in enumerate(task['taskid'].get_problems()):
                 $if task['id'] in user_submission:
+                    $ problem_type = user_submission[task['id']].get('problem_type')
+                    $ submission = user_submission[task['id']]
+                    $ submission_input = submission.get('input', {})
                     <div class="panel panel-default">
                         <div class="panel-body">
                             <div id="task_alert.$problem.get_id()" class="task_alert_problem"></div>
                             <!--?$:problem.get_header()-->
-
-                                $ problem_type = user_submission[task['id']].get('problem_type')
-                                $ submission = user_submission[task['id']]
-                                $ submission_input = submission.get('input', {})
-                            
                                 $if problem_type == 'code-file':
                                     <a href="$submission['download_link']" target="_blank">open submission</a>
                                 $elif problem_type == 'multiple-choice':
-                                    <p>multiple choice</p>
-                                    <p>$submission_input</p>
-                                    <p>$submission</p>
-                                    $for index, key in enumerate(submission_input.keys()):
-                                        <p>$index</p>
-                                        <p>$key</p>
-                                    $ first_and_only_key = list(submission_input.keys())[0]
-                                    <p>$first_and_only_key</p>
-                                    <p>$submission_input.keys()</p>
-                                    $ submission_answer = submission_input[first_and_only_key]
-                                    <p>$submission_answer</p>
-                                    <!--answer_text = problem.get_choice_with_index(int(submission_answer))['text']-->
-                                    $ answer_text = problem.get_choice_with_index(0)['text']
-                                    <p> answer number "$submission_answer". answer is "$answer_text"</p>
+                                    $ if submission_input.get('mcq'):
+                                        $ submission_answer = submission_input['mcq']
+                                        <p>$submission_answer</p>
+                                        <!--answer_text = problem.get_choice_with_index(int(submission_answer))['text']-->
+                                        $ answer_text = problem.get_choice_with_index(0)['text']
+                                        <p> answer number "$submission_answer". answer is "$answer_text"</p>
                                 $else:
                                     <textarea class="code-editor form-control" name="program" data-x-language="$problem.get_original_content().get('language', 'no lang specified')" data-x-lines="1">$submission_input.get('program')</textarea>
                         </div>
