@@ -46,6 +46,7 @@ $var Navbar: $:NavbarF()
 
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu4">
                       $if current_user is None:
+                        <h2>No students are registered here</h2>
                         <li>
                           $for lesson in lessons:
                             <a href="/admin/$course.get_id()/manual">$lessons[lesson]['name']</a>
