@@ -221,9 +221,10 @@ $for index, task in enumerate(lessons[current_lesson]['tasks']):
                                 $elif problem_type == 'multiple-choice':
                                     <p>multiple choice</p>
                                     $ first_and_only_key = list(submission_input.keys())[0]
-                                    <p>$first_and_only_key</p>>
+                                    <p>$first_and_only_key</p>
+                                    <p>$submission_input.keys()</p>
                                     $ submission_answer = submission_input[first_and_only_key]
-                                    <p>$submission_answer</p>>
+                                    <p>$submission_answer</p>
                                     <!--answer_text = problem.get_choice_with_index(int(submission_answer))['text']-->
                                     $ answer_text = problem.get_choice_with_index(0)['text']
                                     <p> answer number "$submission_answer". answer is "$answer_text"</p>
