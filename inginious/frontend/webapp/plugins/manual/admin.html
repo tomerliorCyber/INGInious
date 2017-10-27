@@ -207,30 +207,29 @@ $for index, task in enumerate(lessons[current_lesson]['tasks']):
             <input type="hidden" name="@action" value="submit"/>
 
             $for key, problem in enumerate(task['taskid'].get_problems()):
+                $if task['id'] in user_submission:
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div id="task_alert.$problem.get_id()" class="task_alert_problem"></div>
+                            <!--?$:problem.get_header()-->
 
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <div id="task_alert.$problem.get_id()" class="task_alert_problem"></div>
-                        <!--?$:problem.get_header()-->
-                        $if task['id'] in user_submission:
-                            $ problem_type = user_submission[task['id']].get('problem_type')
-                            $ submission = user_submission[task['id']]
-                            $ submission_input = submission.get('input', {})
-
-                            $if problem_type == 'code-file':
-                                <a href="$submission['download_link']" target="_blank">open submission</a>
-                            $elif problem_type == 'multiple-choice':
-                                <p>multiple choice</p>
-                                $ first_and_only_key = list(submission_input.keys())[0]
-                                <p>$first_and_only_key</p>>
-                                $ submission_answer = submission_input[first_and_only_key]
-                                <!--answer_text = problem.get_choice_with_index(int(submission_answer))['text']-->
-                                $ answer_text = problem.get_choice_with_index(0)['text']
-                                <p> answer number "$submission_answer". answer is "$answer_text"</p>
-                            $else:
-                                <textarea class="code-editor form-control" name="program" data-x-language="$problem.get_original_content().get('language', 'no lang specified')" data-x-lines="1">$submission_input.get('program')</textarea>
+                                $ problem_type = user_submission[task['id']].get('problem_type')
+                                $ submission = user_submission[task['id']]
+                                $ submission_input = submission.get('input', {})
+                                $if problem_type == 'code-file':
+                                    <a href="$submission['download_link']" target="_blank">open submission</a>
+                                $elif problem_type == 'multiple-choice':
+                                    <p>multiple choice</p>
+                                    $ first_and_only_key = list(submission_input.keys())[0]
+                                    <p>$first_and_only_key</p>>
+                                    $ submission_answer = submission_input[first_and_only_key]
+                                    <!--answer_text = problem.get_choice_with_index(int(submission_answer))['text']-->
+                                    $ answer_text = problem.get_choice_with_index(0)['text']
+                                    <p> answer number "$submission_answer". answer is "$answer_text"</p>
+                                $else:
+                                    <textarea class="code-editor form-control" name="program" data-x-language="$problem.get_original_content().get('language', 'no lang specified')" data-x-lines="1">$submission_input.get('program')</textarea>
+                        </div>
                     </div>
-                </div>
 
             <!--<div class="row">-->
                 <!--<div class="col-lg-12">-->
