@@ -220,11 +220,9 @@ $for index, task in enumerate(lessons[current_lesson]['tasks']):
                             $if problem_type == 'code-file':
                                 <a href="$submission['download_link']" target="_blank">open submission</a>
                             $elif problem_type == 'multiple-choice':
-                                $ submission_answer = submission_input['mcq']
-                                $ answer_text = problem.get_choice_with_index(int(submission_answer))['text'].content
+                                $ submission_answer = submission_input[submission_input.keys()[0]]
+                                $ answer_text = problem.get_choice_with_index(int(submission_answer))['text']
                                 <p> answer number "$submission_answer". answer is "$answer_text"</p>
-
-
                             $else:
                                 <textarea class="code-editor form-control" name="program" data-x-language="$problem.get_original_content().get('language', 'no lang specified')" data-x-lines="1">$submission_input.get('program')</textarea>
                     </div>
