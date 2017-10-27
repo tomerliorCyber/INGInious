@@ -100,21 +100,22 @@ class ManualPlugin(INGIniousAdminPage):
     def get_user_grade_final_submission_for_lesson(self, course, current_user, current_lesson):
         user_submission = dict()
         courseid = course.get_id()
-        user_task = list(self.database.user_tasks.find({"courseid": courseid, "username": current_user, 'taskid': current_lesson}))
+        user_task = list(self.database.user_tasks.find({"courseid": courseid, "username": current_user}))
         if user_task:
             for task in user_task:
                 task_id = task['taskid']
                 lesson_name, task_name = get_task_and_lesson(task_id)
 
-                submission = self.submission_manager.get_submission(task['submissionid'], False)
-                task_object = self.task_factory.get_task(course, task_id)
-                if submission:
+                if lesson_name == current_lesson:
+                    submission = self.submission_manager.get_submission(task['submissionid'], False)
+                    task_object = self.task_factory.get_task(course, task_id)
+                    if submission:
 
-                    submission = self.submission_manager.get_input_from_submission(submission)
-                    submission = self.submission_manager.get_feedback_from_submission(submission, show_everything=True)
-                    submission = self.submission_manager.get_input_extra_data(submission, task_object, courseid, task_name)
+                        submission = self.submission_manager.get_input_from_submission(submission)
+                        submission = self.submission_manager.get_feedback_from_submission(submission, show_everything=True)
+                        submission = self.submission_manager.get_input_extra_data(submission, task_object, courseid, task_name)
 
-                    user_submission[task_name] = submission
+                        user_submission[task_name] = submission
 
         return user_submission
 
