@@ -220,7 +220,8 @@ $for index, task in enumerate(lessons[current_lesson]['tasks']):
                             $if problem_type == 'code-file':
                                 <a href="$submission['download_link']" target="_blank">open submission</a>
                             $elif problem_type == 'multiple-choice':
-                                $ submission_answer = submission_input[submission_input.keys()[0]]
+                                $ first_and_only_key = list(submission_input.keys())[0]
+                                $ submission_answer = submission_input[first_and_only_key]
                                 $ answer_text = problem.get_choice_with_index(int(submission_answer))['text']
                                 <p> answer number "$submission_answer". answer is "$answer_text"</p>
                             $else:
