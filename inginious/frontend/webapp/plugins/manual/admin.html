@@ -206,18 +206,26 @@ $for index, task in enumerate(lessons[current_lesson]['tasks']):
             <input type="hidden" name="@action" value="submit"/>
 
             $for key, problem in enumerate(task['taskid'].get_problems()):
+
                 <div class="panel panel-default">
                     <div class="panel-body">
                         <div id="task_alert.$problem.get_id()" class="task_alert_problem"></div>
                         <!--?$:problem.get_header()-->
+                        $if task['id'] in user_submission:
+                            $ problem_type = user_submission[task['id']].get('problem_type')
+                            $ submission = user_submission[task['id']]
+                            $ submission_input = submission.get('input', {})
 
-                        $if task['id'] in user_submission and user_submission[task['id']]['input'].get('program'):
-                            $if user_submission[task['id']].get('problem_type') == 'code-file':
-                                <a href="$user_submission[task['id']]['download_link']" target="_blank">open submission</a>
+                            $if problem_type == 'code-file':
+                                <a href="$submission['download_link']" target="_blank">open submission</a>
+                            $elif problem_type == 'multiple-choice':
+                                $ answer_text = problem.get_choice_with_index(3)['text'].content
+                                $ submission_answer = submission_input['mcq']
+                                <p> answer number "$submission_answer". answer is "$answer_text"</p>
+
+
                             $else:
-                                <textarea class="code-editor form-control" name="program" data-x-language="$problem.get_original_content().get('language', 'no lang specified')" data-x-lines="1">$user_submission[task['id']]['input'].get('program')</textarea>
-                        $else:
-                            <textarea class="code-editor form-control" name="program" data-x-language="$problem.get_original_content().get('language', 'no lang specified')" data-x-lines="1"></textarea>
+                                <textarea class="code-editor form-control" name="program" data-x-language="$problem.get_original_content().get('language', 'no lang specified')" data-x-lines="1">$submission_input.get('program')</textarea>
                     </div>
                 </div>
 

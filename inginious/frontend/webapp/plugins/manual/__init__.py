@@ -97,7 +97,26 @@ class ManualPlugin(INGIniousAdminPage):
 
         return user_data
 
+    def get_user_grade_final_submission_for_lesson(self, course, current_user, current_lesson):
+        user_submission = dict()
+        courseid = course.get_id()
+        user_task = list(self.database.user_tasks.find({"courseid": courseid, "username": current_user, 'taskid': current_lesson}))
+        if user_task:
+            for task in user_task:
+                task_id = task['taskid']
+                lesson_name, task_name = get_task_and_lesson(task_id)
 
+                submission = self.submission_manager.get_submission(task['submissionid'], False)
+                task_object = self.task_factory.get_task(course, task_id)
+                if submission:
+
+                    submission = self.submission_manager.get_input_from_submission(submission)
+                    submission = self.submission_manager.get_feedback_from_submission(submission, show_everything=True)
+                    submission = self.submission_manager.get_input_extra_data(submission, task_object, courseid, task_name)
+
+                    user_submission[task_name] = submission
+
+        return user_submission
 
 
 class IndexPage(ManualPlugin):
@@ -108,22 +127,7 @@ class IndexPage(ManualPlugin):
         current_user = users[list(users)[0]]['username'] if len(list(users)) > 0 else None
         current_lesson = list(lessons)[0] if len(list(lessons)) > 0 else None
         buttons = self.get_buttons(current_user, users)
-        user_submission = dict()
-
-        user_task = list(self.database.user_tasks.find({"courseid": course.get_id(), "username": current_user}))
-
-        if user_task:
-            for task in user_task:
-                lesson_name, task_name = get_task_and_lesson(task['taskid'])
-                if lesson_name == current_lesson:
-                    submission = self.submission_manager.get_submission(task['submissionid'], False)
-
-                    if submission:
-                        submission = self.submission_manager.get_input_from_submission(submission)
-                        submission = self.submission_manager.get_feedback_from_submission(submission, show_everything=True)
-
-                        user_submission[task_name] = submission
-
+        user_submission = self.get_user_grade_final_submission_for_lesson(course, current_user, current_lesson)
         user_data = self.get_user_data(current_lesson, current_user, lessons)
 
         return self.template_helper.get_custom_renderer('frontend/webapp/plugins/manual')\
@@ -139,26 +143,7 @@ class StudentPage(ManualPlugin):
         current_lesson = lesson_id
         current_user = student_id
         buttons = self.get_buttons(current_user, users)
-        user_submission = dict()
-
-        user_task = list(self.database.user_tasks.find({"courseid": course.get_id(), "username": current_user}))
-
-        if user_task:
-            for task in user_task:
-                task_id = task['taskid']
-                lesson_name, task_name = get_task_and_lesson(task_id)
-
-                if lesson_name == current_lesson:
-                    submission = self.submission_manager.get_submission(task['submissionid'], False)
-                    task_object = self.task_factory.get_task(course, task_id)
-                    if submission:
-
-                        submission = self.submission_manager.get_input_from_submission(submission)
-                        submission = self.submission_manager.get_feedback_from_submission(submission, show_everything=True)
-                        submission = self.submission_manager.get_input_extra_data(submission, task_object, courseid, task_name)
-
-                        user_submission[task_name] = submission
-
+        user_submission = self.get_user_grade_final_submission_for_lesson(course, current_user, current_lesson)
         user_data = self.get_user_data(current_lesson, current_user, lessons)
 
         if student_id not in users or lesson_id not in lessons:
