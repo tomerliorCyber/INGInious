@@ -221,7 +221,7 @@ $for index, task in enumerate(lessons[current_lesson]['tasks']):
                                 <a href="$submission['download_link']" target="_blank">open submission</a>
                             $elif problem_type == 'multiple-choice':
                                 $ submission_answer = submission_input['mcq']
-                                # answer_text = problem.get_choice_with_index(int(submission_answer))['text'].content
+                                $ answer_text = problem.get_choice_with_index(int(submission_answer))['text'].content
                                 <p> answer number "$submission_answer". answer is "$answer_text"</p>
 
 
