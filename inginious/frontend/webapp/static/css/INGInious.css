@@ -431,3 +431,6 @@ li.placeholder:before {
   color: red;
 }
 
+.btn-ignore-click{
+  background-color: gainsboro;
+}

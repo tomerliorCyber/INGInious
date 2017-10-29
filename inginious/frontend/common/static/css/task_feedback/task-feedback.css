@@ -41,6 +41,7 @@
 .feedback-modal-title{
     font-size: 35px;
     margin: 30px 50px 10px 50px;
+    font-family: 'Arimo', sans-serif !important;
 }
 
 .feedback-modal-failure-text{
