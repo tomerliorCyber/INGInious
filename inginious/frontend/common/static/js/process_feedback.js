@@ -10,8 +10,6 @@ function fillModalTerminalBoxes(feedbackData, scenarioId) {
     var scenarioIdStr = '-' + scenarioId;
     var comments = [];
     console.log('scenarioIdStr is ' + scenarioIdStr);
-    console.log('feedbackData is ');
-    console.log(feedbackData);
 
     // The modal's Terminal initialization
     var command_line = "C:\\Magshimim> program.exe";
@@ -25,7 +23,6 @@ function fillModalTerminalBoxes(feedbackData, scenarioId) {
         line.text(feedbackData.log.quotes[i].value);
         // todo, return this if
         if (feedbackData.log.quotes[i].type.en == "input" || feedbackData.log.quotes[i].type.en == "output") {
-            console.log('inside input output ');
             line.addClass("commentable-section");
             line.attr("data-section-id", i.toString());
 
@@ -41,8 +38,6 @@ function fillModalTerminalBoxes(feedbackData, scenarioId) {
                 ]
             });
         }
-        console.log('append line');
-        console.log(line);
         $("#scenario_log" + scenarioIdStr).append(line);
     }
 
@@ -54,8 +49,6 @@ function fillModalTerminalBoxes(feedbackData, scenarioId) {
         "name": "You"
     };
 
-    console.log('comments for ' + scenarioIdStr);
-    console.log(comments);
 
     var SideComments = require('side-comments');
     window.sideComments = new SideComments('#commentable-container' + scenarioIdStr, currentUser, comments);
@@ -70,8 +63,6 @@ function renderScenarioRows(feedbackData){
 
     $.each(feedbackData, function(id, data) {{
         console.log('here is feedbackData. data is -- ');
-        console.log(data);
-        console.log(id);
         data.id = id;
         data.indexId = parseInt(id) + 1;
         if (isSuccess(data)){{
