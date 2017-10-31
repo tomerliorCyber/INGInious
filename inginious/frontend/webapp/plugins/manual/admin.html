@@ -44,18 +44,20 @@ $var Navbar: $:NavbarF()
                         <span class="caret"></span>
                     </button>
 
+                    $if current_user is None:
+                        <h3>No students are registered here</h3>
+
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu4">
-                      $if current_user is None:
-                        <h2>No students are registered here</h2>
-                        <li>
-                          $for lesson in lessons:
-                            <a href="/admin/$course.get_id()/manual">$lessons[lesson]['name']</a>
-                        </li>
-                      $else:
-                        <li>
-                          $for lesson in lessons:
-                            <a href="/admin/$course.get_id()/manual/$lessons[lesson]['name']/$current_user">$lessons[lesson]['name']</a>
-                        </li>
+                        $if current_user is None:
+                            <li>
+                              $for lesson in lessons:
+                                <a href="/admin/$course.get_id()/manual">$lessons[lesson]['name']</a>
+                            </li>
+                        $else:
+                            <li>
+                              $for lesson in lessons:
+                                <a href="/admin/$course.get_id()/manual/$lessons[lesson]['name']/$current_user">$lessons[lesson]['name']</a>
+                            </li>
                     </ul>
                 </div>
         </div>
