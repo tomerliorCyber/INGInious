@@ -664,12 +664,15 @@ function displayTaskStudentSuccessAlert(content)
 }
 
 //Displays a student error alert in task form
-function displayTaskStudentAlertWithProblems(content, top, type, alwaysShowTop)
-{
+function displayTaskStudentAlertWithProblems(content, top, type, alwaysShowTop) {
     resetAlerts();
 
     var firstPos = -1;
-    var task_alert = $('#task_alert');
+    if (window.specificTaskId) {
+        var task_alert = window.specificTaskId
+    } else {
+        var task_alert = $('#task_alert');
+    }
 
     if("text" in content && content.text != "")
     {
