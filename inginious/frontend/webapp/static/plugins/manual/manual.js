@@ -320,29 +320,31 @@ var ManualPlugin = (function() {
                 data: { "@action": "check", "submissionid": submissionId },
                 dataType: 'json',
                 success: function(data) {
+                    window.specificTaskId = task;
+                    
                     if ("status" in data && data['status'] == "waiting") {
                         manualWaitForSubmission(submissionId, task);
                         manualGetLoadingAlert(task);
                     } else if("status" in data && "result" in data && "grade" in data) {
                         if (data['result'] == "failed") {
-                            manualDisplayFailedAlert(task, data);
+                            displayTaskStudentErrorAlert(data)
                         } else if (data['result'] == "success") {
-                            manualDisplaySuccessAlert(task, data);
+                            displayTaskStudentSuccessAlert(data)
                         } else if (data['result'] == "timeout") {
-                            manualDisplayTimeoutAlert(task);
+                            displayTimeOutAlert(data);
                         } else if (data['result'] == "overflow") {
-                            manualDisplayOverflowAlert(task);
+                            displayOverflowAlert(data);
                         } else if (data['result'] == "killed") {
-                            manualDisplayKillAlert(task);
+                            displayKilledAlert(data);
                         } else { // error
-                            manualDisplayErrorAlert(task);
+                            displayTaskErrorAlert(data);
                         }
                     } else {
-                        manualDisplayErrorAlert(task);
+                        displayTaskErrorAlert(data);
                     }
                 },
                 error: function(data) {
-                    manualDisplayErrorAlert(task);
+                    displayTaskErrorAlert(task);
                 }
             });
         }, 1000);
@@ -418,20 +420,20 @@ var ManualPlugin = (function() {
      * @param task
      * @param taskData
      */
-    function manualDisplayFailedAlert(task, taskData) {
-        var div = $('<div></div>');
-
-        var b = $('<b></b>');
-        b.html('There are some errors in your answer. Your score is ' + taskData.grade + '<br>');
-        b.appendTo(div);
-
-        var pre = $(taskData.text);
-        pre.appendTo(div);
-
-        var taskAlert = manualGetAlertCode(div, 'danger');
-
-        task.find('#task_alert').html(taskAlert);
-    }
+    // function manualDisplayFailedAlert(task, taskData) {
+    //     var div = $('<div></div>');
+    //
+    //     var b = $('<b></b>');
+    //     b.html('There are some errors in your answer. Your score is ' + taskData.grade + '<br>');
+    //     b.appendTo(div);
+    //
+    //     var pre = $(taskData.text);
+    //     pre.appendTo(div);
+    //
+    //     var taskAlert = manualGetAlertCode(div, 'danger');
+    //
+    //     task.find('#task_alert').html(taskAlert);
+    // }
 
 
     /**
@@ -439,31 +441,31 @@ var ManualPlugin = (function() {
      * @param task
      * @param taskData
      */
-    function manualDisplaySuccessAlert(task, taskData) {
-        var div = $('<div></div>');
-        var content = '';
-        content += 'Your answer passed the tests! Your score is ' + taskData.grade;
-        content += taskData.text;
-        div.html(content);
-
-        var taskAlert = manualGetAlertCode(div, 'success');
-
-        task.find('#task_alert').html(taskAlert);
-    }
+    // function manualDisplaySuccessAlert(task, taskData) {
+    //     var div = $('<div></div>');
+    //     var content = '';
+    //     content += 'Your answer passed the tests! Your score is ' + taskData.grade;
+    //     content += taskData.text;
+    //     div.html(content);
+    //
+    //     var taskAlert = manualGetAlertCode(div, 'success');
+    //
+    //     task.find('#task_alert').html(taskAlert);
+    // }
 
 
     /**
      * Display kill alert
      * @param task
      */
-    function manualDisplayKillAlert(task) {
-        var b = $('<b></b>');
-        b.html('Your submission was killed.');
-
-        var taskAlert = manualGetAlertCode(b, 'warning');
-
-        task.find('#task_alert').html(taskAlert);
-    }
+    // function manualDisplayKillAlert(task) {
+    //     var b = $('<b></b>');
+    //     b.html('Your submission was killed.');
+    //
+    //     var taskAlert = manualGetAlertCode(b, 'warning');
+    //
+    //     task.find('#task_alert').html(taskAlert);
+    // }
 
 
     /**
@@ -485,14 +487,14 @@ var ManualPlugin = (function() {
      * @param task
      * @param taskData
      */
-    function manualDisplayTimeoutAlert(task) {
-        var b = $('<b></b>');
-        b.html('Your submission timed out');
-
-        var taskAlert = manualGetAlertCode(b, 'warning');
-
-        task.find('#task_alert').html(taskAlert);
-    }
+    // function manualDisplayTimeoutAlert(task) {
+    //     var b = $('<b></b>');
+    //     b.html('Your submission timed out');
+    //
+    //     var taskAlert = manualGetAlertCode(b, 'warning');
+    //
+    //     task.find('#task_alert').html(taskAlert);
+    // }
 
 
     /**
@@ -500,14 +502,14 @@ var ManualPlugin = (function() {
      * @param task
      * @param taskData
      */
-    function manualDisplayOverflowAlert(task) {
-        var b = $('<b></b>');
-        b.html('Your submission made an overflow');
-
-        var taskAlert = manualGetAlertCode(b, 'warning');
-
-        task.find('#task_alert').html(taskAlert);
-    }
+    // function manualDisplayOverflowAlert(task) {
+    //     var b = $('<b></b>');
+    //     b.html('Your submission made an overflow');
+    //
+    //     var taskAlert = manualGetAlertCode(b, 'warning');
+    //
+    //     task.find('#task_alert').html(taskAlert);
+    // }
 
 
     /**
