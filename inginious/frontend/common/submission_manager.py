@@ -259,10 +259,15 @@ class SubmissionManager(object, metaclass=ABCMeta):
                 return submission
 
     # was created for manual plugin to form a view links for the instructor to view.
-    def get_input_extra_data(self, submission, task, course_id, task_name):
+    def get_input_extra_data(self, submission, task, course_id, task_name, lesson_name):
         program_key = list(submission['input'].keys())[0]
         # note, this assumes one problem (file upload problem) per task
-        submission['download_link'] = '/course/' + course_id + '/' + task_name + '?submissionid=' + str(submission['_id']) + '&questionid=' + program_key
+        # ugly hack for getting the directory name
+        if task_name.isdigit():
+            directory_name = lesson_name + '-' + task_name
+        else:
+            directory_name = task_name
+        submission['download_link'] = '/course/' + course_id + '/' + directory_name + '?submissionid=' + str(submission['_id']) + '&questionid=' + program_key
         # assuming 1 submission to 1 problem .could be wrong
         submission['problem_type'] = task.get_problems()[0].get_type()
 
