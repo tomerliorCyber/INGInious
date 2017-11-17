@@ -47,9 +47,6 @@ class CourseStudentTaskSubmission(INGIniousAdminPage):
         submission = self.submission_manager.get_feedback_from_submission(submission, show_everything=True, inginious_page_object=self)
 
         to_display = []
-        problems = task.get_problems()
-        self.logger.info('problems are ' +repr(problems))
-        self.logger.info('lenghth problems is ' +repr(len(problems)))
         for problem in task.get_problems():
             if problem.get_id() in submission["input"]:  # present in input and in task
                 data = {
@@ -114,7 +111,8 @@ class CourseStudentTaskSubmission(INGIniousAdminPage):
 
         done_id = [d["id"] for d in to_display]
         for pid in submission["input"]:
-            if pid not in done_id:
+            # html_template is used to display html in submissions to students and it's irrelevant here 
+            if pid not in done_id and not "html_template":
                 data = {
                     "id": pid,
                     "name": pid,
@@ -141,5 +139,6 @@ class CourseStudentTaskSubmission(INGIniousAdminPage):
                     data["content"] = submission["input"][pid]
                     data["base64"] = base64.b64encode(str(submission["input"][pid]).encode('utf-8')).decode('utf-8')
                 to_display.append(data)
+
 
         return self.template_helper.get_renderer().course_admin.submission(course, username, task, submissionid, submission, to_display)
