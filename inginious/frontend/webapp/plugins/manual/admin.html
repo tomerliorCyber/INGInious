@@ -213,13 +213,13 @@ $for index, task in enumerate(lessons[current_lesson]['tasks']):
                     $ problem_type = user_submission[task['id']].get('problem_type')
                     $ submission = user_submission[task['id']]
                     $ submission_input = submission.get('input', {})
+
                     $if problem_type == 'code-file':
-                        $ has_submission = submission_input.get('download_link')
+                        $ has_submission = submission.get('download_link')
                     $elif problem_type == 'multiple-choice':
                         $ has_submission = submission_input.get('mcq')
                     $else:
                         $ has_submission = submission_input.get('program')
-
                     $if has_submission:
                         <div class="panel panel-default">
                             <div class="panel-body">
