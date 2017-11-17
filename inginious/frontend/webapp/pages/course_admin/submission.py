@@ -47,6 +47,9 @@ class CourseStudentTaskSubmission(INGIniousAdminPage):
         submission = self.submission_manager.get_feedback_from_submission(submission, show_everything=True, inginious_page_object=self)
 
         to_display = []
+        problems = task.get_problems()
+        self.logger.info('problems are ' +repr(problems))
+        self.logger.info('lenghth problems is ' +repr(len(problems)))
         for problem in task.get_problems():
             if problem.get_id() in submission["input"]:  # present in input and in task
                 data = {
