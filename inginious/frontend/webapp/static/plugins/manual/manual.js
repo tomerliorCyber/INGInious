@@ -320,7 +320,8 @@ var ManualPlugin = (function() {
                 data: { "@action": "check", "submissionid": submissionId },
                 dataType: 'json',
                 success: function(data) {
-                    window.specificTaskId = task;
+                    // the div to display the alerts
+                    window.specificTaskId = task.find('.task-submit-alert');
                     
                     if ("status" in data && data['status'] == "waiting") {
                         manualWaitForSubmission(submissionId, task);
