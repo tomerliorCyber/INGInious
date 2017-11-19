@@ -224,7 +224,6 @@ $for index, task in enumerate(lessons[current_lesson]['tasks']):
                         <div class="panel panel-default">
                             <div class="panel-body">
                                 <div id="task_alert.$problem.get_id()" class="task_alert_problem"></div>
-                                <!--?$:problem.get_header()-->
                                     $if problem_type == 'code-file':
                                         <a href="$submission['download_link']" target="_blank">Download Submission</a>
                                     $elif problem_type == 'multiple-choice':
