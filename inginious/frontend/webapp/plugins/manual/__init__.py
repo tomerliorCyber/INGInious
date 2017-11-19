@@ -154,7 +154,6 @@ class StudentPage(ManualPlugin):
                        current_user, buttons, self.webterm_link, user_submission, user_data)
 
 
-
 class SaveManual(ManualPlugin):
     def POST_AUTH(self, courseid, lessonid, evaluated_student):
         course = self.get_course_and_check_rights(courseid, allow_all_staff=True)[0]

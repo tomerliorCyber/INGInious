@@ -9,7 +9,7 @@ import web
 
 from os import path
 from inginious.frontend.common.task_problems import DisplayableCodeFileProblem, DisplayableMultipleChoiceProblem
-from inginious.frontend.webapp.pages.course_admin.utils import INGIniousAdminPage
+from inginious.frontend.webapp.pages.course_admin.utils import INGIniousAdminPage, get_task_and_lesson
 
 
 class CourseStudentTaskSubmission(INGIniousAdminPage):
@@ -40,11 +40,17 @@ class CourseStudentTaskSubmission(INGIniousAdminPage):
     def page(self, course, username, task, submissionid):
         """ Get all data and display the page """
         submission = self.submission_manager.get_submission(submissionid, False)
+        course_id = course.get_id()
+        task_id = task.get_id()
+        task_object = task
+        # task_object = self.task_factory.get_task(course, task_id)
+        lesson_name, task_name = get_task_and_lesson(task_id)
         if not submission or username not in submission["username"] or submission["courseid"] != course.get_id() or submission["taskid"] != \
                 task.get_id():
             raise web.notfound()
         submission = self.submission_manager.get_input_from_submission(submission)
         submission = self.submission_manager.get_feedback_from_submission(submission, show_everything=True, inginious_page_object=self)
+        submission = self.submission_manager.get_input_extra_data(submission, task_object, course_id, task_name, lesson_name)
 
         to_display = []
         for problem in task.get_problems():
@@ -52,6 +58,8 @@ class CourseStudentTaskSubmission(INGIniousAdminPage):
                 data = {
                     "id": problem.get_id(),
                     "name": problem.get_name(),
+                    "problem_type": problem.get_type(),
+                    "download_link": submission.get('download_link'),
                     "defined": True,
                     "present": True,
                     "context": problem.get_header(),

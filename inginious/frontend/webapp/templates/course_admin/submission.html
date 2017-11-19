@@ -124,6 +124,8 @@ $for key, problem in enumerate(to_display):
                 <object data="data:$problem['mime'];base64,$problem['base64']" type="application/pdf" style="width: 100%; min-height: 800px;">
                     <embed src="data:$problem['mime'];base64,$problem['base64']" type="application/pdf"/>
                 </object>
+            $elif problem.get('download_link'):
+                <a href="$problem['download_link']" target="_blank">Download Submission</a>
             $else:
                 <span class="text-warning">There is input, but it can't be read as an UTF-8 file.</span>
         </div>
