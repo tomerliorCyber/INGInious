@@ -207,7 +207,7 @@ $for index, task in enumerate(lessons[current_lesson]['tasks']):
             $if webterm_link is not None:
                 <input type="hidden" value="$webterm_link" id="webterm_link"/>
             <input type="hidden" name="@action" value="submit"/>
-
+            $ problem_type = ''
             $for key, problem in enumerate(task['taskid'].get_problems()):
                 $if task['id'] in user_submission:
                     $ problem_type = user_submission[task['id']].get('problem_type')
