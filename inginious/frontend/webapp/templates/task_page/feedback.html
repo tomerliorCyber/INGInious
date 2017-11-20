@@ -39,12 +39,12 @@
 
         <!-- Primary Page Layout
         –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-        <table id="scenarios-table" class="table table-condensed feedback-table">
+        <table id="scenarios-table-task_id_to_replace" class="table table-condensed feedback-table">
 
         </table>
 
         <!--here will the modals be injected-->
-        <table id="modals">
+        <table id="modals-task_id_to_replace">
 
         </table>
 
@@ -148,7 +148,8 @@
         </script>
 
         <script>
-            renderScenarioRows(feedbackData)
+            var taskId = 'task_id_to_replace';
+            renderScenarioRows(feedbackData, taskId)
         </script>
 
     </body>

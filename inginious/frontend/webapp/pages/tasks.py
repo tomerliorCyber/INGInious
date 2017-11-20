@@ -18,7 +18,7 @@ import web
 
 from bson.objectid import ObjectId
 from inginious.common import exceptions
-from inginious.frontend.common.task_page_helpers import submission_to_json, list_multiple_multiple_choices_and_files
+from inginious.frontend.common.task_page_helpers import submission_to_json, list_multiple_multiple_choices_and_files, indent
 from inginious.frontend.webapp.pages.utils import INGIniousAuthPage
 
 
@@ -169,7 +169,7 @@ class TaskPage(INGIniousAuthPage):
                     del userinput['@debug-mode']
 
                 if len(task._problems) > 0 and task._problems[0].get_type() == 'code':
-                    userinput = self.add_feedback_html_to_user_input(userinput)
+                    userinput = self.add_feedback_html_to_user_input(userinput, taskid)
 
 
                 # Start the submission
@@ -248,7 +248,7 @@ class TaskPage(INGIniousAuthPage):
             else:
                 raise web.notfound()
 
-    def add_feedback_html_to_user_input(self, user_input):
+    def add_feedback_html_to_user_input(self, user_input, task_id):
         self.logger.info('before opening feebdack.html')
         try:
 
@@ -256,11 +256,13 @@ class TaskPage(INGIniousAuthPage):
             file_path = self.template_helper._root_path + '/'+ self.template_helper._template_dir + '/task_page/feedback.html'
             self.logger.info('file_path ' +repr(file_path))
             with codecs.open(file_path,'r',encoding='utf8') as f:
-                text = f.read()
+                feedback_html = f.read()
             # todo, in order to support multiple scenario boxes in the same html page,
             # it might be a good idea to render the html with the task id in it (05-06, for example)
-            # that way, the way the js will render in the appropriate modal 
-            user_input['html_template'] = text
+            # that way, the way the js will render in the appropriate modal
+            feedback_html_injected_with_id = feedback_html.replace('task_id_to_replace', task_id)
+            feedback_html_injected_with_id = '.. raw:: html' + '\n' + indent(feedback_html_injected_with_id, 4)
+            user_input['html_template'] = feedback_html_injected_with_id
         except Exception as err:
             prefered_encoding = locale.getpreferredencoding()
             self.logger.error( ' ---- prefered_encoding ' + repr(prefered_encoding))

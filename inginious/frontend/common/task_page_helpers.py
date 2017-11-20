@@ -50,3 +50,8 @@ def list_multiple_multiple_choices_and_files(task):
                 if isinstance(box, FileBox):
                     output[box.get_complete_id()] = {}
     return output
+
+
+def indent(text, amount, ch=' '):
+    padding = amount * ch
+    return ''.join(padding + line for line in text.splitlines(True))
