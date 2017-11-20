@@ -257,6 +257,9 @@ class TaskPage(INGIniousAuthPage):
             self.logger.info('file_path ' +repr(file_path))
             with codecs.open(file_path,'r',encoding='utf8') as f:
                 text = f.read()
+            # todo, in order to support multiple scenario boxes in the same html page,
+            # it might be a good idea to render the html with the task id in it (05-06, for example)
+            # that way, the way the js will render in the appropriate modal 
             user_input['html_template'] = text
         except Exception as err:
             prefered_encoding = locale.getpreferredencoding()
