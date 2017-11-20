@@ -55,7 +55,7 @@ function fillModalTerminalBoxes(feedbackData, scenarioId) {
 }
 
 
-function renderScenarioRows(feedbackData){
+function renderScenarioRows(feedbackData, taskId){
     var scenario_row,
         modal;
     console.log('here is feedbackData. ');
@@ -72,11 +72,11 @@ function renderScenarioRows(feedbackData){
         }}
         //add the hidden modal
         modal = $(tmpl('tmpl-modal', data));
-        $('#modals').append(modal);
+        $('#modals-' + taskId).append(modal);
 
         // add row to scenario table
         scenario_row = $(tmpl('tmpl-scenario-row', data));
-        $('#scenarios-table').append(scenario_row);
+        $('#scenarios-table-' + taskId).append(scenario_row);
 
     }});
 }
