@@ -50,7 +50,7 @@ class CourseStudentTaskSubmission(INGIniousAdminPage):
             raise web.notfound()
         submission = self.submission_manager.get_input_from_submission(submission)
         submission = self.submission_manager.get_feedback_from_submission(submission, show_everything=True, inginious_page_object=self)
-        submission = self.submission_manager.get_input_extra_data(submission, task_object, course_id, task_name, lesson_name)
+        submission = self.submission_manager.get_input_extra_data(submission, task_object, course_id, task_name, lesson_name, task_id)
 
         to_display = []
         for problem in task.get_problems():
