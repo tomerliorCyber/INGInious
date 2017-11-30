@@ -112,7 +112,7 @@ class ManualPlugin(INGIniousAdminPage):
 
                         submission = self.submission_manager.get_input_from_submission(submission)
                         submission = self.submission_manager.get_feedback_from_submission(submission, show_everything=True)
-                        submission = self.submission_manager.get_input_extra_data(submission, task_object, courseid, task_name, lesson_name, task_id)
+                        submission = self.submission_manager.get_input_extra_data(submission, task_object, courseid, task_id)
 
                         user_submission[task_name] = submission
 
