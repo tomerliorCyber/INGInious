@@ -17,28 +17,29 @@ function fillModalTerminalBoxes(feedbackData, scenarioId) {
         command_line += " " + feedbackData.args[i];
     }
     $("#scenario_log" + scenarioIdStr).append('<li>' + command_line + '<li>');
+    if (feedbackData.log) {
+        for (var i = 0; i < feedbackData.log.quotes.length; i++) {
+            var line = $('<li></li>');
+            line.text(feedbackData.log.quotes[i].value);
+            // todo, return this if
+            if (feedbackData.log.quotes[i].type.en == "input" || feedbackData.log.quotes[i].type.en == "output") {
+                line.addClass("commentable-section");
+                line.attr("data-section-id", i.toString());
 
-    for (var i = 0; i < feedbackData.log.quotes.length; i++) {
-        var line = $('<li></li>');
-        line.text(feedbackData.log.quotes[i].value);
-        // todo, return this if
-        if (feedbackData.log.quotes[i].type.en == "input" || feedbackData.log.quotes[i].type.en == "output") {
-            line.addClass("commentable-section");
-            line.attr("data-section-id", i.toString());
-
-            comments.push({
-                "sectionId": i.toString(),
-                "comments": [
-                    {
-                        "id": i.toString(),
-                        "authorAvatarUrl": COMMENTS_IMAGES[feedbackData.log.quotes[i].type.en],
-                        "authorName": feedbackData.log.quotes[i].type.he,
-                        "comment":  feedbackData.log.quotes[i].name
-                    }
-                ]
-            });
+                comments.push({
+                    "sectionId": i.toString(),
+                    "comments": [
+                        {
+                            "id": i.toString(),
+                            "authorAvatarUrl": COMMENTS_IMAGES[feedbackData.log.quotes[i].type.en],
+                            "authorName": feedbackData.log.quotes[i].type.he,
+                            "comment": feedbackData.log.quotes[i].name
+                        }
+                    ]
+                });
+            }
+            $("#scenario_log" + scenarioIdStr).append(line);
         }
-        $("#scenario_log" + scenarioIdStr).append(line);
     }
 
 
