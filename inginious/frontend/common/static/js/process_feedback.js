@@ -17,7 +17,7 @@ function fillModalTerminalBoxes(feedbackData, scenarioId) {
         command_line += " " + feedbackData.args[i];
     }
     $("#scenario_log" + scenarioIdStr).append('<li>' + command_line + '<li>');
-    if(feedbackData.log) {
+    if (feedbackData.log) {
         for (var i = 0; i < feedbackData.log.quotes.length; i++) {
             var line = $('<li></li>');
             line.text(feedbackData.log.quotes[i].value);
