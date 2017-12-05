@@ -11,10 +11,13 @@ function fillModalTerminalBoxes(feedbackData, scenarioId) {
     var comments = [];
     console.log('scenarioIdStr is ' + scenarioIdStr);
 
-    // The modal's Terminal initialization
-    var command_line = "C:\\Magshimim> program.exe";
-    for (var i = 0; i < feedbackData.args.length; i++) {
-        command_line += " " + feedbackData.args[i];
+
+    if (feedbackData.args) {
+        // The modal's Terminal initialization
+        var command_line = "C:\\Magshimim> program.exe";
+        for (var i = 0; i < feedbackData.args.length; i++) {
+            command_line += " " + feedbackData.args[i];
+        }
     }
     $("#scenario_log" + scenarioIdStr).append('<li>' + command_line + '<li>');
     if (feedbackData.log) {
