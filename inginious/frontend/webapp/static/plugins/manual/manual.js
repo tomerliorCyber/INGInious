@@ -184,10 +184,16 @@ var ManualPlugin = (function() {
      */
     var onSubmitAllBtn = function() {
         var submitAllBtn = $('.submit-all');
-
+        var tasks = $('form')
         submitAllBtn.on('click', function(event) {
             event.preventDefault();
-            $('.submit-btn').trigger('click');
+            $.each(tasks, function(index, value){
+               var taskChildren = $(value).children()
+                if(taskChildren.length == 3){
+                    $(value).submit();
+                }
+            })
+            //$('.submit-btn').trigger('click');
         });
     };
 
