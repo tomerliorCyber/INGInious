@@ -194,27 +194,6 @@ class TaskPage(INGIniousAuthPage):
                     result = self.submission_manager.get_input_from_submission(result)
                     result = self.submission_manager.get_feedback_from_submission(result, show_everything=is_staff, inginious_page_object=self)
 
-                    #output_json = { '0' : {'flow': 'true', 'result': {'text': 'הצלחה', 'bool': 'true'}, 'verbosity': 4, 'timeout': 1, 'strictness': 'false', 'dialogue': [{'value': '1', 'type': 'input', 'name': 'האיבר הראשון בסדרה (a<sub>0</sub>)'}, {'value': '2', 'type': 'input', 'name': 'יחס הסדרה (q)'}, {'value': '10', 'type': 'input', 'name': 'מספר האיברים בסדרה (num)'}, {'value': '1', 'type': 'output', 'name': 'האיבר הראשון בסדרה'}, {'value': '2', 'type': 'output', 'name': 'האיבר השני בסדרה'}, {'value': '4', 'type': 'output', 'name': 'האיבר השלישי בסדרה'}, {'value': '8', 'type': 'output', 'name': 'האיבר הרביעי בסדרה'}, {'value': '16', 'type': 'output', 'name': 'האיבר החמישי בסדרה'}, {'value': '32', 'type': 'output', 'name': 'האיבר השישי בסדרה'}, {'value': '64', 'type': 'output', 'name': 'האיבר השביעי בסדרה'}, {'value': '128', 'type': 'output', 'name': 'האיבר השמיני בסדרה'}, {'value': '256', 'type': 'output', 'name': 'האיבר התשיעי בסדרה'}, {'value': '512', 'type': 'output', 'name': 'האיבר העשירי בסדרה'}], 'name': 'חישוב האיברים הראשונים בסדרה של איבר ראשון שווה לאחד ויחס חיובי – יותר איברים', 'args': [], 'description': 'התכנית תקלוט את האיבר הראשון בסדרה הנדסית (1), את יחס הסדרה (2) ואת מספר האיברים הראשונים להצגה (10). לאחר מכן, התכנית תדפיס למסך את הסדרה ההנדסית (1 ואז 2 ואז 4 ואז 8 ואז 16 ואז 32 ואז 64 ואז 128 ואז 256 ואז 512).', 'test': [{'args': [1], 'type': 'assertEqual', 'expected': 2, 'input': [1], 'error': 'התרחשה שגיאה'}], 'id': '02-calc-geometric-series-a0-one-ratio-positive-more-elements'}}
-                    # couldn't open with  get_renderer, errors on js, tries to render the page and run the js
-                    # file_path = self.template_helper._root_path + '/' + self.template_helper._template_dir + '/task_page/feedback.html'
-                    # self.logger.info('file_path ' + repr(file_path))
-                    # with codecs.open(file_path, 'r', encoding='utf8') as f:
-                    #     feedback_html = f.read()
-                    # # todo, in order to support multiple scenario boxes in the same html page,
-                    # # it might be a good idea to render the html with the task id in it (05-06, for example)
-                    # # that way, the way the js will render in the appropriate modal
-                    # feedback_html_injected_with_id = feedback_html.replace('task_id_to_replace', 'zlil')
-                    # #feedback_html_injected_with_id = '.. raw:: html' + '\n' + indent(feedback_html_injected_with_id, 4)
-                    #
-                    #
-                    # #scenario_feedback = u'eval(' + json.dumps(output_json) + u')'
-                    # scenario_feedback = output_json
-                    # scenario_output_html = feedback_html_injected_with_id.format(
-                    #     feedback_json=scenario_feedback)
-                    # #feedback_output_html = '.. raw:: html' + '\n' + indent(scenario_output_html, 4)
-                    #result['text'] = scenario_output_html
-
-
                     # per ana's design, this alert box should always be gray no matter what the grade is.
                     result['grade_css_class'] = ' grade gray feedback-box'
                     # user_task always exists as we called user_saw_task before
