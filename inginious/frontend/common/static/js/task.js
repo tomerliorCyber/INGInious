@@ -705,11 +705,6 @@ function displayTaskStudentAlertWithProblems(content, top, type, alwaysShowTop) 
         firstPos = task_alert.offset().top;
     }
 
-    //$('html, body').animate(
-    //{
-    //    scrollTop: firstPos - 100
-    //}, 200);
-
     colorizeStaticCode();
 }
 
