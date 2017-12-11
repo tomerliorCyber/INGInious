@@ -189,7 +189,7 @@ var ManualPlugin = (function() {
             event.preventDefault();
             $.each(tasks, function(index, value){
                var taskChildren = $(value).children()
-                if(taskChildren.length == 3){
+                if(taskChildren.length > 2){
                     $(value).submit();
                 }
             })
