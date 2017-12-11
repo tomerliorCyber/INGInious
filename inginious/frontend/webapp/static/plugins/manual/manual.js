@@ -193,7 +193,6 @@ var ManualPlugin = (function() {
                     $(value).submit();
                 }
             })
-            //$('.submit-btn').trigger('click');
         });
     };
 

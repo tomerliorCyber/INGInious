@@ -13,10 +13,8 @@ import urllib.request, urllib.parse, urllib.error
 import traceback
 import codecs
 import locale
-import unittest
 import web
 
-from inspect import signature
 from bson.objectid import ObjectId
 from inginious.common import exceptions
 from inginious.frontend.common.task_page_helpers import submission_to_json, list_multiple_multiple_choices_and_files, indent
@@ -145,9 +143,8 @@ class TaskPage(INGIniousAuthPage):
 
             # TODO: this is nearly the same as the code in the webapp.
             # We should refactor this.
-            json_output = []
+
             userinput = web.input()
-            task_path = task.get_directory_path()
             if "@action" in userinput and userinput["@action"] == "submit":
                 # Verify rights
                 if not self.user_manager.task_can_user_submit(task, username):
