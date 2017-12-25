@@ -86,6 +86,7 @@ class TaskPage(INGIniousAuthPage):
             if userinput["questionid"] not in sinput:
                 raise web.notfound()
 
+
             if isinstance(sinput[userinput["questionid"]], dict):
                 # File uploaded previously
                 mimetypes.init()
