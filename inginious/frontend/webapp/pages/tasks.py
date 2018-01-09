@@ -254,7 +254,7 @@ class TaskPage(INGIniousAuthPage):
         try:
 
             # couldn't open with  get_renderer, errors on js, tries to render the page and run the js
-            file_path = self.template_helper._root_path + '/'+ self.template_helper._template_dir + '/task_page/feedback.html'
+            file_path = self.template_helper._root_path + '/'+ self.template_helper._template_dir + '/task_page/feedback_python.html'
             self.logger.info('file_path ' +repr(file_path))
             with codecs.open(file_path,'r',encoding='utf8') as f:
                 feedback_html = f.read()
