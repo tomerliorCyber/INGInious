@@ -21,6 +21,8 @@ from inginious.frontend.common.task_page_helpers import submission_to_json, list
 from inginious.frontend.webapp.pages.utils import INGIniousAuthPage
 
 
+PYTHON_KEYWORDS = ['python', 'template']
+
 class TaskPage(INGIniousAuthPage):
     """ Display a task (and allow to reload old submission/file uploaded during a submission) """
 
@@ -169,7 +171,7 @@ class TaskPage(INGIniousAuthPage):
                     del userinput['@debug-mode']
 
                 if len(task._problems) > 0 and task._problems[0].get_type() == 'code':
-                    userinput = self.add_feedback_html_to_user_input(userinput, taskid)
+                    userinput = self.add_feedback_html_to_user_input(userinput, taskid, courseid)
 
 
                 # Start the submission
@@ -249,12 +251,13 @@ class TaskPage(INGIniousAuthPage):
             else:
                 raise web.notfound()
 
-    def add_feedback_html_to_user_input(self, user_input, task_id):
+    def add_feedback_html_to_user_input(self, user_input, task_id, course_name):
         self.logger.info('before opening feebdack.html')
         try:
 
             # couldn't open with  get_renderer, errors on js, tries to render the page and run the js
-            file_path = self.template_helper._root_path + '/'+ self.template_helper._template_dir + '/task_page/feedback_python.html'
+            feedback_file_name = self.get_feedback_file_name(course_name)
+            file_path = self.template_helper._root_path + '/'+ self.template_helper._template_dir + '/task_page/' +feedback_file_name
             self.logger.info('file_path ' +repr(file_path))
             with codecs.open(file_path,'r',encoding='utf8') as f:
                 feedback_html = f.read()
@@ -273,6 +276,14 @@ class TaskPage(INGIniousAuthPage):
             user_input['html_template'] = ''
 
         return user_input
+
+
+    def get_feedback_file_name(self, course_name):
+        for keyword in PYTHON_KEYWORDS:
+            if keyword in course_name.lower():
+                return 'feedback_python.html'
+
+        return 'feedback.html'
 
 
 
