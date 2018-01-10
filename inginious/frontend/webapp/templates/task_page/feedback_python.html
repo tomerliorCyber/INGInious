@@ -8,96 +8,58 @@
         <meta name="description" content="scenario feedback">
         <meta name="author" content="">
 
-        <!-- Mobile Specific Metas
-        –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-
         <!-- FONT
         –––––––––––––––––––––––––––––––––––––––––––––––––– -->
         <link href="https://fonts.googleapis.com/css?family=Arimo" rel="stylesheet">
-        <!--<link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">-->
-        <!--<link href="//fonts.googleapis.com/css?family=Alef|Open+Sans" rel="stylesheet">-->
 
-        <!-- CSS
-        –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-        <!-- Loaded by Ingenious. Font Awesome https://www.w3schools.com/icons/fontawesome_icons_intro.asp -->
-        <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">-->
-        <!--bootstrap is already loaded by Inginious remove after testing -->
-        <!--Loaded by Ingenious. if loaded twice, causes a bug in inginious <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>-->
-
-        <!--Loaded by Ingenious. <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">-->
-        <!-- Right to lef -->
-        <!--Loaded by Ingenious. <link rel="stylesheet" href="//cdn.rawgit.com/morteza/bootstrap-rtl/v3.3.4/dist/css/bootstrap-rtl.min.css">-->
-        <!--Loaded by Ingenious. <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" crossorigin="anonymous"></script>-->
-
-        <!-- Frontend templates js -->
-        <!--Loaded by Ingenious. <script src="https://cdn.rawgit.com/blueimp/JavaScript-Templates/master/js/tmpl.min.js" crossorigin="anonymous"></script>-->
-
-        <!-- task-feedback.css will be loaded by inginious -->
     </head>
     <body>
 
 
-            <p class="python-feedback-p"> התשובה שלך עברה את הבדיקות! הציון שלך הוא 66.6%</p>
-
         <!-- Primary Page Layout
         –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-        <table id="scenarios-table-task_id_to_replace" class="table table-condensed feedback-table">
-            <thead class="thead-light text-center">
+        <table id="scenarios-table-task_id_to_replace" class="table table-condensed table-bordered feedback-table-python">
+            <thead class="thead-light text-center python-feedback-table-head">
                 <tr>
-                    <th class="python-feedback-table-head" style="width: 40px"></th>
-                    <th class="python-feedback-table-head" style="width: 305px; text-align:center">פונקציה</th>
-                    <th class="python-feedback-table-head" style="width: 305px; text-align:center">צפוי</th>
-                    <th class="python-feedback-table-head" style="width: 150px; text-align:center">התקבל בפועל</th>
+                    <th class="col-md-10 col-xs-10">התקבל בפועל</th>
+                    <th class="col-md-10 col-xs-10">צפוי</th>
+                    <th class="col-md-9 col-xs-9" id="method-signature"></th>
+                    <th class="fix-feedback-column-green-red"></th>
                 </tr>
             </thead>
-              <!--<tbody>-->
-                <!--<tr class="text-center">-->
-                  <!--<td clsss="green"><i class="fa fa-check-circle-o feedback-icon" aria-hidden="true"></i></td>-->
-                  <!--<th style="width: 305px; text-align:center">True</th>-->
-                  <!--<td style="width: 305px; text-align:center">Mark</td>-->
-                  <!--<td style="width: 150px; text-align:center">Otto</td>-->
-                <!--</tr>-->
-                <!--<tr class="text-center">-->
-                  <!--<td class="red"><i class="fa fa-check-circle-o feedback-icon" aria-hidden="true"></i></td>-->
-                  <!--<th style="width: 305px; text-align:center">True</th>-->
-                  <!--<td style="width: 305px; text-align:center">Jacob</td>-->
-                  <!--<td style="width: 150px; text-align:center">Thornton</td>-->
-                <!--</tr>-->
-                <!--<tr class="text-center">-->
-                  <!--<td class="red"><i class="fa fa-check-circle-o feedback-icon" aria-hidden="true"></i></td>-->
-                  <!--<th style="width: 305px; text-align:center">False</th>-->
-                  <!--<td style="width: 305px; text-align:center">Larry</td>-->
-                  <!--<td style="width: 150px; text-align:center">the Bird</td>-->
-                <!--</tr>-->
-              <!--</tbody>-->
+            <tbody>
+            </tbody>
+
         </table>
 
         <!--Template for a single scenario row -->
         <script type="text/x-tmpl" id="tmpl-scenario-row">
-            <tbody>
             <tr>
-                <td style="width: 40px" class="{{%=o.color%}}">
+                <td class="col-md-10 col-xs-10">
+                    {{%=o.returned_value || 'אין ערך מוחזר'%}}
+                </td>
+
+                <td class="col-md-10 col-xs-10">
+                    {{%=o.expected || 'לא קיים מידע'%}}
+                </td>
+
+                <td class="col-md-9 col-xs-9">
+                   {{%=o.sentToFunction || 'אין מידע'%}}
+                </td>
+
+                <td class="{{%=o.color%}}">
+                    <i class="fa
 
                     {{% if (!o.result.bool) {{ %}}
-                        <i class="fa fa-times-circle-o feedback-icon" aria-hidden="true"></i>
+                        fa-times-circle-o
                     {{% }} else {{ %}}
-                        <i class="fa fa-check-circle-o feedback-icon" aria-hidden="true"></i>
+                        fa-check-circle-o
                     {{% }} %}}
-                </td>
-
-                <td style="width: 305px; text-align:center" class="black-text">
-                   {{%=o.id%}}
-                </td>
-                <td style="width: 305px; text-align:center" class="">
-                    <a href="#" class="feedback-link" data-toggle="modal" data-target="#myModal{{%=o.id%}}">פרטים נוספים</a>
-                </td>
-                <td style="width: 150px; text-align:center" class="">
-                    last column
+                    
+                        feedback-icon feedback-icon-python" aria-hidden="true"></i>
                 </td>
             </tr>
 
-            </tbody>
 
 
         </script>

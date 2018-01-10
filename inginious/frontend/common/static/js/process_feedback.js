@@ -58,31 +58,53 @@ function fillModalTerminalBoxes(feedbackData, scenarioId) {
     window.sideComments = new SideComments('#commentable-container' + scenarioIdStr, currentUser, comments);
 }
 
+function generateSentSignature(data){
+    var methodName = data.method_name || 'solution';
+    var argumentsSent = data.arguments_sent;
 
-function renderScenarioRows(feedbackData, taskId){
+    return methodName + '(' +  String(argumentsSent) + ')';
+}
+
+function renderScenarioRows(feedbackData, taskId) {
     var scenario_row,
         modal;
     console.log('here is feedbackData. ');
     console.log(feedbackData);
 
-    $.each(feedbackData, function(id, data) {{
-        console.log('here is feedbackData. data is -- ');
-        data.id = id;
-        data.indexId = parseInt(id) + 1;
-        if (isSuccess(data)){{
-            data.color = 'green'
-        }}else{{
-            data.color = 'red'
-        }}
-        //add the hidden modal
-        modal = $(tmpl('tmpl-modal', data));
-        $('#modals-' + taskId).append(modal);
+    $.each(feedbackData, function (id, data) {
+        {
+            console.log('here is feedbackData. data is -- ');
+            data.id = id;
+            data.indexId = parseInt(id) + 1;
+            if (isSuccess(data)) {
+                {
+                    data.color = 'green'
+                }
+            } else {
+                {
+                    data.color = 'red'
+                }
+            }
+            //add the hidden modal
+            modal = $(tmpl('tmpl-modal', data));
+            $('#modals-' + taskId).append(modal);
 
-        // add row to scenario table
-        scenario_row = $(tmpl('tmpl-scenario-row', data));
-        $('#scenarios-table-' + taskId).append(scenario_row);
+            // in python's case, this data wil be presented in the feedback table like so
+            // my_function(1,"foo", "bar")
 
-    }});
+            data.sentToFunction = generateSentSignature(data);
+            // add row to scenario table
+            scenario_row = $(tmpl('tmpl-scenario-row', data));
+            $('#scenarios-table-' + taskId).append(scenario_row);
+
+        }
+    });
+
+    // relevant to python's feedback only, will do nothing in other courses
+    if (feedbackData[0] && feedbackData[0].method_signature) {
+        $('#scenarios-table-' + taskId + ' #method-signature').html(feedbackData[0].method_signature)
+    }
+
 }
 
 

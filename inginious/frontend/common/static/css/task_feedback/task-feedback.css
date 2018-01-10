@@ -32,6 +32,10 @@
     color: white;
 }
 
+.feedback-icon-python{
+    margin: auto -7.5px;
+}
+
 .terminal-feedback-icon{
     margin: auto 7.5px;
     color: #999999;
@@ -114,6 +118,21 @@
     font-weight: 900;
 }
 
+.feedback-table-python{
+    font-family: 'Arimo', sans-serif;
+    font-size: 16px;
+    background-color: white;
+    margin: 15px;
+    text-align: left;
+    table-layout: fixed;
+}
+
+.python-feedback-table-head th{
+    text-align: center;
+    background-color: #f2f2f2;
+}
+
+
 .python-feedback-p{
     font-family: 'Arimo', sans-serif;
     font-size: 20px;
@@ -147,21 +166,18 @@
     border: 1px solid #ccc;
 }
 
-.first-column-python-feedback{
-    width: 40px;
-}
-
-.second-column-python-feedback{
-    width: 305px;
-}
-
-.third-column-python-feedback{
-    width: 150px;
-}
-
 .python-feedback-table-icon{
     font-size: 20px;
     color: #FFFFFF;
     margin-top: 8px;
     margin-left: 11px;
+}
+
+.fix-feedback-column-green-red{
+    width: 40px;
+}
+
+
+.feedback-table-python tbody tr td{
+    padding-left: 20px;
 }
