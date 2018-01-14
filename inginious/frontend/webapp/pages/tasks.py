@@ -279,7 +279,7 @@ class TaskPage(INGIniousAuthPage):
 
 
     def get_feedback_file_name(self, task_type):
-        if task_type == 'python':
+        if task_type == 'python-unit-test':
             return 'feedback_python.html'
 
         return 'feedback.html'
