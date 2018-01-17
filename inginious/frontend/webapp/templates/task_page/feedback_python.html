@@ -36,7 +36,7 @@
         <script type="text/x-tmpl" id="tmpl-scenario-row">
             <tr>
                 <td class="col-md-10 col-xs-10">
-                    {{%=o.returned_value || 'אין ערך מוחזר'%}}
+                    {{%=o.returned_value == undefined ? 'אין ערך מוחזר' : o.returned_value%}}
                 </td>
 
                 <td class="col-md-10 col-xs-10">
