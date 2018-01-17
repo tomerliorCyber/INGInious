@@ -40,7 +40,7 @@
                 </td>
 
                 <td class="col-md-10 col-xs-10">
-                    {{%=o.expected || 'לא קיים מידע'%}}
+                    {{%=o.expected == undefined ? 'לא קיים מידע' : o.expected%}}
                 </td>
 
                 <td class="col-md-9 col-xs-9">
