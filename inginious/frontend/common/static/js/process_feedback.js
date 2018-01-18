@@ -11,7 +11,6 @@ function fillModalTerminalBoxes(feedbackData, scenarioId) {
     var comments = [];
     console.log('scenarioIdStr is ' + scenarioIdStr);
 
-
     if (feedbackData.args) {
         // The modal's Terminal initialization
         var command_line = "C:\\Magshimim> program.exe";
@@ -61,8 +60,8 @@ function fillModalTerminalBoxes(feedbackData, scenarioId) {
 function generateSentSignature(data){
     var methodName = data.method_name || 'solution';
     var argumentsSent = data.arguments_sent;
-
-    return methodName + '(' +  String(argumentsSent) + ')';
+    var argsString = convertArgs(argumentsSent);
+    return methodName + '(' +  String(argsString) + ')';
 }
 
 function renderScenarioRows(feedbackData, taskId) {
@@ -70,6 +69,7 @@ function renderScenarioRows(feedbackData, taskId) {
         modal;
     console.log('here is feedbackData. ');
     console.log(feedbackData);
+    feedbackData[0]['expected'] = convertToString(feedbackData[0]['expected'])
 
     $.each(feedbackData, function (id, data) {
         {
@@ -85,6 +85,8 @@ function renderScenarioRows(feedbackData, taskId) {
                     data.color = 'red'
                 }
             }
+
+
             //add the hidden modal
             modal = $(tmpl('tmpl-modal', data));
             $('#modals-' + taskId).append(modal);
@@ -112,3 +114,34 @@ function renderScenarioRows(feedbackData, taskId) {
 function isSuccess(data) {{
     return data.result.bool
 }}
+
+function convertArgs(args) {
+
+    var stringArgs = [];
+
+    $.each(args, function (index, data) {
+
+        stringArgs[index] = convertToString(data)
+    })
+
+    return stringArgs;
+}
+
+function convertToString(data) {
+
+     var type = typeof (data);
+
+     switch (type) {
+         case "object":
+             return "[" + data.join() + "]";
+             break;
+         case "number":
+             return data;
+             break;
+         case "string":
+             return '"' + data + '"';
+             break;
+         default:
+             return data;
+     }
+}
