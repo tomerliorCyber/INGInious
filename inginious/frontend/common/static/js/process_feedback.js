@@ -70,6 +70,7 @@ function renderScenarioRows(feedbackData, taskId) {
     console.log('here is feedbackData. ');
     console.log(feedbackData);
     feedbackData[0]['expected'] = convertToString(feedbackData[0]['expected'])
+    feedbackData[0]['returned_value'] = convertToString(feedbackData[0]['returned_value'])
 
     $.each(feedbackData, function (id, data) {
         {
@@ -140,6 +141,9 @@ function convertToString(data) {
              break;
          case "string":
              return '"' + data + '"';
+             break;
+         case "boolean":
+             return data.toString();
              break;
          default:
              return data;
