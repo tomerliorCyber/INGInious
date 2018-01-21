@@ -69,11 +69,12 @@ function renderScenarioRows(feedbackData, taskId) {
         modal;
     console.log('here is feedbackData. ');
     console.log(feedbackData);
-    feedbackData[0]['expected'] = convertToString(feedbackData[0]['expected'])
-    feedbackData[0]['returned_value'] = convertToString(feedbackData[0]['returned_value'])
+
 
     $.each(feedbackData, function (id, data) {
         {
+            feedbackData[id]['expected'] = convertToString(feedbackData[id]['expected'])
+            feedbackData[id]['returned_value'] = convertToString(feedbackData[id]['returned_value'])
             console.log('here is feedbackData. data is -- ');
             data.id = id;
             data.indexId = parseInt(id) + 1;
