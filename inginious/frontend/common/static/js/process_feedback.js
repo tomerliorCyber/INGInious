@@ -119,6 +119,10 @@ function isSuccess(data) {{
 
 function convertArgs(args) {
 
+    if(args == undefined){
+     return
+    }
+
     var stringArgs = [];
 
     $.each(args, function (index, data) {
