@@ -13,7 +13,7 @@ function fillModalTerminalBoxes(feedbackData, scenarioId) {
 
     if (feedbackData.args) {
         // The modal's Terminal initialization
-        var command_line = "C:\\Magshimim> program.exe";
+        var command_line = feedbackData['prompt'];
         for (var i = 0; i < feedbackData.args.length; i++) {
             command_line += " " + feedbackData.args[i];
         }
@@ -120,7 +120,7 @@ function isSuccess(data) {{
 function convertArgs(args) {
 
     if(args == undefined){
-     return
+     return ''
     }
 
     var stringArgs = [];
@@ -139,7 +139,7 @@ function convertToString(data) {
 
      switch (type) {
          case "object":
-             return "[" + data.join() + "]";
+             return "[" + data.join(", ") + "]";
              break;
          case "number":
              return data;
