@@ -181,3 +181,7 @@
 .feedback-table-python tbody tr td{
     padding-left: 20px;
 }
+
+.wrap-word{
+    overflow-wrap: break-word;
+}
