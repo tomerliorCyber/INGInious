@@ -182,6 +182,10 @@
     padding-left: 20px;
 }
 
-.wrap-word{
+.wrap-word {
     overflow-wrap: break-word;
+}
+
+.task-rtl-css p{
+    direction: rtl
 }
