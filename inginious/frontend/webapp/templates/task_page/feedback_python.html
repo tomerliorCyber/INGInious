@@ -36,7 +36,7 @@
         <!--Template for a single scenario row -->
         <script type="text/x-tmpl" id="tmpl-scenario-row">
             <tr>
-                <td class="col-md-10 col-xs-10">
+                <td class="col-md-10 col-xs-10 wrap-word">
                     {{%=o.returned_value == undefined ? o.noValue : o.returned_value%}}
                 </td>
 
@@ -64,7 +64,7 @@
 
         <script type="text/x-tmpl" id="tmpl-scenario-row-print-out">
             <tr>
-                <td class="col-md-8 col-xs-8">
+                <td class="col-md-8 col-xs-8 wrap-word">
                     {{%=o.returned_value == undefined ? o.noValue : o.returned_value%}}
                 </td>
 
