@@ -60,8 +60,8 @@ function fillModalTerminalBoxes(feedbackData, scenarioId) {
 function generateSentSignature(data){
     var methodName = data.method_name || 'solution';
     var argumentsSent = data.arguments_sent;
-    var argsString = convertArgs(argumentsSent);
-    return methodName + '(' +  String(argsString) + ')';
+    //var argsString = convertArgs(argumentsSent);
+    return methodName + '(' +  String(argumentsSent) + ')';
 }
 
 function renderScenarioRows(feedbackData, taskId) {
@@ -73,21 +73,33 @@ function renderScenarioRows(feedbackData, taskId) {
 
     $.each(feedbackData, function (id, data) {
         {
-            feedbackData[id]['expected'] = convertToString(feedbackData[id]['expected'])
-            feedbackData[id]['returned_value'] = convertToString(feedbackData[id]['returned_value'])
+            //feedbackData[id]['expected'] = convertToString(feedbackData[id]['expected'])
+            //feedbackData[id]['returned_value'] = convertToString(feedbackData[id]['returned_value'])
             console.log('here is feedbackData. data is -- ');
             data.id = id;
             data.indexId = parseInt(id) + 1;
             if (isSuccess(data)) {
                 {
                     data.color = 'green'
+                    data.colorIconExpected = 'icon-color-green'
+                    data.colorIconPrint = 'icon-color-green'
                 }
             } else {
                 {
                     data.color = 'red'
+                    data.colorIconExpected = 'icon-color-red'
+                }
+                if(feedbackData[id]['feedback']['text']=='PrintOutException'){
+                    data.colorIconPrint = 'icon-color-red'
+                    if(feedbackData[id]['returned_value'] == feedbackData[id]['expected']){
+                        data.colorIconExpected = 'icon-color-green'
+                    }
                 }
             }
 
+
+
+            var checkPrint = feedbackData[id]['test'][0]['expected_stdout']
 
             //add the hidden modal
             modal = $(tmpl('tmpl-modal', data));
@@ -98,7 +110,14 @@ function renderScenarioRows(feedbackData, taskId) {
 
             data.sentToFunction = generateSentSignature(data);
             // add row to scenario table
-            scenario_row = $(tmpl('tmpl-scenario-row', data));
+            if(checkPrint){
+                data.expectedPrint = checkPrint
+                scenario_row = $(tmpl('tmpl-scenario-row-print-out', data));
+                $('.print-head').show()
+            }else{
+                scenario_row = $(tmpl('tmpl-scenario-row', data));
+                $('.print-head').hide()
+            }
             $('#scenarios-table-' + taskId).append(scenario_row);
 
         }
