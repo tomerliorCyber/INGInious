@@ -37,11 +37,11 @@
         <script type="text/x-tmpl" id="tmpl-scenario-row">
             <tr>
                 <td class="col-md-10 col-xs-10">
-                    {{%=o.returned_value == undefined ? 'אין ערך החזרה' : o.returned_value%}}
+                    {{%=o.returned_value == undefined ? o.noValue : o.returned_value%}}
                 </td>
 
                 <td class="col-md-10 col-xs-10 wrap-word">
-                    {{%=o.expected == undefined ? 'אין ערך החזרה' : o.expected%}}
+                    {{%=o.expected == undefined ? o.noValue : o.expected%}}
                 </td>
 
                 <td class="col-md-9 col-xs-9 wrap-word">
@@ -65,11 +65,11 @@
         <script type="text/x-tmpl" id="tmpl-scenario-row-print-out">
             <tr>
                 <td class="col-md-8 col-xs-8">
-                    {{%=o.returned_value == undefined ? 'אין ערך החזרה' : o.returned_value%}}
+                    {{%=o.returned_value == undefined ? o.noValue : o.returned_value%}}
                 </td>
 
                 <td class="col-md-8 col-xs-8 wrap-word">
-                    {{%=o.expected == undefined ? 'אין ערך החזרה' : o.expected%}}
+                    {{%=o.expected == undefined ? o.noValue : o.expected%}}
                 </td>
 
                 <td class="col-md-10 col-xs-10 wrap-word td-print-result">
@@ -112,10 +112,10 @@
 
             <tr>
                     <td>
-                        {{%=o.actual_stdout == undefined ? 'אין ערך החזרה' : o.actual_stdout%}}
+                        {{%=o.actual_stdout == undefined ? o.noValue : o.actual_stdout%}}
                     </td>
                     <td>
-                        {{%=o.expectedPrint == undefined ? 'אין ערך החזרה' : o.expectedPrint%}}
+                        {{%=o.expectedPrint == undefined ? o.noValue : o.expectedPrint%}}
                     </td>
 
                     <td class="col-md-10 col-xs-10 wrap-word td-print-result">

@@ -78,6 +78,7 @@ function renderScenarioRows(feedbackData, taskId) {
             console.log('here is feedbackData. data is -- ');
             data.id = id;
             data.indexId = parseInt(id) + 1;
+            data.noValue = 'אין ערך החזרה'
             if (isSuccess(data)) {
                 {
                     data.color = 'green'
