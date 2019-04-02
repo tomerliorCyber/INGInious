@@ -109,8 +109,6 @@ def job_done_callback(result, filename, inputfiles, data):
 
     job_done_callback.jobs_done += 1
 
-    return noprob
-
 job_done_callback.jobs_done = 0
 
 
@@ -128,7 +126,7 @@ def get_config(configfile):
 
 def launch_job(filename, data, inputfiles):
     result, grade, problems, tests, custom, archive, stdout, stderr = job_manager.new_job(task, data["input"], "Task tester", True)
-    return job_done_callback({"result":result, "grade": grade, "problems": problems, "tests": tests, "custom": custom, "archive": archive, "stdout": stdout, "stderr": stderr}, filename, inputfiles, data)
+    job_done_callback({"result":result, "grade": grade, "problems": problems, "tests": tests, "custom": custom, "archive": archive, "stdout": stdout, "stderr": stderr}, filename, inputfiles, data)
 
 
 def parse_text(task, job_result):
@@ -173,7 +171,7 @@ if __name__ == "__main__":
 
     # Wait for the agent to load containers
     time.sleep(2)
-    exit_code = 0
+
     for filename in inputfiles:
         filename = os.path.basename(filename)
 
@@ -185,10 +183,7 @@ if __name__ == "__main__":
             exit(2)
 
         data = inginious.common.custom_yaml.load(inputfile)
-        success = launch_job(filename, data, inputfiles)
-        if not success:
-            exit_code = 1
-
+        launch_job(filename, data, inputfiles)
 
     client.close()
-    sys.exit(exit_code)
+    sys.exit(0)

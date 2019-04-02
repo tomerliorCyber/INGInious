@@ -8,8 +8,6 @@ from gridfs import GridFS
 from pymongo import MongoClient
 import web
 from web.debugerror import debugerror
-from web.webapi import _InternalError
-import logging
 
 from inginious.frontend.common.arch_helper import create_arch, start_asyncio_and_zmq
 from inginious.frontend.webapp.database_updater import update_database
@@ -65,12 +63,6 @@ urls_maintenance = (
     '/.*', 'inginious.frontend.webapp.pages.maintenance.MaintenancePage'
 )
 
-# to log to file the stacktrace in case of crash
-def logInternalerror():
-    logger = logging.getLogger()
-    logger.exception('failed in inginious')
-    return _InternalError()
-
 
 def _put_configuration_defaults(config):
     """
@@ -78,7 +70,7 @@ def _put_configuration_defaults(config):
     :return: the same dict, but with defaults for some unfilled parameters
     """
     if 'allowed_file_extensions' not in config:
-        config['allowed_file_extensions'] = [".c", ".cpp", ".java", ".oz", ".zip", ".tar.gz", ".tar.bz2", ".txt", ".rar"]
+        config['allowed_file_extensions'] = [".c", ".cpp", ".java", ".oz", ".zip", ".tar.gz", ".tar.bz2", ".txt"]
     if 'max_file_size' not in config:
         config['max_file_size'] = 1024 * 1024
     return config
@@ -114,7 +106,6 @@ def get_app(config):
     default_max_file_size = config['max_file_size']
 
     zmq_context, _ = start_asyncio_and_zmq()
-
 
     # Init the different parts of the app
     plugin_manager = PluginManager()
@@ -161,7 +152,6 @@ def get_app(config):
     # Not found page
     appli.notfound = lambda: web.notfound(template_helper.get_renderer().notfound('Page not found'))
 
-    appli.internalerror = logInternalerror
     # Enable stacktrace display if logging is at level DEBUG
     if config.get('log_level', 'INFO') == 'DEBUG':
         appli.internalerror = debugerror

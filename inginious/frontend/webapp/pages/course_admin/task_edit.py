@@ -296,10 +296,7 @@ class CourseEditTask(INGIniousAdminPage):
         # Get original data
         try:
             orig_data = self.task_factory.get_task_descriptor_content(courseid, taskid)
-            if orig_data.get("order"):
-                data["order"] = orig_data["order"]
-            if orig_data.get("type"):
-                data["type"] = orig_data["type"]
+            data["order"] = orig_data["order"]
         except:
             pass
 

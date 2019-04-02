@@ -14,5 +14,3 @@ utils/task_manual_tester/tests/
 node_modules/
 INGInious.egg-info/
 dist/
-tasks/
-/inginious/log/*.log
