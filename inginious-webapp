@@ -28,6 +28,7 @@ from inginious.common.base import load_json_or_yaml
 
 import inginious.frontend.webapp.app
 
+
 if __name__ == "__main__":
     # Parse the paramaters from command line arguments
     parser = argparse.ArgumentParser()
@@ -57,6 +58,7 @@ if not configfile:
 # Load configuration and application (!!! For mod_wsgi, application identifier must be present)
 config = load_json_or_yaml(configfile)
 application, close_app_func = inginious.frontend.webapp.app.get_app(config)
+
 
 # Init logging
 init_logging(config.get('log_level', 'INFO'))
