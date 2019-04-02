@@ -18,8 +18,7 @@ def submission_to_json(data, debug, reloading=False, replace=False):
         'id': str(data["_id"]),
         'submitted_on': str(data['submitted_on']),
         'grade': str(data.get("grade", 0.0)),
-        'replace': replace and not reloading,  # Replace the evaluated submission
-        'grade_css_class': data.get('grade_css_class')
+        'replace': replace and not reloading  # Replace the evaluated submission
     }
 
     if reloading:
@@ -35,7 +34,6 @@ def submission_to_json(data, debug, reloading=False, replace=False):
 
     if debug:
         tojson["debug"] = data
-
     return json.dumps(tojson, default=str)
 
 
@@ -50,8 +48,3 @@ def list_multiple_multiple_choices_and_files(task):
                 if isinstance(box, FileBox):
                     output[box.get_complete_id()] = {}
     return output
-
-
-def indent(text, amount, ch=' '):
-    padding = amount * ch
-    return ''.join(padding + line for line in text.splitlines(True))

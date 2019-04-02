@@ -35,12 +35,6 @@ function init_task_page(evaluate)
         $(this).on('click', clickOnSubmission);
         $(this).find('a').on('click', selectSubmission);
     });
-
-    $('.optional-upload-file-btn-js').change(uploadFile);
-    $('.btn-ignore-click').click(function(e){
-        e.preventDefault();
-        $(this).parent().find('.optional-upload-file-btn-js').click()
-    });
 }
 
 var evaluatedSubmission = 'best';
@@ -273,8 +267,7 @@ function taskFormValid()
         }
     });
 
-    // going throw file upload types that are not optional
-    form.find('input[type="file"]:not(.optional-upload-file-btn-js)').each(function()
+    form.find('input[type="file"]').each(function()
     {
         var filename = $(this).val().split(/(\\|\/)/g).pop();
 
@@ -410,7 +403,6 @@ function waitForSubmission(submissionid)
                     else
                         displayTaskLoadingAlert(data, submissionid);
                 }
-                // todo make more generic for multiple colors for grades
                 else if("status" in data && "result" in data && "grade" in data)
                 {
                     if("debug" in data)
@@ -652,7 +644,7 @@ function displayTaskStudentErrorAlert(content)
 {
     displayTaskStudentAlertWithProblems(content,
         "<b>There are some errors in your answer. Your score is " + content["grade"] + "%</b>",
-        content["grade_css_class"], false);
+        "danger", false);
 }
 
 //Displays a student success alert in task form
@@ -660,19 +652,16 @@ function displayTaskStudentSuccessAlert(content)
 {
     displayTaskStudentAlertWithProblems(content,
         "<b>Your answer passed the tests! Your score is " + content["grade"] + "%</b>",
-        content["grade_css_class"], true);
+        "success", true);
 }
 
 //Displays a student error alert in task form
-function displayTaskStudentAlertWithProblems(content, top, type, alwaysShowTop) {
+function displayTaskStudentAlertWithProblems(content, top, type, alwaysShowTop)
+{
     resetAlerts();
 
     var firstPos = -1;
-    if (window.specificTaskId) {
-        var task_alert = window.specificTaskId
-    } else {
-        var task_alert = $('#task_alert');
-    }
+    var task_alert = $('#task_alert');
 
     if("text" in content && content.text != "")
     {
@@ -704,6 +693,11 @@ function displayTaskStudentAlertWithProblems(content, top, type, alwaysShowTop) 
         task_alert.html(getAlertCode(top, type, true));
         firstPos = task_alert.offset().top;
     }
+
+    $('html, body').animate(
+    {
+        scrollTop: firstPos - 100
+    }, 200);
 
     colorizeStaticCode();
 }
@@ -824,19 +818,4 @@ function loadInput(submissionid, input)
         else
             this.setValue("");
     })
-}
-
-function uploadFile(e){
-    var myFile = e.target.files[0];
-    var reader = new FileReader();
-    var problemIndex = $(this).attr('data-index');
-    var fileDisplayArea = codeEditors[problemIndex];
-    reader.onload = function(e){
-        var output = e.target.result;
-        fileDisplayArea.getDoc().setValue(output)
-
-    };
-    reader.readAsText(myFile);
-    // clear all uploaded files . todo, could be a race condition. check
-    $(this).val('');
 }
